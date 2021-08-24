@@ -1,0 +1,30 @@
+.top-bar {
+    height: 40px;
+    padding-top: 10px;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    -webkit-box-shadow: 0 5px 6px -6px var(--gray3);
+    font-weight: 500;
+}
+.top-bar div{
+    text-align: center;
+}
+
+.active-bar {
+    border-bottom: 5px solid var(--green);
+    padding-bottom: 10px;
+    font-weight: 600;
+}
+
+.mr-50 {
+    margin-right: 50px;
+    cursor: pointer;
+}
+
+.pb-30 {
+    padding-bottom: 30px;
+}
+
+.ml-60 {
+    margin-left: 60px;
+}

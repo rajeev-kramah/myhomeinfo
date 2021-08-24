@@ -1,0 +1,33 @@
+.inner-bg {
+    background-color: var(--disableColor); 
+}
+
+
+.dropdown-menu>li>a {
+    display: block;
+    clear: both;
+    font-weight: 400;
+    line-height: 1.42857143;
+    color:  var(--blue) !important;
+    white-space: nowrap;
+}
+.dropdown-menu>li {
+    padding: 5px 30px 5px 4px !important;
+}
+
+
+
+
+.houseDropDown{
+    background-color:var(--gray5);
+    border : 1px solid var(--gray4) !important;
+    border-radius: 25px;
+}
+
+.navbar-fixed-top {
+    z-index: 1;
+}
+
+.house-selected {
+    background-color: var(--lightBlue) !important;
+}

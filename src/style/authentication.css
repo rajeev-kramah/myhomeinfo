@@ -1,0 +1,98 @@
+.bg {
+    background-color: var(--lightGray);
+}
+
+.enable-border {
+    color: var(--lightBlue);
+}
+
+.disable-border {
+    color: var(--disableColor);
+}
+
+.heading-color {
+    color: var(--gray1);
+}
+
+.subheading-color {
+    color: var(--gray2);
+}
+
+.primary-color {
+    color: var(--gray3);
+}
+
+.primary-button {
+    color: var(--blue);
+}
+
+.select-color {
+    color: var(--green);
+}
+
+.login_home_img {
+    width: 300px;
+}
+
+.login_left {
+    left: 0;
+    background-color: var(--white);
+}
+
+.login_right {
+    right: 0;
+    background-color: var(--lightGray);
+}
+
+.left_padding {
+    padding-top: 12%;
+}
+
+.right_padding {
+    padding-top: 10%;
+    padding-bottom: 15%;
+}
+
+.pt-4 {
+    padding-top: 4% !important;
+    padding-bottom: 5% !important;
+}
+
+.tc {
+    text-align: center;
+}
+
+.fb {
+    font-weight: bold;
+}
+
+.pt-15 {
+    padding-top: 15px;
+}
+
+.pt-30 {
+    padding-top: 30px;
+}
+
+.login-btn {
+    width: 100%;
+    background-color: var(--blue);
+    color: var(--white);
+    padding: 14px 20px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+h4 {
+    font-weight: bolder;
+}
+
+.pb-15 {
+    padding-bottom: 15px;
+}
+
+.pb-30 {
+    padding-bottom: 30px;
+}

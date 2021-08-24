@@ -1,0 +1,543 @@
+{
+	"info": {
+		"_postman_id": "59adf9a8-5b6c-4197-b3ac-6217e373a0bb",
+		"name": "myhomeinfo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User Registration",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "name",
+						"value": "manohar",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\" : \"Manohar\",\r\n    \"email\" : \"mksinghnitc@gmail\",\r\n    \"username\" : \"manoharks\",\r\n    \"address\" : \"Patna Bihar \",\r\n    \"zipcode\" : \"841419\",\r\n    \"refferedby\" : \"Ravi\",\r\n    \"substartdate\" : \"10 june 1991\",\r\n    \"subenddate\" : \"10 june 1991\",\r\n    \"mono\" : \"9606514210\",\r\n    \"password\" : \"0000\"\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4600/users/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4600",
+					"path": [
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\" : \"mksnitc@gmail.com\",\r\n    \"password\" : \"1111\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4600/users/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4600",
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Forget",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\" : \"mksnitc@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4600/users/forget",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4600",
+					"path": [
+						"users",
+						"forget"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reset",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\" : \"mksnitc@gmail.com\",\r\n    \"password\": \"1111\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4600/users/reset",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4600",
+					"path": [
+						"users",
+						"reset"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Home",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"houseno\" : 5,\r\n    \"streetname\" : \"Tes Hpllow\",\r\n    \"city\" : \"Brampton\",\r\n    \"state\" : \"Ontario\",\r\n    \"country\": \"Canada\",\r\n    \"zip\" : \"123445\",\r\n    \"primaryHouse\" : \"yes\",\r\n    \"yearbuilt\": \"2019\",\r\n    \"surveyno\": \"123456\",\r\n    \"purchaseamount\": \"$300000\",\r\n    \"purchasedate\": \"30 jun 1991\",\r\n    \"buildername\": \"Manohar\",\r\n    \"subdivision\": \"tstststst\",\r\n    \"owner_id\": 3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4600/home",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4600",
+					"path": [
+						"home"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Titleholder",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"titleholder1\" : \"Manohar1\",\r\n    \"titleholder2\": \"Vikas\",\r\n    \"titleholder3\": \"Santosh\",\r\n    \"titleholder4\": \"Kamlesh\", \r\n    \"house_id\" : 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4600/home/titleholders",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4600",
+					"path": [
+						"home",
+						"titleholders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create HOA Details",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"companyname\": \"Test1\",\r\n    \"contactname\": \"Manohar\",\r\n    \"phoneno\": \"9876543210\",\r\n    \"email\": \"mksnitc@gmail.com\",\r\n    \"frequency\" : \"1234\",\r\n    \"amount\" :  \"$1000\",\r\n    \"house_id\" : \"1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4600/home/hoadetails",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4600",
+					"path": [
+						"home",
+						"hoadetails"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Realtor",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Manohar1\",\r\n    \"phono\" : \"8765432190\",\r\n    \"email\" : \"mksnitc@gmail.com\",\r\n    \"details\" : \"Test\",\r\n    \"house_id\" : 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4600/home/realtor",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4600",
+					"path": [
+						"home",
+						"realtor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "HMO Details",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\" : \"Test XYSZ11\",\r\n    \"description\" : \"ABC Test\",\r\n    \"house_id\" : 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4600/home/hmodetails",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4600",
+					"path": [
+						"home",
+						"hmodetails"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User Details",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"id\" : 3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4600/users/userdeatils",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4600",
+					"path": [
+						"users",
+						"userdeatils"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "housedetail",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\" : 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4600/home/housedetail",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4600",
+					"path": [
+						"home",
+						"housedetail"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:4600/home/ownerhouselist",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"owner_id\" : 3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4600/home/ownerhouselist",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4600",
+					"path": [
+						"home",
+						"ownerhouselist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Contacts",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"groupname\" :\"Test2\", \r\n    \"contactperson\" : \"Manohar\", \r\n    \"landline\" : \"1234567890\" , \r\n    \"email\" : \"mksnitc@gmail.com\" , \r\n    \"companyname\" : \"myhomeinfo\", \r\n    \"adress\" : \"Marthahalli Market\", \r\n    \"mono\" : \"0987654321\",\r\n     \"url\" : \"file:///D:/Webapp/Jsconcept/callApplyBind.js\", \r\n     \"comment\": \"Comment Check\", \r\n     \"house_id\": 68,\r\n     \"id\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4600/contact",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4600",
+					"path": [
+						"contact"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getsinglecontact",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\" : 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4600/contact/getsinglecontact",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4600",
+					"path": [
+						"contact",
+						"getsinglecontact"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "gethomecontacts",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"house_id\" : 68\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4600/contact/gethomecontacts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4600",
+					"path": [
+						"contact",
+						"gethomecontacts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "loan create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"loantype\" :\"Loan Type\", \r\n    \"lcontactperson\" : \"Manohar\", \r\n    \"laddress\" : \"Marathahalli bangalore\", \r\n    \"lphno\": \"9876543210\", \r\n    \"lemail\" : \"mksnitc@gmail.com\", \r\n    \"lurl\" : \"file:///D:/Webapp/Jsconcept/callApplyBind.js\", \r\n    \"purchaseprice\" : \"$11111\", \r\n    \"downpayment\" : \"$111\", \r\n    \"loanamount\" : \"$567\", \r\n    \"rateofinterest\" : \"10\", \r\n    \"loanterm\" : \"Loan Term\", \r\n    \"loannumber\" :\"123456\", \r\n    \"escrow\" : \"Yes\", \r\n    \"mortgage\" : \"$123456\", \r\n    \"loanbegindate\" : \"10-04-2016\", \r\n    \"propertytax\" : \"$1234\", \r\n    \"additionaldetails\" : \"additionaldetails\", \r\n    \"loanclosuredate\" : \"10-03-2019\", \r\n    \"status\" : \"Active\", \r\n    \"house_id\" : 68\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4600/loan",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4600",
+					"path": [
+						"loan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getsingleloan",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\" : 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4600/loan/getsingleloan",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4600",
+					"path": [
+						"loan",
+						"getsingleloan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "gethomeloans",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"house_id\" : 68  \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4600/loan/gethomeloans",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4600",
+					"path": [
+						"loan",
+						"gethomeloans"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

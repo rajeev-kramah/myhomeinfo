@@ -1,0 +1,68 @@
+.loan {
+    background-color: var(--lightGray);
+    min-height: 650px;
+    padding-top: 16vh;
+}
+
+.loan-inner {
+    background-color: white;
+    border-radius: 10px;
+    color: var(--gray1);
+}
+
+.mt-25 {
+    margin-top: 25px;
+}
+
+.mt-5 {
+    margin-top: 5px;
+}
+
+.status {
+    border-radius: 10px;
+    padding: 0px 5px 0px 5px;
+    color: var(--white);
+}
+
+.s-active {
+    background-color: var(--green);
+}
+
+.s-expired {
+    background-color: var(--red);
+}
+#provider{
+    margin-left: 8px;
+    width: 92%;
+}
+#lab1{
+    margin-left: 7px;
+}
+#provider1{
+    margin-left: 10px;
+    width: 95%;
+}
+#provider2{
+    margin-left: 8px;
+    width: 94%;
+}
+.lab{
+    margin-left: 10px;
+}
+.row2{
+    margin-left: 20px;
+}
+#row{
+    width: 178px;
+}
+#wide{
+    position: absolute;
+    right: 140px;
+}
+#wide1{
+    position: absolute;
+    right: 210px;
+}
+#insurance{
+    margin-top: 50px;
+}
