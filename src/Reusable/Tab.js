@@ -6,7 +6,7 @@ const Tab = (props) => {
             <div className="col-md-1"></div>
             <div className="col-md-10 t15" align="center">
                 <div className="row tabContainer">
-                    <>
+                    <React.Fragment>
                         {
                             props.id ? (
                                 props.tabs.map((tab, index)=>{
@@ -33,7 +33,7 @@ const Tab = (props) => {
                             )
                            
                         }
-                    </>
+                    </React.Fragment>
                 </div>
             </div>
         </div>

@@ -37,6 +37,7 @@ const ContactList = (props) => {
      
     return (
         <div className="container-fluid contact">
+            {console.log("data ::",data)}
             <h4>Contact Details</h4>
             <div className="contact-form pt-25">
                 <Table url={"/contact-form"} data={data} columns={columns} header={header} getSingleData={props.getContactById} tableId={"contact"+house_id}  house_id={house_id}/>

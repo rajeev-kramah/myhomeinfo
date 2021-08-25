@@ -103,7 +103,7 @@ const Navbar = (props) => {
 			props.getLink(data);
 		}else if(type == "shareproperty") {
 			props.getShare(data);
-		} else if(type === 'gallery') {
+		} else if(type === 'gallary') {
 			props.getGallery(data);
 		} else if(type === 'leases') {
 			props.getLease(data);
@@ -145,7 +145,7 @@ const Navbar = (props) => {
 
 
 	return (
-		<>
+		<React.Fragment>
 			<nav className="navbar navbar-default navbar-fixed-top outer-bg">
 				<div className="container-fluid">
 					<div className="navbar-header">
@@ -303,8 +303,8 @@ const Navbar = (props) => {
 													<NavLink to={{
 														pathname : "/galary",
 														state : {house_id : house.house.id}
-													}} onClick={()=> updateHouse(house.house.id, "gallery")}>
-														Galleries
+													}} onClick={()=> updateHouse(house.house.id, "gallary")}>
+														Gallaries
 													</NavLink>
 												</li>
 
@@ -353,7 +353,7 @@ const Navbar = (props) => {
 				</div>
 			</nav>
 			
-		</>
+		</React.Fragment>
 	)
 }
 

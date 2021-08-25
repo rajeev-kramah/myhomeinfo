@@ -1,5 +1,8 @@
 import React, {useState, useEffect} from 'react';
+import Slider from "react-slick";
 import "../../style/Dashboard.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router-dom";
 import { NotificationManager } from "react-notifications";
 import { connect } from "react-redux";
@@ -27,6 +30,7 @@ const Dashboard = (props) => {
     const [homecost, setHomecost] = useState(); 
     const [loanData, setLoanData] = useState([]);
 
+    
     localStorage.setItem('house_id', JSON.stringify(""));
 
     useEffect(() => {
@@ -76,6 +80,7 @@ const Dashboard = (props) => {
     }, [props.warranties]);
 
     const updateHouse = (id, streetname) => {
+        console.log("id")
         setActive_house(id);
         setActive_house_name(streetname);
         let data = {
@@ -415,8 +420,15 @@ const Dashboard = (props) => {
           }
         }
     }
-
+    var settings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 3,
+        slidesToScroll: 3
+      };
     return (
+        
         <div className="container-fluid dashboard">
             <div className="row m-l-0">
                 <div className="col-md-2">
@@ -429,16 +441,83 @@ const Dashboard = (props) => {
                 </div>
                 <div className="col-md-8"></div>
             </div>
-            <div className="row card-deck">
+
             {
-                props.house ? 
+                props.house && props.house.length <= 3 && 
+                <div className="row card-deck">
+                    {console.log("props.house",props.house)}
+                {
+                    props.house ? 
+                    (props.house.map((data)=>{
+                        let mortgageData = nextMortgagePayment(data.loan);
+                        let nextMortgage = mortgageData ? dateFormat(mortgageData.nextMortgagePayment) : "NA";
+                        let totalInstallment = mortgageData ?  mortgageData.totalInstallment: "NA";
+                        let paidInstallment  = mortgageData ? mortgageData.paidInstallment : "NA";
+                    return(
+                    <div className="col-md-3 card" key={data.house.id}>
+                        <div className="imageArea" onClick={(e)=> updateHouse(data.house.id, data.house.streetname)}>
+                        <img
+                            src={data.house.img_path ? "../files/" + data.house.img_path.substr(11) : "../assets/image/dummy.png"}
+                            alt="Upload house image !"
+                            id="img-upload"
+                        />
+                        </div>
+                        <div className="card-body">
+                            <div className="h35">
+                                <div className="fl">
+                                    <span className="card-title">{data.house.houseno}  {data.house.streetname}</span>
+                                    <small className="card-text">{data.house.city}, {data.house.zip} {data.house.state}</small>
+                                </div>
+                                <div className="fr">
+                                    <small className="text-muted">Mortgage</small>
+                                    <div className="progress-div" style={{width: width}}>
+                                        <div style={{width: `${progress}px`}}className="progress"/>
+                                            <span className="progressBar">{paidInstallment}/{totalInstallment}</span>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div className="pt-10 h35">
+                                <div className="title">
+                                    <small className="text-muted card-text w30">Mortgage Maturity</small>
+                                    <small className="text-muted card-text w30 pl-10">Insurance Expiry</small>
+                                    <small className="text-muted card-text w40 pl-10">Lease Expiry</small>
+                                </div>
+                                
+                                <div className="title-body">
+                                    <span className="card-text w30">{data.loan.length > 0 ? dateFormat(data.loan[0]['loanclosuredate']) : "NA"}</span>
+                                    <span className="card-text w30 pl-10">{data.insurance.length > 0 ? dateFormat(data.insurance[0]['expiry_date']) : "NA"}</span>
+                                    <span className="card-text w40 pl-10">{nextMortgage}</span>
+                                
+                                </div>
+                            </div>
+                            <div className="pt-10">
+                                <button className="btn dashboard-btn" onClick={()=>handleUpdate(data.house.id)}>Property Details <span className="glyphicon glyphicon-arrow-right"></span></button>
+                            </div>
+                        </div>
+                    </div>
+                    )
+                })):""
+                }
+                </div>
+           }
+
+           {
+                props.house && props.house.length > 3 && 
+                <React.Fragment>
+                <div className="row">
+                <div>
+            <Slider {...settings}>
+            {
+                props.house  ? 
                 (props.house.map((data)=>{
                     let mortgageData = nextMortgagePayment(data.loan);
                     let nextMortgage = mortgageData ? dateFormat(mortgageData.nextMortgagePayment) : "NA";
                     let totalInstallment = mortgageData ?  mortgageData.totalInstallment: "NA";
                     let paidInstallment  = mortgageData ? mortgageData.paidInstallment : "NA";
                 return(
-                <div className="col-md-3 card" key={data.house.id}>
+                    <React.Fragment>
+                   
+                    <div className={`sliderCard card ${data.house.id === active_house && "selectedCard"}`} key={data.house.id}>
                     <div className="imageArea" onClick={(e)=> updateHouse(data.house.id, data.house.streetname)}>
                     <img
                         src={data.house.img_path ? "../files/" + data.house.img_path.substr(11) : "../assets/image/dummy.png"}
@@ -462,9 +541,9 @@ const Dashboard = (props) => {
                         </div>
                         <div className="pt-10 h35">
                             <div className="title">
-                                <small className="text-muted card-text w30">Mortgage Renewal</small>
+                                <small className="text-muted card-text w30">Mortgage Maturity</small>
                                 <small className="text-muted card-text w30 pl-10">Insurance Expiry</small>
-                                <small className="text-muted card-text w40 pl-10">Next Mortgage Payment</small>
+                                <small className="text-muted card-text w40 pl-10">Lease Expiry</small>
                             </div>
                             
                             <div className="title-body">
@@ -479,13 +558,21 @@ const Dashboard = (props) => {
                         </div>
                     </div>
                 </div>
+                
+               </React.Fragment>
                 )
             })):""
             }
+             </Slider>
+            
+             </div>
             </div>
+            </React.Fragment>
+           }
             
             <div className="pt-10">
                 <div className="row m-l-0">
+                    <hr className="propertyCard"></hr>
                     <h4 className="">Property Summary - {active_house_name}</h4>
                 </div>
 
@@ -508,16 +595,16 @@ const Dashboard = (props) => {
                             <small className="text-muted card-text w30">Amount</small>
                         {
                             props.leases && props.leases.length > 0 ? 
-                            <>
+                            <React.Fragment>
                                 <span className="card-text w30">{props.leases[0].tenant_name1}</span>
                                 <span className="card-text w30">{props.leases[0].lease_begin}</span>
                                 <span className="card-text w30">{props.leases[0].rent}</span>
-                            </> : 
-                            <>
+                            </React.Fragment> : 
+                            <React.Fragment>
                                 <span className="card-text w30">N/A</span>
                                 <span className="card-text w30">N/A</span>
                                 <span className="card-text w30">N/A</span>
-                            </>   
+                            </React.Fragment>   
                         }
                             <button className="small-card-btn" onClick={(e)=>handleHomePages('lease')}><span className="glyphicon glyphicon-arrow-right m-l-4"></span></button>
                         </div>
@@ -525,16 +612,16 @@ const Dashboard = (props) => {
                             <span   className="card-title">Share Property</span>
                         {
                             props.shares && props.shares.length > 0 ? 
-                            <>
+                            <React.Fragment>
                                 <small  className="text-muted card-text w30">{props.shares[0].fname} {props.shares[0].lname}</small>
                                 <small  className="text-muted card-text w30">{props.shares[0].phono}</small>
                                 <small  className="text-muted card-text w30">{props.shares[0].email}</small>
-                            </>
-                            : <>
+                            </React.Fragment>
+                            : <React.Fragment>
                                 <small  className="text-muted card-text w30">N/A</small>
                                 <small  className="text-muted card-text w30">N/A</small>
                                 <small  className="text-muted card-text w30">N/A</small>
-                            </>
+                            </React.Fragment>
                         }
                             <button className="small-card-btn" onClick={(e)=>handleHomePages('share')}><span className="glyphicon glyphicon-arrow-right m-l-4"></span></button>
                         </div>
@@ -547,17 +634,17 @@ const Dashboard = (props) => {
                             <small className="text-muted card-text w30">Premium Amount</small>
                             {
                                 props.insurances && props.insurances.length > 0 ? (
-                                    <>
+                                    <React.Fragment>
                                     <span className="card-text w30">{props.insurances[0].provider}</span>
                                     <span className="card-text w30">{props.insurances[0].expiry_date}</span>
                                     <span className="card-text w30">{props.insurances[0].premium}</span>
-                                    </>
+                                    </React.Fragment>
                                 ): (
-                                    <>
+                                    <React.Fragment>
                                     <span className="card-text w30">NA</span>
                                     <span className="card-text w30">NA</span>
                                     <span className="card-text w30">NA</span>
-                                    </>
+                                    </React.Fragment>
                                 )
                             }
                             <button className="small-card-btn" onClick={(e)=>handleHomePages('insurance')}><span className="glyphicon glyphicon-arrow-right m-l-4"></span></button>
@@ -570,25 +657,25 @@ const Dashboard = (props) => {
                                  loanData.length > 0 ? (
                                 loanData.map((loanData)=>{
                                     return (
-                                        <>
+                                        <React.Fragment>
                                             <small className="text-muted card-text w30">{loanData.loantype}</small>
                                             <small className="text-muted card-text w30">Loan balance</small>
                                             <small className="text-muted card-text w30">Installments</small>
                                             <span className="card-text w30">{loanData.lname}</span>
                                             <span className="card-text w30">{loanData.endingloan}</span>
                                             <span className="card-text w30">{loanData.paidInstallment}/{loanData.totalInstallment}</span>
-                                        </>
+                                        </React.Fragment>
                                     )
                                 })
                                 ): (
-                                    <>
+                                    <React.Fragment>
                                         <small className="text-muted card-text w30">Mortgage</small>
                                         <small className="text-muted card-text w30">Loan balance</small>
                                         <small className="text-muted card-text w30">Installments</small>
                                         <span className="card-text w30">NA</span>
                                         <span className="card-text w30">NA</span>
                                         <span className="card-text w30">NA</span>
-                                    </>
+                                    </React.Fragment>
                                 )
                             }
                          

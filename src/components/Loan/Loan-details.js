@@ -242,14 +242,14 @@ const LoanDetails = (props) => {
                             <div className="col-md-4">
                                 <div className="form-group">
                                     
-                                {   loantype === 'Mortgage' ? (<><label htmlFor="amount">Loan Amount</label><input type="text" placeholder="Loan Amount" value={
+                                {   loantype === 'Mortgage' ? (<React.Fragment><label htmlFor="amount">Loan Amount</label><input type="text" placeholder="Loan Amount" value={
                                        Util.loanAmount(purchaseprice,downpayment)
                                     } onChange={e=>{
                                          setLoanamount(e.target.value)
-                                    }} className="form-control" readOnly/></>) : (<><label htmlFor="amount" className="req">Loan Amount</label><input type="text" placeholder="Loan Amount" value={loanamount}
+                                    }} className="form-control" readOnly/></React.Fragment>) : (<React.Fragment><label htmlFor="amount" className="req">Loan Amount</label><input type="text" placeholder="Loan Amount" value={loanamount}
                                         onChange={e=>{
                                           setLoanamount(e.target.value)
-                                     }} className="form-control"/></>)
+                                     }} className="form-control"/></React.Fragment>)
                                 }
                                     
                                 </div>

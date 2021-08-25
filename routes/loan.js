@@ -550,7 +550,7 @@ const queryFunc = (sql) =>{
 		res.send(result.response(422, "", "house_id is empty"));
 	} else {
 		con.connect(function(err) {
-			var sql = "SELECT loan.id, loantype, lname, lcontactperson, laddress, lphno, lemail, lurl, purchaseprice, downpayment, loanamount, rateofinterest, loanterm, loannumber, escrow, mortgage, loanbegindate, propertytax, doc_path, additionaldetails, loanclosuredate, status, escrowPayee, propertytaxPayee, escrowamount, loan.house_id, lcontact_id, escrowcontact_id, propertytaxcontact_id, contacts.groupname,contacts.companyname From loan INNER JOIN contacts ON loan.lname = contacts.id where loan.house_id='"+req.body.house_id+"'";
+			var sql = "SELECT loan.id, loantype, lname, lcontactperson, laddress, lphno, lemail, lurl, purchaseprice, downpayment, loanamount, rateofinterest, loanterm, loannumber, escrow, mortgage, loanbegindate, propertytax, doc_path, additionaldetails, loanclosuredate, status, escrowPayee, propertytaxPayee, escrowamount, loan.house_id, lcontact_id, escrowcontact_id, propertytaxcontact_id, contacts.groupname,contacts.companyname From loan INNER JOIN contacts ON loan.lname = contacts.id where loan.house_id='"+req.body.house_id+"' and status = 'Active'";
 			
 			con.query(sql, function (err, loan) {
 				if (err) {

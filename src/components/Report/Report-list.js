@@ -138,10 +138,10 @@ const ReportList = (props) => {
                                     }
                                   
                                     return( 
-                                        <>
+                                        <React.Fragment>
                                             <option className={className} value={data}>{space}{itemValue}
                                             </option>
-                                        </>
+                                        </React.Fragment>
                                     )
                                    
                             })):""
@@ -154,10 +154,10 @@ const ReportList = (props) => {
                                         if(data.groupname == "Income"){
                                             if(index == 0){
                                                 return( 
-                                                    <>
+                                                    <React.Fragment>
                                                         <option value="Income"  className="level1">Income</option>
                                                         <option value={data.groupname+"&"+data.subgroup}>&nbsp;&nbsp;{data.subgroup}</option>
-                                                    </>
+                                                    </React.Fragment>
                                                 )
                                             }
                                             return(
@@ -166,10 +166,10 @@ const ReportList = (props) => {
                                         }else if(data.subgroup == "Loans" || data.groupname == "Loans"){
                                             if(index == 2){
                                                 return(
-                                                    <>
+                                                    <React.Fragment>
                                                         <option value="Expenses" className="level1"  >Expenses</option>
                                                         <option value="Loans" className="level1"  >&nbsp;&nbsp;Loans</option>
-                                                    </>
+                                                    </React.Fragment>
                                                 ) 
                                             }else{
                                                 return(

@@ -293,10 +293,10 @@ const Contact = (props) => {
                                     }
                                   
                                     return( 
-                                        <>
+                                        <React.Fragment>
                                             <option className={className} value={data}>{space}{itemValue}
                                             </option>
-                                        </>
+                                        </React.Fragment>
                                     )
                                    
                             })):""
@@ -412,7 +412,12 @@ const Contact = (props) => {
                             <div className="col-md-6">
                                 <div className="form-group">
                                     <label htmlFor="transaction_type">Transaction Type</label>
-                                    <input type="text" placeholder="" value={transaction_type} onChange={e=> setTransaction_type(e.target.value)} className="form-control"/>
+                                    {/* <input type="text" placeholder="" value={transaction_type} onChange={e=> setTransaction_type(e.target.value)} className="form-control"/> */}
+                                    <select className="form-control" value={transaction_type} onChange={e=> setTransaction_type(e.target.value)} >
+                                        <option value="" disabled>Select</option>
+                                        <option value="Receipt">Receipt</option>
+                                        <option value="Payment">Payment</option>
+                                    </select>
                                 </div>
                             </div>
                             <div className="col-md-6">

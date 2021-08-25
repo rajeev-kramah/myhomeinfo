@@ -92,7 +92,7 @@ const Router = (props) => {
 			<div>
 				<Switch>
 				{ login ? (
-				<>
+				 <React.Fragment>
 					<Navbar />	
 					
 					<Route path="/generate-transaction" component={GenerateTransaction} />
@@ -156,15 +156,15 @@ const Router = (props) => {
 					{
 						pageType == "dashboard" ? (<Redirect from="/" to="/dashboard" />) : (<Redirect from="/" to="/house-details" />)
 					}
-				</>
+			 </React.Fragment>
 				) : (
-				<>
+				<React.Fragment>
 					<Route path="/" exact component={Login} />
 					<Route path="/forgot" component={Forgot} />
 					<Route path="/signup" component={Signup} />
 					<Route path="/reset-password" component={ResetPassword} />
 					{/* <Redirect from="*" to="/" /> */}
-				</>
+				</React.Fragment>
 				)}
 				<Route path="*" exact={true} component={notFound} />
 				</Switch>
