@@ -63,7 +63,9 @@ const LoanList = (props) => {
 }
 
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state) => (
+console.log("ststedata",state),
+    {
     loans : state.Loan.loans.data
 });
 

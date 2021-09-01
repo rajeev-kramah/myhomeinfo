@@ -46,6 +46,7 @@ router.post("/", async (req, res) => {
 	let address = req.body.address;
 	let zipcode = req.body.zipcode;
 	let refferedby = req.body.refferedby;
+	let maxProperty = req.body.maxProperty;
 	let substartdate = req.body.substartdate ? req.body.substartdate : new Date();
 	let subenddate = req.body.subenddate ?  req.body.subenddate : new Date(new Date().setFullYear(new Date().getFullYear() + 1));
 	let mono = req.body.mono;
@@ -75,7 +76,7 @@ router.post("/", async (req, res) => {
 				// 		);
 				// 	}
 				// 	hash_pass = hash;
-					var sql = "INSERT INTO owner (name, email, username, address, zipcode, refferedby, substartdate, subenddate, mono, password) VALUES ('"+name+"', '"+email+"', '"+username+"', '"+address+"', '"+zipcode+"', '"+refferedby+"', '"+substartdate+"', '"+subenddate+"', '"+mono+"', '"+password+"')";
+					var sql = "INSERT INTO owner (name, email, username, address, zipcode, refferedby,maxProperty, substartdate, subenddate, mono, password) VALUES ('"+name+"', '"+email+"', '"+username+"', '"+address+"', '"+zipcode+"', '"+refferedby+"', '"+substartdate+"', '"+subenddate+"', '"+mono+"', '"+password+"')";
 					con.query(sql, function (err, user) {
 						if (err) {
 							res.send(
@@ -116,7 +117,7 @@ router.post("/", async (req, res) => {
 		res.send(result.response(422, "", "User is empty"));
 	} else {
 		con.connect(function(err) {
-			var sql = "SELECT id, name, email, username, address, zipcode, refferedby, substartdate, subenddate, mono FROM owner where id ='"+req.body.id+"'";
+			var sql = "SELECT id, name, email, username, address, zipcode, refferedby,maxProperty, substartdate, subenddate, mono FROM owner where id ='"+req.body.id+"'";
 			con.query(sql, function (err, user) {
 				if (err) {
 					res.send(
@@ -420,13 +421,14 @@ router.post("/updateuser", async (req, res) => {
 	let address = req.body.address;
 	let zipcode = req.body.zipcode;
 	let refferedby = req.body.refferedby;
+	let maxProperty = req.body.maxProperty;
 	let substartdate = req.body.substartdate;
 	let subenddate = req.body.subenddate;
 	let mono = req.body.mono;
 
 	con.connect(function(err) {
 		
-		var sql = "Update owner set name = '"+name+"', email='"+email+"', username='"+username+"', address='"+address+"', zipcode='"+zipcode+"', refferedby='"+refferedby+"', substartdate='"+substartdate+"', subenddate='"+subenddate+"', mono='"+mono+"' where id = '"+id+"'";
+		var sql = "Update owner set name = '"+name+"', email='"+email+"', username='"+username+"', address='"+address+"', zipcode='"+zipcode+"', refferedby='"+refferedby+"',maxProperty='"+maxProperty+"', substartdate='"+substartdate+"', subenddate='"+subenddate+"', mono='"+mono+"' where id = '"+id+"'";
 
 		con.query(sql, function (err, user) {
 			if (err) {
@@ -438,8 +440,9 @@ router.post("/updateuser", async (req, res) => {
 					)
 				);
 			} else {
-				sql =  "SELECT id, name, email, username, address, zipcode, refferedby, substartdate, subenddate, mono FROM owner WHERE id='"+id+"'"
+				sql =  "SELECT id, name, email, username, address, zipcode, refferedby, maxProperty , substartdate, subenddate, mono FROM owner WHERE id='"+id+"'"
 				con.query(sql, function (err, users) {
+					console.log("users",users)
 					if (err) {
 						res.send(
 							result.response(

@@ -71,17 +71,9 @@ const Tenant = (props) => {
         }
     }, [props.leaseDetails]);
 
-
-
-    const togglePopup = () => {
-        setShowGroup(!showGroup);
-        let data = {
-            house_id : house_id
-        }
-        props.getContact(data);
-    };
+    props.getContact({house_id: house_id});
     
-    const handleSubmit = () => {
+     const handleSubmit = () => {
         let data = {
             "id": id,
             "lease_begin": lease_begin,
@@ -116,18 +108,21 @@ const Tenant = (props) => {
         }
 
         form.append("document", document);
+        form.append("lastTab", true)
 
         let valid = validate();
         if(valid) {
             props.addLease(form)
             props.history.push({
-                pathname: 'realtor',
+                pathname: 'lease-list',
                 state: {
                     house_id : house_id
                 }
             });
         }
     }
+
+        
 
     const validate = () => {
         if(tenant_name1 === '') {
@@ -140,6 +135,14 @@ const Tenant = (props) => {
         return true;
     }
 
+    const togglePopup = () => {
+        setShowGroup(!showGroup);
+        let data = {
+            "house_id" : house_id
+        }
+        props.getContact(data);
+    };
+
     const handlePrevious = () => {
         props.history.push({
             pathname: 'lease',
@@ -149,12 +152,24 @@ const Tenant = (props) => {
         });
     } 
 
+
+    const handleOnChange = (e) => {
+        setRealtor_name(e.target.value);
+        for(var i=0; i<props.contactList.length; i++){
+            if(props.contactList[i]['groupname'] == "Expenses&Realtor" && e.target.value == props.contactList[i]['companyname']){
+                setRealtor_phone(props.contactList[i].mono);
+                setRealtor_email(props.contactList[i].email);
+                break;
+            }
+        }
+    }
+
     const tabs = [
-        {pathname : "/Lease", label : "Lease"},
         {pathname : "/tenant", label : "Tenants"},
-        {pathname : "/realtor", label : "Realtor"},
-        {pathname : "/hmo", label : "HMO spaces"},
-        {pathname : "/additional", label : "Additional Details"},
+        {pathname : "/Lease", label : "Lease"},
+        // {pathname : "/realtor", label : "Realtor"},
+        // {pathname : "/hmo", label : "HMO spaces"},
+        // {pathname : "/additional", label : "Additional Details"},
     ]
 
 
@@ -345,8 +360,8 @@ const Tenant = (props) => {
                             </div>
                         </div>
 
-                        <div className="row">
-                            <div className="col-md-4">
+                        <div className="divWithContact">
+                            {/* <div className="col-md-4"> */}
                                 <div className="form-group">
                                     <label htmlFor="Renewed">Renewed ?</label>
                                     <select className="form-control" value={renewed} onChange={e=> setRenewed(e.target.value)} >
@@ -355,12 +370,53 @@ const Tenant = (props) => {
                                         <option value="No">No</option>
                                     </select>
                                 </div>
+                            {/* </div> */}
+                            {/* <div className="col-md-8"> */}
+                                    <div className="form-group ">
+                                        <label htmlFor="name">Realtor Name</label>
+                                        <select className="form-control" value={realtor_name} onChange={(e) => handleOnChange(e)}>
+                                            <option value="" disabled>Select</option>
+                                            {
+                                                props.contactList ? (
+                                                    props.contactList.map((data) => {
+                                                        if (data.groupname === "Expenses&Realtors") {
+                                                            return (
+                                                                <option value={data.companyname}>{data.companyname}</option>
+                                                            )
+                                                        }
+                                                    })
+                                                ) : ""
+                                            }
+                                        </select>
+                                    </div>
+                                    
+                                {/* </div> */}
+                                <div onClick={() => togglePopup()} > <img className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo" /> </div>
+                        </div>
+                       
+                        <div className="row ">
+                            <div className="col-md-8">
+                                <div className="form-group ">
+                                    <label htmlFor="phone">Realtor Phone No.</label>
+                                    <input id="phoneNumberFormat" maxLength="12" type="text" placeholder="Phone Number" value={realtor_phone} onChange={e => setRealtor_phone(e.target.value)} className="form-control" />
+                                </div>
                             </div>
                         </div>
-
+                        <div className="row ">
+                            <div className="col-md-8">
+                                <div className="form-group ">
+                                    <label htmlFor="email">Realtor Email</label>
+                                    <input type="email" placeholder="Email" value={realtor_email} onChange={e => setRealtor_email(e.target.value)} className="form-control" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                   
                     <div className="col-md-3"></div>
                 </div>
+
+              
+
                 <div className="row footer ">
                     <div className="col-md-3"></div>
                     <div className="col-md-4 pt-pb-10" align="center">
@@ -369,7 +425,7 @@ const Tenant = (props) => {
                     <div className="col-md-5">
                         <div className="btn-group pull-right" role="group" aria-label="...">
                             <button type="button" className="btn btn-primary btn-sm addNewItem " onClick={handlePrevious}><span className="glyphicon glyphicon-arrow-left"></span>Previous</button>
-                            <button type="button"  className="btn btn-primary btn-sm addNewItem " onClick={handleSubmit}>Next <span className="glyphicon glyphicon-arrow-right"> </span></button>
+                            <button type="button"  className="btn btn-primary btn-sm addNewItem disable " disabled="disabled">Next <span className="glyphicon glyphicon-arrow-right"> </span></button>
                         </div>
                     </div>
                 </div>

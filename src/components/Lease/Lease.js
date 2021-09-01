@@ -6,9 +6,9 @@ import { NotificationManager } from "react-notifications";
 import { addLease, deleteLease, getSingleLease } from "../../store/Actions/Lease";
 import Tab from "../../Reusable/Tab";
 import { Util } from "../../Datamanipulation/Util";
+import { getHouseHmo } from "../../store/Actions/house";
 
 const LenderDetails = (props) => {
-    
     let houseId = props.location.state.house_id ? props.location.state.house_id : "";
     const [lease_begin,setLease_begin] = useState(Util.getCurrentDate("-"));
     const [lease_end,setLease_end] = useState(Util.getCurrentDate("-"));
@@ -35,9 +35,12 @@ const LenderDetails = (props) => {
     const [comment,setComment] = useState('');
     const [id, setId] = useState('');
     const [house_id, setHouse_id] = useState(houseId);
+    const [docName, setDocName] = useState('');
+    const [download, setDownload] = useState('');
 
     useEffect(()=> {
         if(props.leaseDetails && props.leaseDetails.length > 0) {
+            console.log("props.leaseDetails",props.leaseDetails)
             setId(props.leaseDetails[0].id);
             setLease_begin(props.leaseDetails[0].lease_begin);
             setLease_end(props.leaseDetails[0].lease_end);
@@ -63,8 +66,26 @@ const LenderDetails = (props) => {
             setDocument(props.leaseDetails[0].document);
             setComment(props.leaseDetails[0].comment);
             setHouse_id(props.leaseDetails[0].house_id);
+            setDocName(props.leaseDetails[0].document.split('-')[1]);
+            setDownload(props.leaseDetails[0].document ?( "../files/" + props.leaseDetails[0].document.substr(11))  :"");
         }
     }, [props.leaseDetails]);
+    const handleOnChange = (e) => {
+        setHmo_space(e.target.value);
+        for(var i=0; i<props.hmoDetails.length; i++){
+            if(e.target.value === props.hmoDetails[i].name ) {
+                setSpace_description(props.hmoDetails[i].description);
+                break;
+            }
+        }
+    }
+    useEffect(()=> {
+        let data = {
+            "house_id": houseId
+        }
+        props.getHouseHmo(data);    
+    }, []);
+    
     
     const handleSubmit = () => {
         let data = {
@@ -146,7 +167,13 @@ const LenderDetails = (props) => {
         return true;
     }
 
-    const handleDelete = () => {
+    const handleDocumentUpload = (event)=> {
+        setDocument(event.target.files[0])
+        setDocName(event.target.files[0]['name']);
+    }
+   
+
+    const handleDeleteLease = () => {
         let data = {
             "id": id,
             "house_id": house_id
@@ -159,12 +186,19 @@ const LenderDetails = (props) => {
             }
         });
     }
+    const handleDelete = (id) => {
+        if (document) {
+            props.getSingleLease({ id: id, delete: "doc" })
+            NotificationManager.error("Success Message", "Attachment deleted");
+        }
+    }
+
     const tabs = [
-        {pathname : "/Lease", label : "Lease"},
         {pathname : "/tenant", label : "Tenants "},
-        {pathname : "/realtor", label : "Realtor"},
-        {pathname : "/hmo", label : "HMO spaces"},
-        {pathname : "/additional", label : "Additional Details"},
+        {pathname : "/Lease", label : "Lease"},
+        // {pathname : "/realtor", label : "Realtor"},
+        // {pathname : "/hmo", label : "HMO spaces"},
+        // {pathname : "/additional", label : "Additional Details"},
     ]
 
     return (
@@ -229,15 +263,71 @@ const LenderDetails = (props) => {
                                 </div>
                             </div>
                         </div>
+                        <div className="row ">
+                            <div className="col-md-8">
+                                <div className="form-group">
+                                    <label htmlFor="attachment">Attachments</label>
+                                    <label htmlFor="file" className="fileContainer">
+                                        <div className="attachfile" align="center">
+                                            <i>Click here to attach documents</i>
+                                            <p>{docName ? docName : ""}</p>
+
+                                        </div>
+                                        <input type="file" style={{ height: "0px" }} id="file" onChange={(event) => handleDocumentUpload(event)} className="form-control" style={{ "visibility": "hidden" }} />
+                                    </label>
+                                </div>
+                            </div>
+                            <div className="col-md-4" style={{ marginTop: "2%" }}>
+                                {/* <a type="button" className="btn btn-primary btn-sm addNewItem " href={download ? download : "javascript:void(0)"}>
+                                    <span className="glyphicon glyphicon-download-alt"> </span> Download Attachment</a> */}
+                                    <button type="button"  className="btn btn-primary btn-sm addNewItem " href={download ? download : "javascript:void(0)"} download={document}>
+                                    <span className="glyphicon glyphicon-download-alt"> </span> Download Attachment
+                                </button>
+                                <button type="button" className="btn btn-primary btn-sm addNewItem " onClick={() => handleDelete(id)}><span className="glyphicon glyphicon-trash"> </span> Delete Attachment </button>
+                            </div>
+                        </div>
+                        <div className="row ">
+                            <div className="col-md-12">
+                                <div className="form-group">
+                                    <label htmlFor="Additional Details">Additional Details</label>
+                                    <textarea rows="4" placeholder="Comments" value={comment} onChange={e => setComment(e.target.value)} className="form-control"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="row ">
+                            <div className="col-md-4">
+                                <div className="form-group">
+                                    <label htmlFor="name">Space Name</label>
+                                    <select className="form-control" value={hmo_space} onChange={e=> handleOnChange(e)}>
+                                        <option value="" disabled>Select</option>
+                                        {
+                                            props.hmoDetails ? (
+                                                props.hmoDetails.map((data)=>{
+                                                    return(<option value={data.name}>{data.name}</option>)
+                                                })
+                                            ): ""
+                                        }
+                                    </select>
+                                   
+                                </div>
+                            </div>
+                            <div className="col-md-8">
+                                <div className="form-group">
+                                    <label htmlFor="description">Space Description</label>
+                                    <input type="text" placeholder="HMO Space Description" value={space_description} onChange={e=> setSpace_description(e.target.value)} className="form-control" readOnly/>
+                                </div>
+                            </div>
+                           
+                        </div>
+                        </div>
                     </div>
-                    <div className="col-md-3">
-                    </div>
-                </div>
+                    
+              
                 <div className="row footer ">
                     <div className="col-md-4">
                         {
                             id ? (
-                                <button className="btn btn-default btn-sm addNewItem" onClick={handleDelete}>  <span className="glyphicon glyphicon-trash"> </span> Delete Entry</button>
+                                <button className="btn btn-default btn-sm addNewItem" onClick={handleDeleteLease}>  <span className="glyphicon glyphicon-trash"> </span> Delete Entry</button>
                             ):""
                         }
                     </div>
@@ -259,12 +349,15 @@ const LenderDetails = (props) => {
 
 const mapStateToProps = (state) => ({
     leaseDetails: state.Lease.leaseDetails.data,
+    leaseDetails : state.Lease.leaseDetails.data,
+    hmoDetails : state.House.houseHmo.data,
 });
 
 const mapDispatchToProps = {
     addLease,
     getSingleLease,
-    deleteLease
+    deleteLease,
+    getHouseHmo,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(LenderDetails);

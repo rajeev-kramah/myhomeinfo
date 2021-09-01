@@ -13,7 +13,7 @@ const ApiService = {
 			.catch(err => console.log(err));
 	},
 
-	post(apiurl, bodyFormData) {
+post(apiurl, bodyFormData) {
 		return axios
 			.post(apiurl, bodyFormData)
 			.then(response => {

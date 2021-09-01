@@ -85,7 +85,8 @@ const LoanDetails = (props) => {
             "lurl": lurl,
             "purchaseprice": purchaseprice,
             "downpayment" : downpayment,
-            "loanamount" : Util.loanAmount(purchaseprice,downpayment),
+            // "loanamount" : Util.loanAmount(purchaseprice,downpayment),
+            "loanamount" : loantype === "Mortgage" ? Util.loanAmount(purchaseprice,downpayment) : loanamount,
             "rateofinterest" : rateofinterest,
             "loanterm" : loanterm,
             "loannumber" : loannumber,
@@ -212,8 +213,8 @@ const LoanDetails = (props) => {
             <div className="house-form">
                <Tab loanPage="Loan Details" tabs={tabs} id={id} house_id={house_id}/>
                 <div className="row">
-                    <div className="col-md-3 imgTop"></div>
-                    <div className="col-md-6 house-form pt-25">
+                    <div className="col-md-2 imgTop"></div>
+                    <div className="col-md-8 house-form pt-25">
                         <div className="row pt-25">
                         {   loantype === 'Mortgage' ? 
                                 (
@@ -277,7 +278,7 @@ const LoanDetails = (props) => {
                         </div>
 
                         <div className="row">
-                            <div className="col-md-6">
+                            <div className="col-md-4">
                                 <div className="form-group">
                                     <label htmlFor="begindate" className="req">Loan Start Date</label>
                                     <input type="date" value={loanbegindate} onChange={e=>{
@@ -290,9 +291,39 @@ const LoanDetails = (props) => {
                                     }} className="form-control" />
                                 </div>
                             </div>
-                            <div className="col-md-6">
+                             <div className="col-md-4">
+                                {/* <div className="form-group">
+                                    <label htmlFor="begindate" className="req">Loan Maturity Date </label>
+                                    <input type="date" value={loanclosuredate} onChange={e=>{
+                                            setLoanbegindate(e.target.value);
+                                            let laonC = e.target.value.split("-");
+                                            console.log(parseInt(laonC[0]))
+                                            laonC[0] = parseInt(laonC[0])+parseInt(loanterm);
+                                            setLoanclosuredate(laonC.join("-"))
+
+                                    }} className="form-control" />
+                                </div> */}
                                 <div className="form-group">
                                     <label htmlFor="closure">Loan Maturity Date</label>
+                                    <input type="date" value={loanclosuredate} onChange={e=> {
+                                        setLoanclosuredate(e.target.value)
+                                        var past_date = new Date(e.target.value);
+                                        var current_date = new Date();
+                                        var difference = (past_date.getFullYear() - current_date.getFullYear()) * 12 + (past_date.getMonth() - current_date.getMonth());
+                                        if(difference <= 0) {
+                                            setStatus('Closed');
+                                        }else{
+                                            setStatus('Active');
+                                        }
+
+                                    }
+                                    } className="form-control" />
+                                    {/* <input type="date" value={loanclosuredate} onChange={e=> setLoanclosuredate(e.target.value)} className="form-control" /> */}
+                                </div>
+                            </div>
+                            <div className="col-md-4">
+                                <div className="form-group">
+                                    <label htmlFor="closure">Loan Closure Date</label>
                                     <input type="date" value={loanclosuredate} onChange={e=> {
                                         setLoanclosuredate(e.target.value)
                                         var past_date = new Date(e.target.value);
@@ -364,7 +395,7 @@ const LoanDetails = (props) => {
                       
 
                     </div>
-                    <div className="col-md-3"></div>
+                    <div className="col-md-2"></div>
                 </div>
                 <div className="row footer ">
                     <div className="col-md-3"></div>

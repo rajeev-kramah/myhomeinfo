@@ -19,16 +19,15 @@ const TransactionList = (props) => {
             sortable: true, 
             cell: row => row.ltransaction == "*" ? row.companyname+"*" :<Link data-tag="allowRowEvents" role="link" to={{pathname : "transaction", state:{house_id : house_id}}}>{row.companyname}</Link>
         },
-        { name: 'Transaction Date', selector: 'date', sortable: true, cell: row => Util.dateFormat(row.date)},
         { name: 'Contact Person', selector: 'contact_person', sortable: true, },
         { name: 'Type', selector: 'type', sortable: true, },
         { name: 'Amount', selector: 'amount', sortable: true },
         { name: 'Comments', selector: 'comments', sortable: true,},
         { name: 'Receipt', selector: 'receipt', sortable: true, },
-        { name: 'Entry Date & Time', selector: 'created_at', sortable: true, cell: row => Util.dateFormat(row.created_at)},
         { name: 'Entered By', selector: 'entered_by', sortable: true, },
+        { name: 'Entry Date & Time', selector: 'created_at', sortable: true, cell: row => Util.dateFormat(row.created_at)},
+        { name: 'Transaction Date', selector: 'date', sortable: true, cell: row => Util.dateFormat(row.date)},
       ];
-
     return (
         <div className="container-fluid contact">
             <h4>Transactions</h4>

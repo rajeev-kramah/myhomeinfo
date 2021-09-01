@@ -14,6 +14,7 @@ const Contact = (props) => {
     let house_id = props.location.state.house_id ? props.location.state.house_id : "";
     const [groupName, setGroupName] = useState('');
     const [contactPerson, setContactPerson] = useState('');
+    const [phonenumber, setPhoneNumber] = useState('');
     const [landline, setLandline] = useState('');
     const [email, setEmail] = useState('');
     const [company, setCompany] = useState('');
@@ -51,6 +52,7 @@ const Contact = (props) => {
         if(props.contactDetails && props.contactDetails.length > 0){
             setGroupName(props.contactDetails[0].groupname);
             setContactPerson(props.contactDetails[0].contactperson);
+            setPhoneNumber(props.contactDetails[0].phonenumber);
             setLandline(props.contactDetails[0].landline);
             setEmail(props.contactDetails[0].email);
             setCompany(props.contactDetails[0].companyname);
@@ -92,11 +94,12 @@ const Contact = (props) => {
         let data = {
             "groupname": groupName,
             "contactperson": contactPerson ? contactPerson : company,
+            "phonenumber": phonenumber,
+            "mono" : mobile,
             "landline" : landline,
             "email" : email,
             "companyname" : company,
             "address" : address,
-            "mono" : mobile,
             "url" : url,
             "street" : streetName,
             "comment" : comment,
@@ -118,9 +121,10 @@ const Contact = (props) => {
         let valid = validate();
         if(valid) {
             props.addContact(data);
+            console.log("data::",data)
             props.history.push(
                 {
-                    pathname : "generate-transaction",
+                    pathname : "contact-form",
                     state : {house_id : house_id}
                 }
             )
@@ -131,11 +135,16 @@ const Contact = (props) => {
         if(company === "" || company === undefined) {
             NotificationManager.error("Error Message", "Company Name cannot be empty.");
             return false;
-        } else if(email === "" || email === undefined) {
-            NotificationManager.error("Error Message", "Email cannot be empty.");
+        } 
+        else if(phonenumber === "" || phonenumber === undefined){
+            NotificationManager.error("Error Message", "Phonenumber cannot be empty.");
             return false;
-        }else if(mobile === "" || mobile === undefined){
+        }
+        else if(mobile === "" || mobile === undefined){
             NotificationManager.error("Error Message", "Mobile cannot be empty.");
+            return false;
+        }else if(email === "" || email === undefined) {
+            NotificationManager.error("Error Message", "Email cannot be empty.");
             return false;
         }
         
@@ -320,16 +329,27 @@ const Contact = (props) => {
                             </div>
                         </div>
                         <div className="row">
-                            <div className="col-md-6">
-                                    <div className="form-group inputGroup">
-                                        <label htmlFor="landline">Landline</label>
-                                        <input type="text" placeholder="Landline" value={landline} onChange={e=> setLandline(e.target.value)} className="form-control" />
-                                    </div>
+                            <div className="col-md-4">
+                                <div className="form-group">
+                                    <label htmlFor="phonenumber" className="req">Phone Number</label>
+                                    <select className="form-control" value={phonenumber} onChange={e => setPhoneNumber(e.target.value)} >
+                                        <option value="" disabled>Select</option>
+                                        <option value="Mobile">Mobile</option>
+                                        <option value="Landline">Landline</option>
+                                       
+                                    </select>{console.log("phonenumber",phonenumber)}
+                                </div>
                             </div>
-                            <div className="col-md-6">
+                            <div className="col-md-4">
                                 <div className="form-group inputGroup">
-                                    <label htmlFor="mobile" className="req">Mobile No.</label>
-                                    <input id="phoneNumberFormat" maxLength="12" type="text" placeholder="Mobile No." value={mobile} onChange={e=> setMobile(e.target.value)} className="form-control" />
+                                    <label htmlFor="landline" className="req">Phone 1</label>
+                                    <input id="phoneNumberFormat" type="text" placeholder="Phone 1" value={mobile} onChange={e => setMobile(e.target.value)}  className="form-control" />
+                                </div>
+                            </div>
+                            <div className="col-md-4">
+                                <div className="form-group inputGroup">
+                                    <label htmlFor="mobile" >Phone 2</label>
+                                    <input  maxLength="12" type="text" placeholder="Phone 2" value={landline} onChange={e => setLandline(e.target.value)} className="form-control" />
                                 </div>
                             </div>
                         </div>

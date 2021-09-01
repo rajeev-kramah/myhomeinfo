@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from "react-redux";
 import { addGallery, getGallery, deleteGallery } from "../../store/Actions/Gallery";
 import { NotificationManager } from "react-notifications";
+import Slider from "react-slick";
 
 const IMAGES =
 [{
@@ -110,7 +111,13 @@ const Galleries = (props) => {
             }
         }
     }
-
+    var settings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 3,
+        slidesToScroll: 3
+      };
     return (
         <div className="container-fluid loan">
             <h4>Gallery</h4>
@@ -146,7 +153,10 @@ const Galleries = (props) => {
 
                 {/* *Galary Code */}
                 <div className="contact-form galary">
+                    {
+                        props.galleries && props.galleries.length <= 3 &&
                     <div className="row">
+                    {/* <Slider {...settings}> */}
                     { 
                     props.galleries && props.galleries.map((image)=>{
                         return(
@@ -168,8 +178,38 @@ const Galleries = (props) => {
                     
                     })  
                     }
+                       {/* </Slider> */}
                 </div>
-           </div>
+                }
+                    {
+                        props.galleries &&  
+                    <div className="row">
+                    <Slider {...settings}>
+                    { 
+                    props.galleries && props.galleries.length > 3 &&  props.galleries.map((image)=>{
+                        return(
+                            <div className="col-md-3">
+                                <div className="imageArea">
+                                <img
+                                    src={image.attachment}
+                                    id="img-upload"
+                                />
+                            </div>
+                            <div className="galaryBody">
+                                <div className="date">{image.uploaded_at}</div>
+                                <div className="deleteImage">
+                                    <span className="glyphicon glyphicon-trash" onClick={(e)=>handleDelete(image.id)}></span>
+                                </div>
+                            </div>
+                        </div>
+                        )
+                    
+                    })  
+                    }
+                       </Slider>
+                </div>
+                }
+          </div>
         {/* Galary Code Completed */}
         </div>
     )

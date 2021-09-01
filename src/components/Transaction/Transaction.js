@@ -127,7 +127,7 @@ const Transaction = (props) => {
             "escrowbalance" : escrowbalance,
             "escrowStatus" : escrowStatus
         }
-        
+        console.log("datatra",data)
         var form = new FormData();
         for (const key in data) {
             form.append(key, data[key]);
@@ -220,7 +220,7 @@ const Transaction = (props) => {
                         <div className="divWithContact">
                             <div className="form-group">
                                 <label htmlFor="name">Company Name / Account Name</label>
-                                <select className="form-control" value={accountName} onChange={e=> handleOnChange(e)}>
+                                    <select className="form-control" value={accountName} onChange={e=> handleOnChange(e)}>
                                     <option value="" disabled>Select</option>
                                     {
                                         props.contactList ? (

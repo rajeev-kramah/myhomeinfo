@@ -16,10 +16,9 @@
     --red: red;
     --lightGray: #F1F5FA;
 }
-
-
-
-
+.house-header .inactive-title {
+	font-weight: 500 !important;
+}
 .rdt_Table,
 .rdt_Pagination{
     padding-left : 5% !important;

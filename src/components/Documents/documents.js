@@ -110,8 +110,8 @@ const Document = (props) => {
                         <div className="row">
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label htmlFor="Date" className="required">Folder Name</label>
-                                    <input type="text" placeholder="Document Name" value={docname} onChange={e=> setDocname(e.target.value)} className="form-control" />
+                                    <label htmlFor="Date" className="required">Folder</label>
+                                    <input type="text" placeholder="Folder" value={docname} onChange={e=> setDocname(e.target.value)} className="form-control" />
                                 </div>
                             </div>
                             <div className="col-md-6">

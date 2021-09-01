@@ -209,7 +209,7 @@ const AdditionalDetails = (props) => {
                             <div className="col-md-6">
                                 <div className="form-group">
                                     <label htmlFor="">Escrow Amount</label>
-                                    <input type="text" placeholder="Escrow Amount" value={Util.addCommas(escrowamount ?escrowamount : 0)} onChange={e=> setEscrowAmount(e.target.value)} className="form-control" disabled={escrow == 'No'? true : false } />
+                                    <input type="text" placeholder="Escrow Amount" value={Util.addCommas(escrowamount ? escrowamount : 0)} onChange={e=> setEscrowAmount(e.target.value)} className="form-control" disabled={escrow == 'No'? true : false } />
                                 </div>
                             </div>
                         </div>

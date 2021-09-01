@@ -16,6 +16,7 @@ const Personal = (props) => {
     const [address, setAddress] = useState('');
     const [zipcode, setZipcode] = useState('');
     const [refferedby, setRefferedby] = useState('');
+    const [maxProperty, setMaxProperty] = useState('');
     const [substartdate, setSubstartdate] = useState(Util.getCurrentDate("-"));
     const [subenddate, setSubenddate] = useState(Util.getCurrentDate("-"));
     const [mono, setMono] = useState('');
@@ -31,6 +32,7 @@ const Personal = (props) => {
             setAddress(props.accountDetails[0].address);
             setZipcode(props.accountDetails[0].zipcode);
             setRefferedby(props.accountDetails[0].refferedby);
+            setMaxProperty(props.accountDetails[0].maxProperty);
             setSubstartdate(props.accountDetails[0].substartdate);
             setSubenddate(props.accountDetails[0].subenddate);
             setMono(props.accountDetails[0].mono);
@@ -51,6 +53,7 @@ const Personal = (props) => {
             "address" : address,
             "zipcode" : zipcode,
             "refferedby" : refferedby,
+            "maxProperty" : maxProperty,
             "substartdate" : substartdate,
             "subenddate" : subenddate,
             "mono" : mono,
@@ -60,7 +63,9 @@ const Personal = (props) => {
         let valid = validate();
         if(valid) {
             props.updateAccount(data);
+            console.log("data2::",props.updateAccount(data))
         }
+        console.log("data:::",data)
     }
 
     const validate = () => {
@@ -211,19 +216,23 @@ const Personal = (props) => {
                                 </div>
                             </div>
                             <div className="col-md-6 ">
+                                <div className="form-group inputGroup">
+                                    <label htmlFor="referred">Maximum Property</label>
+                                    <input type="number" min="0" placeholder="Maximum Property" className="form-control" value={maxProperty} onChange={e=> setMaxProperty(e.target.value)} />
+                                </div>
                             </div>
                         </div>
                         <div className="row pt-25">
                             <div className="col-md-6">
                                 <div className="form-group inputGroup">
                                     <label htmlFor="start">Subscription Start Date</label>
-                                    <input type="date" className="form-control" value={substartdate} onChange={e=> setSubstartdate(e.target.value)} />
+                                    <input type="date" className="form-control" value={substartdate} onChange={e=> setSubstartdate(e.target.value)} readOnly/>
                                 </div>
                             </div>
                             <div className="col-md-6 ">
                                 <div className="form-group inputGroup">
                                     <label htmlFor="end">Subscription End Date</label>
-                                    <input type="date" value={subenddate} onChange={e => setSubenddate(e.target.value)} className="form-control" />
+                                    <input type="date" value={subenddate} onChange={e => setSubenddate(e.target.value)} className="form-control" readOnly />
                                 </div>
                             </div>
                         </div>
@@ -241,8 +250,11 @@ const Personal = (props) => {
     )
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state) => (
+    console.log("accountdetails",state),
+    {
     accountDetails : state.Account.accountDetails.data
+    
 });
 
 const mapDispatchToProps = {

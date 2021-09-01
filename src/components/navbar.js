@@ -301,7 +301,7 @@ const Navbar = (props) => {
 
 												<li>
 													<NavLink to={{
-														pathname : "/galary",
+														pathname : "/gallary",
 														state : {house_id : house.house.id}
 													}} onClick={()=> updateHouse(house.house.id, "gallary")}>
 														Gallaries

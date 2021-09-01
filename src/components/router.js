@@ -130,7 +130,7 @@ const Router = (props) => {
 
 					<Route path="/link" component={Link} />
 					<Route path="/link-list" component={LinkList} />
-					<Route path="/galary" component={Galary} />
+					<Route path="/gallary" component={Galary} />
 
 					
 					

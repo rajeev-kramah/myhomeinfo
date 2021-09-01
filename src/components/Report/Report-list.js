@@ -42,24 +42,27 @@ const ReportList = (props) => {
             NotificationManager.error("Error Message", "To Date must be greater than From Date.");
             return false;
         }
-       if(reportType == "company"){
+       if(reportType === "company"){
             for(let i=0; i<props.transactions.length; i++){
                 let filterData = props.transactions[i]['companyname'];
                 let createdAT = new Date(props.transactions[i].date);
+              
                 if(companyname == filterData && (+createdAT >= +formDate) && (+createdAT <= +toDate)){
                         tableData.push(props.transactions[i]) 
-                }
+                    }
             } 
        }else{
             for(let i=0; i<props.transactions.length; i++){
                 let filterData = props.transactions[i]['groupname'];
                 if(companyname == "Expenses" || companyname == "Income" ||companyname == "Loans"){
                     filterData = filterData.split("&")[0];
+
                 }
                 let createdAT = new Date(props.transactions[i].date);
                
                 if(companyname == filterData && (+createdAT >= +formDate) && (+createdAT <= +toDate)){
                         tableData.push(props.transactions[i]) 
+                       
                 }
             } 
        }
@@ -67,7 +70,7 @@ const ReportList = (props) => {
         setTransactionData(tableData);
     }
 
-    var groupData = ['Income', "Expenses"];
+    var groupData = ['All' , 'Income', "Expenses"];
     var highLight = [];
     if(props.groupDetails){
         for(let i=0; i<props.groupDetails.length; i++){
@@ -75,6 +78,7 @@ const ReportList = (props) => {
                 let item = props.groupDetails[i]['groupname']+"&"+props.groupDetails[i]['subgroup'];
                 let checkItem = groupData.indexOf(props.groupDetails[i]['groupname'])
                 groupData.splice(checkItem+1, 0, item );
+                groupData.sort();
             }
            
         }
@@ -82,6 +86,7 @@ const ReportList = (props) => {
 
     return (
         <div className="container-fluid contact">
+            {console.log("report",reportType)}
             <h4>Generate Reports</h4>
             <div className="contact-form pt-25">
                 <div className="row report">
@@ -112,6 +117,7 @@ const ReportList = (props) => {
                                     if(highLight.indexOf(index)){
                                         className="parent" 
                                     }
+                                    {console.log("test group::",data)}
                                     let item = data.split("&");
                                     let itemValue = item[item.length-1]
                                     if(data.subgroup != "Income" &&  data.subgroup != "Expenses"){
@@ -191,7 +197,9 @@ const ReportList = (props) => {
                                { 
                                       props.contacts ? (props.contacts.map((data)=>{
                                         return(
+                                     
                                             <option vlaue={data.companyname}>{data.companyname}</option>
+                                     
                                         )
                                     })): ""
                                  }   
@@ -256,6 +264,7 @@ const mapStateToProps = (state) => ({
     contacts : state.Contact.contacts.data,
     transactions : state.Transaction.transactions.data,
     groupDetails: state.Contact.groups.data,
+  
 });
 
 const mapDispatchToProps = {

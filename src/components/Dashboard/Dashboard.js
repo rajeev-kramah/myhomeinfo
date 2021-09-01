@@ -8,7 +8,9 @@ import { NotificationManager } from "react-notifications";
 import { connect } from "react-redux";
 import { ownerHouseDetails } from "../../store/Actions/house";
 import { getHouseDetail } from "../../store/Actions/house";
+import { getAccount } from "../../store/Actions/Account";
 import { getInsurance} from "../../store/Actions/insurance";
+import { Util } from "../../Datamanipulation/Util";
 import { getLoan} from "../../store/Actions/Loan";
 import { getWarranty} from "../../store/Actions/Warranty";
 import { getGroup} from "../../store/Actions/contact";
@@ -22,20 +24,42 @@ var commaNumber = require('comma-number')
 
 
 const Dashboard = (props) => {
+    console.log("account 45",props)
     const [owner_id, setOwner_id] = useState(JSON.parse(localStorage.getItem('user')).id);
     const [active_house, setActive_house] = useState("");
     const [active_house_name, setActive_house_name] = useState("");
     const [warranty_data, setWarranty_data] = useState([]);
     const [purchaseprice, setPurchaseprice] =  useState();
     const [homecost, setHomecost] = useState(); 
+    const [addPropertyRestrict, setPropertyRestrict] = useState(true); 
     const [loanData, setLoanData] = useState([]);
-
+    const[user, setUser] = useState(Util.getLoggedinUser());
     
     localStorage.setItem('house_id', JSON.stringify(""));
 
     useEffect(() => {
         props.ownerHouseDetails({"owner_id":JSON.parse(localStorage.getItem('user')).email});
     }, []);
+
+    useEffect(()=> {
+     
+        if(props.accountDetails && props.accountDetails.length > 0 && props.house && props.house.length > 0 ) {
+           
+            console.log("account 56 2",props.accountDetails[0].maxProperty , props.house.length)
+            if( props.house.length < props.accountDetails[0].maxProperty ) {
+            setPropertyRestrict(true)
+            }
+          else {
+            setPropertyRestrict(false)
+          }
+        } 
+        else {
+            let data = {
+                id: user['id']
+            }
+            props.getAccount(data);
+        }
+    }, [props.accountDetails])
 
     useEffect(()=> {
         if(props.house && props.house.length > 0 && active_house === "") {
@@ -331,6 +355,7 @@ const Dashboard = (props) => {
                     loanData.totalInstallment = totalM;
                     loanData.paidInstallment = i+1; 
                     loanData.lname = props.loans[j].lname
+                    loanData.status = props.loans[j].status
                     loanDetails.push(loanData);
                     break;
                 }
@@ -434,16 +459,19 @@ const Dashboard = (props) => {
                 <div className="col-md-2">
                     <label className="dashboard-title">Dashboard</label>
                 </div>
+                {
+
+               addPropertyRestrict && 
                 <div className="col-md-2 ml--5">
                     <button className="btn btn-primary btn-sm" onClick={handleAddproperty}>
                         <span className="glyphicon glyphicon-plus"></span> Add a property
                     </button>
-                </div>
+                </div> }
                 <div className="col-md-8"></div>
             </div>
-
             {
                 props.house && props.house.length <= 3 && 
+               
                 <div className="row card-deck">
                     {console.log("props.house",props.house)}
                 {
@@ -658,12 +686,16 @@ const Dashboard = (props) => {
                                 loanData.map((loanData)=>{
                                     return (
                                         <React.Fragment>
+                                            {loanData.status === "Active" ? 
+                                            <>
+                                            {console.log("loandata",loanData)}
                                             <small className="text-muted card-text w30">{loanData.loantype}</small>
                                             <small className="text-muted card-text w30">Loan balance</small>
                                             <small className="text-muted card-text w30">Installments</small>
                                             <span className="card-text w30">{loanData.lname}</span>
                                             <span className="card-text w30">{loanData.endingloan}</span>
                                             <span className="card-text w30">{loanData.paidInstallment}/{loanData.totalInstallment}</span>
+                                            </>:""}
                                         </React.Fragment>
                                     )
                                 })
@@ -766,7 +798,9 @@ const Dashboard = (props) => {
 }
 
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state) => (
+    console.log("mapstateToProps",state.Loan.loans.data),
+    {
     house : state.House.houses.data,
     houseDetails : state.House.houseDetail.data,
     insurances : state.Insurance.insurances.data,
@@ -778,6 +812,7 @@ const mapStateToProps = (state) => ({
     loanTransactions : state.Loan.mortgageTransaction.data,
     contacts: state.Contact.contacts.data,
     loanDetails : state.Loan.loanDetails.data,
+    accountDetails : state.Account.accountDetails.data
 });
 
 const mapDispatchToProps = {
@@ -792,7 +827,8 @@ const mapDispatchToProps = {
     getLoanTransaction,
 	getMortgageTransaction,
     getTransaction,
-    getContact
+    getContact,
+    getAccount
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

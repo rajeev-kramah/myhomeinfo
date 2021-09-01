@@ -46,6 +46,7 @@ const Insurance = (props) => {
 
     useEffect(()=> {
         if(props.insuranceDetails && props.insuranceDetails.length > 0) {
+            console.log("props.insuranceDetails",props.insuranceDetails)
             setId(props.insuranceDetails[0].id);
             setInsurance_number(props.insuranceDetails[0].insurance_number);
             setProvider(props.insuranceDetails[0].provider);
@@ -107,6 +108,7 @@ const Insurance = (props) => {
             'id':id,
             "status": status
         }
+        console.log("data:::0:",data)
         var form = new FormData();
       
         for (const key in data) {
@@ -116,10 +118,19 @@ const Insurance = (props) => {
         form.append("attachment", attachment);
 
         let valid = validate();
+        // if(valid) {
+        //     props.addInsurance(form)
+        //     props.history.push({
+        //         pathname: 'agent',
+        //         state: {
+        //             house_id : house_id
+        //         }
+        //     }); 
+        // }
         if(valid) {
             props.addInsurance(form)
             props.history.push({
-                pathname: 'agent',
+                pathname: 'insurance-list',
                 state: {
                     house_id : house_id
                 }
@@ -193,7 +204,7 @@ const Insurance = (props) => {
     }
     
     const onChangehandle =(e) =>  {
-        setAgent_name(e.target.value);
+        setCompany_name(e.target.value);
         for(var i=0; i<props.contactList.length; i++){
             if(props.contactList[i]['groupname'] == "Expenses&Insurance" && e.target.value == props.contactList[i]['companyname']){
                 setAgent_name(props.contactList[i].contactperson)
@@ -302,30 +313,29 @@ const Insurance = (props) => {
     return (
         <div className="container-fluid house">
             <h4>Add Insurance Details</h4>
-            <div className="house-form">
-              <Tab loanPage="Insurance" tabs={tabs} id={id} house_id={house_id}/>
+            <div className="house-form pb-2">
+              {/* <Tab loanPage="Insurance" tabs={tabs} id={id} house_id={house_id}/> */}
                 <div className="row">
                     <div className="col-md-3"></div>
                      <div className="col-md-2">
-                            <div className="form-group">
-                                    <label htmlFor="Insurance company" className="req">Provider</label>
-                                    
-                                        <select className="form-control" value={provider} onChange={e=> handleOnChange(e)}>
-                                            <option value="" disabled>Select</option>
-                                        
-                                            {
-                                                props.contactList ? (
-                                                    props.contactList.map((data)=>{
-                                                        if(data.groupname == "Expenses&Insurance"){
-                                                            return(
-                                                                <option value={data.companyname}>{data.companyname}</option>
-                                                            )
-                                                        }
-                                                    })
-                                                ): ""
+                        <div className="form-group">
+                            <label htmlFor="Insurance company" className="req">Provider</label>
+                            <select className="form-control" value={provider} onChange={e=> handleOnChange(e)}>
+                                <option value="" disabled>Select</option>
+                            
+                                {
+                                    props.contactList ? (
+                                        props.contactList.map((data)=>{
+                                            if(data.groupname == "Expenses&Insurance"){
+                                                return(
+                                                    <option value={data.companyname}>{data.companyname}</option>
+                                                )
                                             }
-                                        </select>
-                            </div>
+                                        })
+                                    ): ""
+                                }
+                            </select>
+                        </div>
                     </div>
                     <div className="col-md-2">
                         <div className="form-group">
@@ -352,28 +362,46 @@ const Insurance = (props) => {
                     <div className="col-md-2">
                         <div className="form-group">
                             <label htmlFor="Company Name">Company Name</label>
-                                <select className="form-control" value={company_name } onChange={e=> onChangehandle(e)}>
-                                    <option value="" disabled>Select</option>
-                                    {
-                                        props.contactList ? (
-                                            props.contactList.map((data)=>{
-                                                if(data.groupname == "Expenses&Insurance"){
-                                                    return(
-                                                        <option value={data.companyname}>{data.companyname}</option>
-                                                    )
-                                                }
-                                            })
-                                        ): ""
-                                    }
-                                </select>
+                            <select className="form-control" value={company_name} onChange={e=> onChangehandle(e)}>
+                                <option value="" disabled>Select</option>
+                                {
+                                    props.contactList ? (
+                                        props.contactList.map((data)=>{
+                                            if(data.groupname == "Expenses&Insurance"){
+                                                return(
+                                                    <option value={data.companyname}>{data.companyname}</option>
+                                                )
+                                            }
+                                        })
+                                    ): ""
+                                }
+                            </select>
                         </div>
+                        {/* <div className="form-group">
+                            <label htmlFor="Insurance company" className="req">Provider</label>
+                            <select className="form-control" value={provider} onChange={e=> handleOnChange(e)}>
+                                <option value="" disabled>Select</option>
+                            
+                                {
+                                    props.contactList ? (
+                                        props.contactList.map((data)=>{
+                                            if(data.groupname == "Expenses&Insurance"){
+                                                return(
+                                                    <option value={data.companyname}>{data.companyname}</option>
+                                                )
+                                            }
+                                        })
+                                    ): ""
+                                }
+                            </select>
+                        </div> */}
                     </div>
 
                     <div className="col-md-2">
                         <div className="form-group">
                             <label htmlFor="name">Agent Name</label>
                             <input type="text" placeholder="Agent Name" value={agent_name} onChange={e=> {
-                                setCompany_name(e.target.value)
+                                setAgent_name(e.target.value)
                                 }} className="form-control" />
                         </div>
                     </div>
@@ -497,7 +525,7 @@ const Insurance = (props) => {
                                             <p>{attachment_name ? attachment_name : ""}</p>
                                            
                                         </div>
-                                      <input type="file" style={{height:"0px"}} onChange={(event)=>handleDocumentUpload(event)} className="form-control" style={{"visibility":"hidden"}} />
+                                      <input type="file" style={{height:"0px"}}  id="file" onChange={(event)=>handleDocumentUpload(event)} className="form-control" style={{"visibility":"hidden"}} />
                                     </label>
                                 </div>
                             </div>
@@ -534,10 +562,12 @@ const Insurance = (props) => {
 }
 
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state) => 
+({
     insuranceDetails : state.Insurance.insuranceDetails.data,
     houseDetails: state.House.houseDetail.data,
     contactList : state.Contact.contacts.data
+    
 });
 
 const mapDispatchToProps = {

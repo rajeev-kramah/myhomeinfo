@@ -10,7 +10,8 @@ router.post("/", async (req, res) => {
 	let id = req.body.id; 
 	let groupname = req.body.groupname;   
 	let contactperson = req.body.contactperson;  
-	let landline = req.body.landline;  
+	let landline = req.body.landline;
+	let phonenumber = req.body.phonenumber;  
 	let email = req.body.email;  
 	let companyname = req.body.companyname; 
 	let address = "";  
@@ -33,10 +34,10 @@ router.post("/", async (req, res) => {
 
 
     con.connect(function(err) {
-        var sql = "INSERT INTO contacts (groupname, contactperson, landline, email, companyname, address, mono, url, comment, house_id, add_to_home_cost, transaction_type, transaction_amount, auto_post, posting_frequency, posting_date, streetName, city, state, country, houseno, zipcode) VALUES ('"+groupname+"', '"+contactperson+"', '"+landline+"', '"+email+"', '"+companyname+"', '"+address+"','"+mono+"', '"+url+"', '"+comment+"', '"+house_id+"', '"+add_to_home_cost+"', '"+transaction_type+"', '"+transaction_amount+"', '"+auto_post+"', '"+posting_frequency+"', '"+posting_date+"', '"+streetName+"', '"+city+"', '"+state+"', '"+country+"', '"+houseno+"', '"+zipcode+"')";
+        var sql = "INSERT INTO contacts (groupname, contactperson, landline,phonenumber, email, companyname, address, mono, url, comment, house_id, add_to_home_cost, transaction_type, transaction_amount, auto_post, posting_frequency, posting_date, streetName, city, state, country, houseno, zipcode) VALUES ('"+groupname+"', '"+contactperson+"', '"+landline+"','"+phonenumber+"','"+email+"', '"+companyname+"', '"+address+"','"+mono+"', '"+url+"', '"+comment+"', '"+house_id+"', '"+add_to_home_cost+"', '"+transaction_type+"', '"+transaction_amount+"', '"+auto_post+"', '"+posting_frequency+"', '"+posting_date+"', '"+streetName+"', '"+city+"', '"+state+"', '"+country+"', '"+houseno+"', '"+zipcode+"')";
 
         if(id){
-            sql = "UPDATE contacts SET groupname = '"+groupname+"', contactperson = '"+contactperson+"', landline = '"+landline+"', email = '"+email+"', companyname = '"+companyname+"', address = '"+address+"', mono = '"+mono+"', url = '"+url+"', comment = '"+comment+"', house_id = '"+house_id+"', add_to_home_cost = '"+add_to_home_cost+"', transaction_type = '"+transaction_type+"', transaction_amount = '"+transaction_amount+"', auto_post = '"+auto_post+"', posting_frequency = '"+posting_frequency+"', posting_date = '"+posting_date+"', streetName='"+streetName+"', city='"+city+"', state='"+state+"', country ='"+country+"', houseno='"+houseno+"', zipcode='"+zipcode+"' where id = '"+id+"'";
+            sql = "UPDATE contacts SET groupname = '"+groupname+"', contactperson = '"+contactperson+"', landline = '"+landline+"', phonenumber = '"+phonenumber+"' , email = '"+email+"', companyname = '"+companyname+"', address = '"+address+"', mono = '"+mono+"', url = '"+url+"', comment = '"+comment+"', house_id = '"+house_id+"', add_to_home_cost = '"+add_to_home_cost+"', transaction_type = '"+transaction_type+"', transaction_amount = '"+transaction_amount+"', auto_post = '"+auto_post+"', posting_frequency = '"+posting_frequency+"', posting_date = '"+posting_date+"', streetName='"+streetName+"', city='"+city+"', state='"+state+"', country ='"+country+"', houseno='"+houseno+"', zipcode='"+zipcode+"' where id = '"+id+"'";
         }
         con.query(sql, function (err, contacts) {
 			console.log(contacts);
@@ -219,7 +220,7 @@ router.post("/delete", async (req, res) => {
 						)
 					);
 				} else {
-					var sql = "SELECT id,companyname,contactperson,mono,landline,email,url,address,groupname From contacts where house_id='"+req.body.house_id+"'";
+					var sql = "SELECT id,companyname,contactperson,mono,landline,phonenumber,email,url,address,groupname From contacts where house_id='"+req.body.house_id+"'";
 					con.query(sql, function (err, contacts) {
 						if (err) {
 							res.send(
