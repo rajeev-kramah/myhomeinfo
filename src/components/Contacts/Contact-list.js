@@ -18,8 +18,8 @@ const ContactList = (props) => {
             cell: row => <Link data-tag="allowRowEvents" role="link" to={{pathname : "contact-form", state:{house_id : house_id}}}>{row.companyname}</Link>
         },
         { name: 'Contact Person', selector: 'contactperson', sortable: true, },
-        { name: 'Mobile No.', selector: 'mono', sortable: true, },
-        { name: 'Landline', selector: 'landline', sortable: true, },
+        { name: 'Phone 1', selector: 'phone1', sortable: true, },
+        { name: 'Phone 2', selector: 'phone2', sortable: true, },
         { name: 'Email', selector: 'email', sortable: true },
         { name: 'URL', selector: 'url', sortable: true,},
         { name: 'Address', selector: 'address', sortable: true, },

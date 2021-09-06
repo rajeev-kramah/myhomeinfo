@@ -11,20 +11,24 @@ import {
 import { NotificationManager } from "react-notifications";
 
 export const addContact = (data) => {
+    console.log("data123::",data)
     return async (dispatch) => {
         await Contact.addContact(data)
-        .then(res => {
+            .then(res => {
             if(res.status === 200  || res.status === 404 || res.status === 422) {
                 var data = {
                     type: GET_CONTACT,
                     payload: res
                 }
                 dispatch(data);
+                console.log("response",data)
                 NotificationManager.success("Success Message", res.statusText);
             } else {
+                console.log("response",res)
                 NotificationManager.error("Error Message", res.statusText)
             }
         }).catch(error => {
+            console.log("response",error)
             throw (error);
         });
     }

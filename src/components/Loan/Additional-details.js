@@ -235,8 +235,9 @@ const AdditionalDetails = (props) => {
                         </div>
                         
                       
-                        <div className="divWithContact ">
-                            <div className="form-group">
+                        {/* <div className="divWithContact "> */}
+                            <div className="row">
+                            <div className="form-group col-md-6">
                                 <label htmlFor="tax" className="req">Porperty Tax Payee</label>
                                 <select className="form-control" value={ptaxpayee} onChange={e=> setPropertytaxPayee(e.target.value)}>
                                         <option value="" disabled>Select</option>
@@ -256,14 +257,15 @@ const AdditionalDetails = (props) => {
                                 {/* <input type="text" placeholder="Porperty Tax" value={ptaxpayee} onChange={e=> setPropertytaxPayee(e.target.value)} className="form-control" /> */}
                             </div>
                         
-                            <div className="form-group">
+                            <div className="form-group col-md-6">
                                 <label htmlFor="tax" className="req">Porperty Tax Amount</label>
                                 <input type="text" placeholder="Porperty Tax Amount" value={Util.addCommas(propertytax)} onChange={e=> setPropertytax(e.target.value)} className="form-control" />
                             </div>
-                            <div onClick={()=>togglePopup()} ><img className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/>  </div>
+                            {/* <div onClick={()=>togglePopup()} ><img className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/>  </div> */}
                         </div>
+                        {/* </div> */}
 
-                        <div className="row ">
+                        <div className="row buttondisplay ">
                             <div className="col-md-8">
                                 <div className="form-group">
                                     <label htmlFor="attachment">Attachments</label>
@@ -278,10 +280,15 @@ const AdditionalDetails = (props) => {
                                 </div>
                             </div>
 
-                            <div className="col-md-4" style={{marginTop: "2%"}}>
+                            {/* <div className="col-md-4" style={{marginTop: "2%"}}>
                                 <a type="button"  className="btn btn-primary btn-sm addNewItem " href={download ? download : "javascript:void(0)"}><span className="glyphicon glyphicon-download-alt"> </span> Download Attachment</a>
                                 <button type="button"  className="btn btn-primary btn-sm addNewItem " onClick={()=>handleDelete(id)}><span className="glyphicon glyphicon-trash"> </span> Delete Attachment </button>
-                                </div>
+                                </div> */}
+                                 <div className="dflex">
+                        <i className="glyphicon glyphicon-eye-open primary  btn-lg addNewItemlogo1232" value={document} ></i>
+                        <i className="glyphicon glyphicon-download-alt primary  btn-lg addNewItemlogo1232" value={document}  ></i>
+                        <i className="glyphicon glyphicon-trash primary  btn-lg d-flex addNewItemlogo1232" value={document} onClick={()=>handleDelete(id)}></i>
+                    </div>
                         </div>
 
                         <div className="row ">

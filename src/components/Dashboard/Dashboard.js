@@ -638,6 +638,9 @@ const Dashboard = (props) => {
                         </div>
                         <div className="small-card">
                             <span   className="card-title">Share Property</span>
+                            <small className="text-muted card-text w30">Name</small>
+                            <small className="text-muted card-text w30">Phone</small>
+                            <small className="text-muted card-text w30">Email ID</small>
                         {
                             props.shares && props.shares.length > 0 ? 
                             <React.Fragment>
@@ -718,70 +721,75 @@ const Dashboard = (props) => {
                     <div className="col-md-6 plr-0">
                         <div className="small-card">
                             <span className="card-title">Warranty Summary</span>
-                            <div className="ml-25">
-                            {
-                                warranty_data && warranty_data.length > 0 ?
-                                    <Chart
-                                        width={'400px'}
-                                        height={'250px'}
-                                        chartType="PieChart"
-                                        loader={<div>Loading Chart</div>}
-                                        data={warranty_data}
-                                        options={{
-                                            title: 'Warranty Details',
-                                            pieHole: 0.4,
-                                        }}
-                                        rootProps={{ 'data-testid': '3' }}
-                                    /> : ""
-                            }
-                                
-                            </div>
                             <div className="row">
-                                {
-                                    props.warranties && props.warranties.length > 0 ? 
-                                        props.warranties.map( (element, index) => {
-                                            if(index < 4) {
-                                                let ext_date = new Date(element.extended_warranty_end_date);
-                                                let install_date = new Date(element.installation_date);
-                                                let current_date = new Date();
-                                                let diff1 = (current_date.getFullYear() - install_date.getFullYear());
-                                                let diff2 = (ext_date.getFullYear() - current_date.getFullYear());
-                                                let diff3 = ext_date.getFullYear() - install_date.getFullYear();
-                                                if(diff2 === 0) {
-                                                    diff1 = 1;
+                            <div className="col-md-1"></div>
+                                <div className="col-md-10">
+                                    {
+                                        warranty_data && warranty_data.length > 0 ?
+                                            <Chart
+                                                width={'100%'}
+                                                height={'250px'}
+                                                chartType="PieChart"
+                                                loader={<div>Loading Chart</div>}
+                                                data={warranty_data}
+                                                options={{
+                                                    title: 'Warranty Details',
+                                                    pieHole: 0.4,
+                                                }}
+                                                rootProps={{ 'data-testid': '3' }}
+                                            /> : ""
+                                    }
+                                    </div>
+                                <div className="col-md-1"></div>
+                                </div>
+                            <div className="row">
+                                <div className="col-md-12 plr-0">
+                                    {
+                                        props.warranties && props.warranties.length > 0 ? 
+                                            props.warranties.map( (element, index) => {
+                                                if(index < 4) {
+                                                    let ext_date = new Date(element.extended_warranty_end_date);
+                                                    let install_date = new Date(element.installation_date);
+                                                    let current_date = new Date();
+                                                    let diff1 = (current_date.getFullYear() - install_date.getFullYear());
+                                                    let diff2 = (ext_date.getFullYear() - current_date.getFullYear());
+                                                    let diff3 = ext_date.getFullYear() - install_date.getFullYear();
+                                                    if(diff2 === 0) {
+                                                        diff1 = 1;
+                                                    }
+                                                    diff1 = diff1 < 0 ? 0 : diff1;
+                                                    diff2 = diff2 < 0 ? 0 : diff2;
+                                                    diff3 = diff3 < 0 ? 0 : diff3;
+                                                    return (
+                                                        <div className="col-md-6 min-chat">
+                                                        <Chart
+                                                            width={'100%'}
+                                                            height={'270px'}
+                                                            chartType="PieChart"
+                                                            loader={<div>Loading Chart</div>}
+                                                            data={[
+                                                                    ['Product Name', 'Warranty'],
+                                                                    ['Covered', diff1],
+                                                                    [element.product_name, diff2]
+                                                                ]}
+                                                            options={{
+                                                                title: '',
+                                                                // Just add this option
+                                                                pieHole: 0.4,
+                                                            }}
+                                                            rootProps={{ 'data-testid': '3' }}
+                                                        />
+                                                        <span className=""><strong>{element.product_name}</strong></span>
+                                                        <br></br>
+                                                        <span className="">{diff3} year warranty</span>
+                                                        <br></br>
+                                                        <span className="">Expires {element.extended_warranty_end_date}</span>
+                                                    </div>
+                                                )
                                                 }
-                                                diff1 = diff1 < 0 ? 0 : diff1;
-                                                diff2 = diff2 < 0 ? 0 : diff2;
-                                                diff3 = diff3 < 0 ? 0 : diff3;
-                                                return (
-                                                <div className="col-md-6 min-chat">
-                                                    <Chart
-                                                        width={'300px'}
-                                                        height={'240px'}
-                                                        chartType="PieChart"
-                                                        loader={<div>Loading Chart</div>}
-                                                        data={[
-                                                                ['Product Name', 'Warranty'],
-                                                                ['Covered', diff1],
-                                                                [element.product_name, diff2]
-                                                            ]}
-                                                        options={{
-                                                            title: '',
-                                                            // Just add this option
-                                                            pieHole: 0.4,
-                                                        }}
-                                                        rootProps={{ 'data-testid': '3' }}
-                                                    />
-                                                    <span className=""><strong>{element.product_name}</strong></span>
-                                                    <br></br>
-                                                    <span className="">{diff3} year warranty</span>
-                                                    <br></br>
-                                                    <span className="">Expires {element.extended_warranty_end_date}</span>
-                                                </div>
-                                            )
-                                            }
-                                        }) : ""
-                                }   
+                                            }) : ""
+                                    }   
+                                </div>
                             </div>
                             <div className="row">
                                 <div className="col-md-10"></div>

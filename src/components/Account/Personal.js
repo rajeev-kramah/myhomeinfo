@@ -25,6 +25,7 @@ const Personal = (props) => {
 
     useEffect(()=> {
         if(props.accountDetails && props.accountDetails.length > 0) {
+            console.log("props.accountDetails",props.accountDetails)
             setId(props.accountDetails[0].id);
             setName(props.accountDetails[0].name);
             setEmail(props.accountDetails[0].email);
@@ -251,7 +252,6 @@ const Personal = (props) => {
 }
 
 const mapStateToProps = (state) => (
-    console.log("accountdetails",state),
     {
     accountDetails : state.Account.accountDetails.data
     

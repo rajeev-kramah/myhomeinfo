@@ -122,7 +122,7 @@ const Document = (props) => {
                             </div>
                         </div>
 
-                        <div className="row ">
+                        <div className="row buttondisplay">
                             <div className="col-md-8">
                                 <div className="form-group">
                                     <label htmlFor="attachment">Attachments</label>
@@ -137,13 +137,18 @@ const Document = (props) => {
                                 </div>
                             </div>
 
-                            <div className="col-md-4" style={{marginTop: "2%"}}>
+                            {/* <div className="col-md-4" style={{ marginTop: "2%" }}> */}
                                 {/* <a type="button"  className="btn btn-primary btn-sm addNewItem " href={download ? download : "javascript:void(0)"}><span className="glyphicon glyphicon-download-alt"> </span> Download Attachment</a> */}
-                                <button type="button"  className="btn btn-primary btn-sm addNewItem " href={download ? download : "javascript:void(0)"} download={attachment}>
+                                {/* <button type="button"  className="btn btn-primary btn-sm addNewItem " href={download ? download : "javascript:void(0)"} download={attachment}>
                                     <span className="glyphicon glyphicon-download-alt"> </span> Download Attachment
                                 </button>
-                                <button type="button"  className="btn btn-primary btn-sm addNewItem " onClick={()=>handleDelete(id)}><span className="glyphicon glyphicon-trash"> </span> Delete Attachment </button>
+                                <button type="button"  className="btn btn-primary btn-sm addNewItem " onClick={()=>handleDelete(id)}><span className="glyphicon glyphicon-trash"> </span> Delete Attachment </button> */}
+                                <div className="dflex">
+                                    <i className="glyphicon glyphicon-eye-open primary  btn-lg addNewItemlogo1232" value={document} ></i>
+                                    <i className="glyphicon glyphicon-download-alt primary  btn-lg addNewItemlogo1232" value={document}  ></i>
+                                    <i className="glyphicon glyphicon-trash primary  btn-lg d-flex addNewItemlogo1232" value={document} onClick={() => handleDelete(id)}></i>
                                 </div>
+                            {/* </div> */}
                         </div>
 
                     </div>

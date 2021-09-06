@@ -43,8 +43,8 @@ const Hoadetails = (props) => {
             setEmail(props.houseDetails.hoadetails[0].email ?props.houseDetails.hoadetails[0].email : "");
             setEmail1(props.houseDetails.hoadetails[0].email1 ? props.houseDetails.hoadetails[0].email1 : "");
             setReminder_date(props.houseDetails.hoadetails[0].reminder_date ? props.houseDetails.hoadetails[0].reminder_date : "");
-            setReminder_phone(props.houseDetails.hoadetails[0].reminder_phone != "null" ? props.houseDetails.hoadetails[0].reminder_phone : "");
-            setReminder_email(props.houseDetails.hoadetails[0].reminder_email != "null" ? props.houseDetails.hoadetails[0].reminder_email : "");
+            // setReminder_phone(props.houseDetails.hoadetails[0].reminder_phone != "null" ? props.houseDetails.hoadetails[0].reminder_phone : "");
+            // setReminder_email(props.houseDetails.hoadetails[0].reminder_email != "null" ? props.houseDetails.hoadetails[0].reminder_email : "");
             setReminder_message(props.houseDetails.hoadetails[0].reminder_message != "null" ? props.houseDetails.hoadetails[0].reminder_message : "");
             setFrequency(props.houseDetails.hoadetails[0].frequency ? props.houseDetails.hoadetails[0].frequency : "");
             setFrequency1(props.houseDetails.hoadetails[0].frequency1 ? props.houseDetails.hoadetails[0].frequency1 : "");
@@ -56,11 +56,15 @@ const Hoadetails = (props) => {
         if(props.houseDetails && props.houseDetails.house.length > 0){
             setHouseId(props.houseDetails.house[0].id);
         }
+        if(props.accountDetails && props.accountDetails.length > 0) {
+            setReminder_email(props.accountDetails[0].email);
+            setReminder_phone(props.accountDetails[0].mono);
+        }
         let data = {
             "house_id":house_id
         }
         props.getContact(data);
-    },[props.houseDetails]);
+    },[props.houseDetails,props.accountDetails]);
 
     const handleSubmit = () => {
         let data = {
@@ -110,7 +114,7 @@ const Hoadetails = (props) => {
     const handleOnChange = (e) => {
         setCompanyName(e.target.value);
         for(var i=0; i<props.contactList.length; i++){
-            if(e.target.value == props.contactList[i]['companyname']){
+            if(e.target.value == props.contactList[i]['id']){
                 setPhone(props.contactList[i].mono);
                 setEmail(props.contactList[i].email);
                 setContactName(props.contactList[i].contactperson);
@@ -118,7 +122,18 @@ const Hoadetails = (props) => {
             }
         }
     }
-
+    // const handleOnChange = (e) => {
+    //     setLname(e.target.value);
+    //     for(var i=0; i<props.contactList.length; i++){
+    //         if(e.target.value == props.contactList[i]['id']){
+    //             setLaddress(props.contactList[i].address);
+    //             setLphno(props.contactList[i].mono);
+    //             setLemail(props.contactList[i].email);
+    //             setLcontactperson(props.contactList[i].contactperson);
+    //             break;
+    //         }
+    //     }
+    // }
     const handleOnChangeSub = (e) => {
         setCompanyName1(e.target.value);
         for(var i=0; i<props.contactList.length; i++){
@@ -163,6 +178,28 @@ const Hoadetails = (props) => {
         if(!isNumericInput(event) && !isModifierKey(event)){
             event.preventDefault();
         }
+    };
+
+    const handleSetDate = (lease_frequency) => {
+        var chooseDate=new Date();
+        if(lease_frequency === "Month"){
+            chooseDate.setDate(chooseDate.getDate() + 15);
+        }else if(lease_frequency === "Quarter"){
+            chooseDate.setDate(chooseDate.getDate() + 75);
+        }else {
+            chooseDate.setDate(chooseDate.getDate()+15);
+        }
+        let futureDate = chooseDate.getFullYear()+'-'+('0'+(chooseDate.getMonth()+1)).slice(-2)+'-'+('0'+(chooseDate.getDate())).slice(-2);
+        setReminder_date(futureDate);
+    }
+
+    const handleRenewalDateChange = (e) => {
+        setReminder_date(e.target.value)
+    };
+
+    const handleFrequencyChange = (e) => {
+        handleSetDate(e.target.value)
+        setFrequency1(e.target.value)
     };
     
     const formatToPhone = (event) => {
@@ -213,14 +250,17 @@ const Hoadetails = (props) => {
                                 {
                                     props.contactList ? (
                                         props.contactList.map((data)=>{
-                                            if(data.groupname == "Expenses&HOA-Fees"){
+                                            console.log("data22::",data.groupname)
+                                            if(data.groupname === "Expenses&HOA"){
+                                                console.log("data::",data)
                                                 return(
-                                                    <option value={data.companyname}>{data.companyname}</option>
+                                                    <option value={data.id}>{data.companyname}</option>
                                                 )
                                             }
                                         })
                                     ): ""
                                 }
+                                   
                             </select>
                             {/* <input type="text" placeholder="Company Name" value={companyName} onChange={e=> setCompanyName(e.target.value)} className="form-control"/> */}
                         </div>
@@ -241,9 +281,9 @@ const Hoadetails = (props) => {
                                 }} className="form-control" />
                         </div>
                     </div>
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                         <img onClick={()=>togglePopup()} className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="row">
                     <div className="col-md-3"></div>
@@ -280,19 +320,19 @@ const Hoadetails = (props) => {
                     <div className="col-md-2">
                         <div className="form-group">
                             <label htmlFor="company name">HOA-Sub</label>
-                            <select className="form-control" value={companyName1} onChange={e=> handleOnChangeSub(e)}>
+                            <select className="form-control" value={companyName1} onChange={e => handleOnChangeSub(e)}>
                                 <option value="" disabled>Select</option>
                                 {
-                                                    props.contactList ? (
-                                                        props.contactList.map((data)=>{
-                                                            if(data.groupname == "Expenses&HOA-Fees"){
-                                                                return(
-                                                                    <option value={data.companyname}>{data.companyname}</option>
-                                                                )
-                                                            }
-                                                        })
-                                                    ): ""
-                                                }
+                                    props.contactList ? (
+                                        props.contactList.map((data) => {
+                                            if (data.groupname == "Expenses&HOA") {
+                                                return (
+                                                    <option value={data.companyname}>{data.companyname}</option>
+                                                )
+                                            }
+                                        })
+                                    ) : ""
+                                }
                             </select>
                             {/* <input type="text" placeholder="Company Name" value={companyName1} onChange={e=> setCompanyName1(e.target.value)} className="form-control" /> */}
                         </div>
@@ -313,9 +353,9 @@ const Hoadetails = (props) => {
                             }} className="form-control" />
                         </div>
                     </div>
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                         <img onClick={()=>togglePopup()} className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="row">
                     <div className="col-md-3"></div>
@@ -330,7 +370,7 @@ const Hoadetails = (props) => {
                     <div className="col-md-2">
                         <div className="form-group">
                             <label htmlFor="HOA pymt frequency">HOA Pymt Frequency</label>
-                            <select className="form-control" value={frequency1} onChange={e=> setFrequency1(e.target.value)} >
+                            <select className="form-control" value={frequency1} onChange={e=>handleFrequencyChange(e)} >
                                 <option value="" disabled>Select</option>
                                 <option value="Month">Monthly</option>
                                 <option value="Quarter">Quarterly</option>
@@ -351,9 +391,8 @@ const Hoadetails = (props) => {
                     <div className="col-md-2">
                         <div className="form-group">
                             <label htmlFor="HOA-Sub">Renewal- Reminder Date</label>
-                            <input type="date"  value={reminder_date} onChange={e=> {
-                                    setReminder_date(e.target.value)
-                            }} className="form-control" />
+                            {console.log("reminder_date",reminder_date)}
+                            <input type="date"  value={reminder_date} onChange={e=> handleRenewalDateChange(e)} className="form-control" />
                         </div>
                     </div>
                     <div className="col-md-2">
@@ -405,7 +444,8 @@ const Hoadetails = (props) => {
 
 const mapStateToProps = (state) => ({
     houseDetails : state.House.houseDetail.data,
-    contactList : state.Contact.contacts.data
+    contactList : state.Contact.contacts.data,
+    accountDetails : state.Account.accountDetails.data
 })
 
 const mapDispatchToProps = {

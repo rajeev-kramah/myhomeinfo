@@ -243,11 +243,16 @@ export const Insurance = {
 
 export const Transaction = {
 	addTransaction(data) {
+		console.log("resT::1",data)
 		return ApiService.post(url + "transaction", data);
 	},
 
 	getTransaction(data) {
 		return ApiService.post(url + "transaction/gethometransactions", data);
+	},
+
+	getTransactionAllData(data) {
+		return ApiService.post(url + "transaction/gettransactionsAllData", data);
 	},
 
 	getSingleTransaction(data) {

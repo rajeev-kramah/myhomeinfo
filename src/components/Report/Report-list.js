@@ -11,7 +11,7 @@ const ReportList = (props) => {
     
     let house_id = props.location.state.house_id ? props.location.state.house_id : "";
     const header = ["Company", "Contact Person", "Mobile No.", "Landline", "Email", "URL", "Address", 'Group'];
-    const [companyname, setCompanyname] = useState('');
+    const [companyname, setCompanyname] = useState('All');
     const [fromdate, setFromdate] = useState(Util.getCurrentDate("-"));
     const [todate, setTodate] = useState(Util.getCurrentDate("-"));
     const [transactionData, setTransactionData] = useState('');
@@ -54,16 +54,25 @@ const ReportList = (props) => {
        }else{
             for(let i=0; i<props.transactions.length; i++){
                 let filterData = props.transactions[i]['groupname'];
-                if(companyname == "Expenses" || companyname == "Income" ||companyname == "Loans"){
+                console.log("companyname::",props.transactions)
+                if(companyname == "Expenses" || companyname == "Income" ||companyname == "Loans" || companyname == "All"){
                     filterData = filterData.split("&")[0];
+                   
 
                 }
                 let createdAT = new Date(props.transactions[i].date);
-               
+                
+                if(companyname == "All"){
+                if(+createdAT >= +formDate && +createdAT <= +toDate){
+                        tableData.push(props.transactions[i]) 
+                }
+                }else{
                 if(companyname == filterData && (+createdAT >= +formDate) && (+createdAT <= +toDate)){
                         tableData.push(props.transactions[i]) 
                        
                 }
+                }
+                
             } 
        }
        
@@ -83,7 +92,12 @@ const ReportList = (props) => {
            
         }
     }
-
+    let conatctdata = props.contacts;
+    conatctdata && conatctdata.length > 0 && conatctdata.sort(function(a, b) {
+        var textA = a.companyname.toUpperCase();
+        var textB = b.companyname.toUpperCase();
+        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+    });
     return (
         <div className="container-fluid contact">
             {console.log("report",reportType)}
@@ -142,6 +156,7 @@ const ReportList = (props) => {
                                             space = "------------"
                                         }
                                     }
+                                   
                                   
                                     return( 
                                         <React.Fragment>
@@ -192,10 +207,11 @@ const ReportList = (props) => {
                                 }
                             </select> */}
 
+                            
                             <select style={reportType== "company" ? {display: "block"} : {display: "none"}} className="form-control" value={companyname} onChange={e=> setCompanyname(e.target.value)}>
                               <option value="" disabled>Select</option>
                                { 
-                                      props.contacts ? (props.contacts.map((data)=>{
+                                     conatctdata ? (conatctdata.map((data)=>{
                                         return(
                                      
                                             <option vlaue={data.companyname}>{data.companyname}</option>

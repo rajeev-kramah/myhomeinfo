@@ -402,7 +402,7 @@ const CreateContact = (props) => {
                     <div className="col-md-4"></div>
                     <div className="col-md-4">
                         <input type="radio" className="checkbox-inline" id="homecost" name="homecost" value={add_to_home_cost} onChange={e=> setAdd_to_home_cost(add_to_home_cost  == 0 ? 1 : 0)}  checked={add_to_home_cost === 1 ? "checked" : false}/> 
-                            <label className="checkbox-inline" id="home">Add To Home Cost</label>
+                        <label className="checkbox-inline" id="home">Add To Home Cost</label>
                     </div> 
                     <div className="col-md-4">
                         <label className="checkbox-inline" id="post">

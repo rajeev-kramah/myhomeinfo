@@ -265,77 +265,89 @@ const Tenant = (props) => {
                 <div className="row">
                     <div className="col-md-3"></div>
                     <div className="col-md-6 house-form pt-25">
-                        <div className="divWithContact">
+                        {/* <div className="divWithContact"> */}
+                        <div className="row">
+                            <div className="col-md-4">
                                 <div className="form-group">
                                     <label htmlFor="Tenant 1 Name">Tenant 1 Name</label>
-                                        <select className="form-control" value={tenant_name1} onChange={e=> handleOnChange1(e)}>
-                                            <option value="" disabled>Select</option>
-                                        
-                                            {
-                                                props.contactList ? (
-                                                    props.contactList.map((data)=>{
-                                                       
-                                                            return(
-                                                                <option value={data.companyname}>{data.companyname}</option>
-                                                            )
-                                                      
-                                                    })
-                                                ): ""
-                                            }
-                                        </select>
+                                    <select className="form-control" value={tenant_name1} onChange={e => handleOnChange1(e)}>
+                                        <option value="" disabled>Select</option>
+
+                                        {
+                                            props.contactList ? (
+                                                props.contactList.map((data) => {
+
+                                                    return (
+                                                        <option value={data.companyname}>{data.companyname}</option>
+                                                    )
+
+                                                })
+                                            ) : ""
+                                        }
+                                    </select>
                                 </div>
-                            
+                            </div>
+                            <div className="col-md-4">
                                 <div className="form-group">
                                     <label htmlFor="Tenant 1 Email">Tenant 1 Email</label>
-                                    <input type="email" value={tenant_email1} onChange={e=>setTenant_email1(e.target.value)} className="form-control" />
+                                    <input type="email" value={tenant_email1} onChange={e => setTenant_email1(e.target.value)} className="form-control" />
                                 </div>
-                            
+                            </div>
+                            <div className="col-md-4">
                                 <div className="form-group">
                                     <label htmlFor="Tenant 1 Phono">Tenant 1 Phone</label>
-                                    <input type="text" id="phoneNumberFormat" maxLength="12" value={tenant_phone1} onChange={e => setTenant_phone1(e.target.value)} onKeyDown={e=> enforceFormat} onKeyUp={e=> formatToPhone} className="form-control" />
+                                    <input type="text" id="phoneNumberFormat" maxLength="12" value={tenant_phone1} onChange={e => setTenant_phone1(e.target.value)} onKeyDown={e => enforceFormat} onKeyUp={e => formatToPhone} className="form-control" />
                                 </div>
-                            
-                             <div>
-                                <img onClick={()=>togglePopup()} className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/>
                             </div>
-                            
-                            
                         </div>
-
-                        <div className="divWithContact">
                             
-                                <div className="form-group">
-                                    <label htmlFor="Tenant 2 Name">Tenant 2 Name</label>
-                                    <select className="form-control" value={tenant_name2} onChange={e=> handleOnChange2(e)}>
+                             {/* <div>
+                                <img onClick={()=>togglePopup()} className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/>
+                            </div> */}
+                            
+                            
+                        {/* </div> */}
+
+                        {/* <div className="divWithContact"> */}
+                            <div className="row">
+                                <div className="col-md-4">
+                                    <div className="form-group">
+                                        <label htmlFor="Tenant 2 Name">Tenant 2 Name</label>
+                                        <select className="form-control" value={tenant_name2} onChange={e => handleOnChange2(e)}>
                                             <option value="" disabled>Select</option>
-                                        
+
                                             {
                                                 props.contactList ? (
-                                                    props.contactList.map((data)=>{
-                                                       
-                                                            return(
-                                                                <option value={data.companyname}>{data.companyname}</option>
-                                                            )
-                                                      
+                                                    props.contactList.map((data) => {
+
+                                                        return (
+                                                            <option value={data.companyname}>{data.companyname}</option>
+                                                        )
+
                                                     })
-                                                ): ""
+                                                ) : ""
                                             }
                                         </select>
-                                </div>
+                                    </div>
+                                    </div>
+                                    <div className="col-md-4">
+                                        <div className="form-group">
+                                            <label htmlFor="Tenant 2 Email">Tenant 2 Email</label>
+                                            <input type="email" value={tenant_email2} onChange={e => setTenant_email2(e.target.value)} className="form-control" />
+                                        </div>
+                                    </div>
+                                    <div className="col-md-4">
+                                        <div className="form-group">
+                                            <label htmlFor="Tenant 2 Phono">Tenant 2 Phone</label>
+                                            <input type="text" value={tenant_phone2} id="phoneNumberFormat1" maxLength="12" onChange={e => setTenant_phone2(e.target.value)} className="form-control" />
+                                        </div>
+                                    </div>
+                                
+                            </div>
                             
-                                <div className="form-group">
-                                    <label htmlFor="Tenant 2 Email">Tenant 2 Email</label>
-                                    <input type="email" value={tenant_email2} onChange={e=>setTenant_email2(e.target.value)} className="form-control" />
-                                </div>
-                            
-                                <div className="form-group">
-                                    <label htmlFor="Tenant 2 Phono">Tenant 2 Phone</label>
-                                    <input type="text" value={tenant_phone2} id="phoneNumberFormat1" maxLength="12" onChange={e=>setTenant_phone2(e.target.value)} className="form-control" />
-                                </div>
-                            
-                                <img onClick={()=>togglePopup()} className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/>
+                                {/* <img onClick={()=>togglePopup()} className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/> */}
                          
-                        </div>
+                        {/* </div> */}
 
 
                         <div className="row">
@@ -360,18 +372,20 @@ const Tenant = (props) => {
                             </div>
                         </div>
 
-                        <div className="divWithContact">
-                            {/* <div className="col-md-4"> */}
-                                <div className="form-group">
-                                    <label htmlFor="Renewed">Renewed ?</label>
+                        {/* <div className="divWithContact">
+                            <div className="col-md-4"> */}
+                                {/* {/* <div className="form-group"> */}
+                                    {/* <label htmlFor="Renewed">Renewed ?</label>
                                     <select className="form-control" value={renewed} onChange={e=> setRenewed(e.target.value)} >
                                         <option value="" disabled>Select</option>
                                         <option value="Yes">Yes</option>
                                         <option value="No">No</option>
                                     </select>
-                                </div>
+                                </div> */}
                             {/* </div> */}
                             {/* <div className="col-md-8"> */}
+                            <div className="row">
+                                <div className="col-md-12">
                                     <div className="form-group ">
                                         <label htmlFor="name">Realtor Name</label>
                                         <select className="form-control" value={realtor_name} onChange={(e) => handleOnChange(e)}>
@@ -389,21 +403,21 @@ const Tenant = (props) => {
                                             }
                                         </select>
                                     </div>
+                                </div>
+                            </div>
                                     
-                                {/* </div> */}
+                                {/* </div>
                                 <div onClick={() => togglePopup()} > <img className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo" /> </div>
-                        </div>
+                        </div> */}
                        
                         <div className="row ">
-                            <div className="col-md-8">
+                            <div className="col-md-6">
                                 <div className="form-group ">
                                     <label htmlFor="phone">Realtor Phone No.</label>
                                     <input id="phoneNumberFormat" maxLength="12" type="text" placeholder="Phone Number" value={realtor_phone} onChange={e => setRealtor_phone(e.target.value)} className="form-control" />
                                 </div>
                             </div>
-                        </div>
-                        <div className="row ">
-                            <div className="col-md-8">
+                            <div className="col-md-6">
                                 <div className="form-group ">
                                     <label htmlFor="email">Realtor Email</label>
                                     <input type="email" placeholder="Email" value={realtor_email} onChange={e => setRealtor_email(e.target.value)} className="form-control" />

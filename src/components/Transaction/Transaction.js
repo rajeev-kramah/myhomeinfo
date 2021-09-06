@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import "../../style/Contact.css";
-import { addTransaction, getSingleTransaction} from "../../store/Actions/Transaction";
+import { addTransaction, getSingleTransaction,deleteTransaction} from "../../store/Actions/Transaction";
 import { connect } from "react-redux";
 import { NotificationManager } from "react-notifications";
 import { Util } from "../../Datamanipulation/Util";
@@ -10,6 +10,7 @@ import ContactModal from "../Contacts/Contact-Modal";
 const Transaction = (props) => {
     let houseId = props.location.state.house_id ? props.location.state.house_id : "";
     let loggedinUser = Util.getLoggedinUser();
+    
     const [accountName, setAccountName] = useState('');
     const [contactPerson,setContactPerson] = useState("");
     const [transactionType,setTransactionType] = useState("");
@@ -27,6 +28,7 @@ const Transaction = (props) => {
     const [showGroup, setShowGroup] = useState(false);
     const [product_name, setProduct_name] = useState('');
     const [warranty_id, setWarranty_id] = useState('');
+    const [is_deleted, setIs_deleted] = useState(0);
 
     /**Escrow Details */
     const [principal, setPrincipal] = useState('');
@@ -52,8 +54,11 @@ const Transaction = (props) => {
     }
 
     const handleDelete = (id) => {
-        props.getSingleTransaction({id : id, delete : "doc"})
-        NotificationManager.error("Success Message", "Attachment deleted");
+        setDocName("")
+        setDocument("")
+        if(document)
+        {props.getSingleTransaction({id : id, delete : "doc"})
+        NotificationManager.error("Success Message", "Attachment deleted");}
     }
 
    
@@ -156,10 +161,13 @@ const Transaction = (props) => {
        }
       
        if(closeStatus){
+       
             form.append("receipt", document);
             let valid = validate();
             if(valid) {
+                
                 props.addTransaction(form)
+                console.log("closeStatus", props)
                 props.history.push(
                     {
                         pathname : "transaction-list",
@@ -171,12 +179,27 @@ const Transaction = (props) => {
            NotificationManager.error("Error Message", "Loan already expired.");
         }
     }
+    const handleDeleteTransaction = () => {
+        let data = {
+            "id": id,
+            "house_id" : house_id,
+            
+        }
+        props.deleteTransaction(data);
+        console.log("datap",data)
+        props.history.push(
+            {
+                pathname : "transaction-list",
+                state : {house_id : house_id}
+            }
+        )
+    }
 
     const handleOnChange = (e) => {
         setAccountName(e.target.value);
         if(props.contactList){
             for(var i=0; i<props.contactList.length; i++){
-                if(e.target.value == props.contactList[i]['id']){
+                if(e.target.value == props.contactList[i]['companyname']){
                     setContactPerson(props.contactList[i].contactperson);
                     setAddToHomeCost(props.contactList[i].add_to_home_cost);
                     if(props.contactList[i].groupname.split("&")[0] === "Income") {
@@ -208,6 +231,8 @@ const Transaction = (props) => {
         return true;
     }
 
+    
+
     return (
         <div className="container-fluid contact">
             <h4>Transactions</h4>
@@ -217,7 +242,7 @@ const Transaction = (props) => {
                     </div>
                     <div className="col-md-6 house-form pt-25">
                     
-                        <div className="divWithContact">
+                        {/* <div className="divWithContact">
                             <div className="form-group">
                                 <label htmlFor="name">Company Name / Account Name</label>
                                     <select className="form-control" value={accountName} onChange={e=> handleOnChange(e)}>
@@ -225,11 +250,9 @@ const Transaction = (props) => {
                                     {
                                         props.contactList ? (
                                             props.contactList.map((data)=>{
-                                                
-                                                return(
-                                                    <option value={data.id}>{data.companyname} - ({data.contactperson})</option>
+                                                    return(
+                                                    <option value={data.companyname}>{data.companyname} - ({data.contactperson})</option>
                                                 )
-                                                
                                             })
                                         ): ""
                                     }
@@ -238,12 +261,38 @@ const Transaction = (props) => {
                             
                             <div className="form-group">
                                 <label htmlFor="Contact Person" className="">Contact Person</label>
-                                <input type="text" placeholder="Contact Person" value={contactPerson} onChange={e=> setContactPerson(e.target.value)} className="form-control" />
+                                <input type="text" placeholder="Contact Person" value={contactPerson} onChange={e=> setContactPerson(e.target.value)} className="form-control" readOnly/>
                             </div>
                             
                                 <div onClick={()=>togglePopup()} ><img className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/>  </div>
-                        </div>
+                        </div> */}
                             
+                        <div className="row">
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label htmlFor="name">Company Name / Account Name</label>
+                                        <select className="form-control" value={accountName} onChange={e=> handleOnChange(e)}>
+                                        <option value="" disabled>Select</option>
+                                        {
+                                            props.contactList ? (
+                                                props.contactList.map((data)=>{
+                                                        return(
+                                                        <option value={data.companyname}>{data.companyname} - ({data.contactperson})</option>
+                                                    )
+                                                })
+                                            ): ""
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label htmlFor="Contact Person" className="">Contact Person</label>
+                                    <input type="text" placeholder="Contact Person" value={contactPerson} onChange={e=> setContactPerson(e.target.value)} className="form-control" readOnly/>
+                                </div>
+                            </div>
+                        </div>
+
                         <div className="row">
                             <div className="col-md-6">
                                 <div className="form-group">
@@ -339,9 +388,14 @@ const Transaction = (props) => {
                             </div>
 
                             <div className="col-md-4" style={{marginTop: "2%"}}>
-                                <a type="button"  className="btn btn-primary btn-sm addNewItem " href={download ? download : "javascript:void(0)"}><span className="glyphicon glyphicon-download-alt"> </span> Download Attachment</a>
-                                <button type="button"  className="btn btn-primary btn-sm addNewItem " onClick={()=>handleDelete(id)}><span className="glyphicon glyphicon-trash"> </span> Delete Attachment </button>
+                                {/* <a type="button"  className="btn btn-primary btn-sm addNewItem " href={download ? download : "javascript:void(0)"}><span className="glyphicon glyphicon-download-alt"> </span> Download Attachment</a>
+                                <button type="button"  className="btn btn-primary btn-sm addNewItem " onClick={()=>handleDelete(id)}><span className="glyphicon glyphicon-trash"> </span> Delete Attachment </button> */}
+                                <div className="dflex">
+                                    <i className="glyphicon glyphicon-eye-open primary  btn-lg addNewItemlogo" value={document}  ></i>
+                                    <i className="glyphicon glyphicon-download-alt primary  btn-lg addNewItemlogo"href={download ? download : "javascript:void(0)"} value={document}  ></i>
+                                    <i className="glyphicon glyphicon-trash primary  btn-lg d-flex addNewItemlogo1" value={document} onClick={() => handleDelete(id)}></i>
                                 </div>
+                            </div>
                         </div>
 
                         <div className="row ">
@@ -383,7 +437,7 @@ const Transaction = (props) => {
                     <div className="col-md-4">
                         {
                             id ? (
-                                <button className="btn btn-default btn-sm addNewItem">  <span className="glyphicon glyphicon-trash"> </span> Delete Entry</button>
+                                <button className="btn btn-default btn-sm addNewItem" onClick={handleDeleteTransaction}>  <span className="glyphicon glyphicon-trash"> </span> Delete Entry</button>
                             ):""
                         }
                     </div>
@@ -407,7 +461,8 @@ const mapDispatchToProps = {
     addTransaction,
     getSingleTransaction,
     getContactForTransaction,
-    getContact
+    getContact,
+    deleteTransaction
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Transaction);

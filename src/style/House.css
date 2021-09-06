@@ -122,9 +122,43 @@
     color: var(--blue);
     margin-top: 10px;
     margin-right: 20px;
+    font-weight: 500;
     border-color:var(--blue) ;
 }
 
+.addNewItemlogo{
+    background-color: white;
+    color: var(--blue);
+    margin-top: 20px;
+    margin-right: 6px;
+    font-weight: 100;
+    font-size: large;
+    cursor: pointer;
+    border-color:var(--blue) ;
+}
+.addNewItemlogo1232{
+    background-color: white;
+    color: var(--blue);
+    margin-top: -10px !important;
+    margin-right: 6px;
+    font-weight: 100;
+    font-size: large;
+    cursor: pointer;
+    border-color:var(--blue) ;
+}
+.addNewItemlogo1{
+    background-color: white;
+    color: var(--blue);
+    margin-top: 20px;
+    /* margin-right: 6px; */
+    font-weight: 100;
+    font-size: large;
+    cursor: pointer;
+    border-color:var(--blue) ;
+}
+.dflex{
+    display: flex;
+}
 .addNewItem:hover{
     background-color: white;
     color: var(--blue);

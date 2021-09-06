@@ -12,6 +12,7 @@ const LenderDetails = (props) => {
     let houseId = props.location.state.house_id ? props.location.state.house_id : "";
     const [lease_begin,setLease_begin] = useState(Util.getCurrentDate("-"));
     const [lease_end,setLease_end] = useState(Util.getCurrentDate("-"));
+    const [lease_date,setLease_date] = useState(lease_end);
     const [frequency,setFrequency] = useState('');
     const [rent,setRent] = useState('');
     const [rent_due_by,setRent_due_by] = useState('');
@@ -37,6 +38,8 @@ const LenderDetails = (props) => {
     const [house_id, setHouse_id] = useState(houseId);
     const [docName, setDocName] = useState('');
     const [download, setDownload] = useState('');
+    const [lease_amount, setLease_amount] = useState('');
+    
 
     useEffect(()=> {
         if(props.leaseDetails && props.leaseDetails.length > 0) {
@@ -58,6 +61,7 @@ const LenderDetails = (props) => {
             setPets(props.leaseDetails[0].pets);
             setDeposit(props.leaseDetails[0].deposit);
             setRenewed(props.leaseDetails[0].renewed);
+            setLease_amount(props.leaseDetails[0].lease_amount);
             setRealtor_name(props.leaseDetails[0].realtor_name);
             setRealtor_phone(props.leaseDetails[0].realtor_phone);
             setRealtor_email(props.leaseDetails[0].realtor_email);
@@ -112,9 +116,10 @@ const LenderDetails = (props) => {
             "hmo_space": hmo_space,
             "space_description": space_description,
             "comment": comment,
-            "house_id": house_id
+            "house_id": house_id,
+            "lease_amount":lease_amount
         }
-
+console.log("dataLease",data)
         var form = new FormData();
 
         for (const key in data) {
@@ -186,13 +191,91 @@ const LenderDetails = (props) => {
             }
         });
     }
+
     const handleDelete = (id) => {
+        // console.log("document",document,docName)
+        setDocument("");
+        setDocName("");
         if (document) {
             props.getSingleLease({ id: id, delete: "doc" })
             NotificationManager.error("Success Message", "Attachment deleted");
         }
     }
+    const handleOpen = (id) => {
+        let filename = '../../../public/files/1630410748358-hsbc.jpg';
+        let data =  require('../../Logo.png');
+        console.log(data);
+        // console.log("Openhere111",document)
+        // `window.location.origin + '${data}`, '_blank'
+        // location.href=`'../../../public/files/${document.name}'`
+        // setDocument(document)
 
+    
+    }
+    // const handleDownload = (id) => {
+    //     console.log("downloadhere",download)
+    //     setDocument(download)
+    //     setDownload(document)
+    //     if(download) {
+    //         props.getSingleLease({id: id, download: "doc.pdf"})
+        
+    //     }
+       
+    // }
+const handleDownload = (id) => {
+    console.log("downloadhere",download)
+}
+
+
+const handleFrequencyChange = (e) => {
+    // var chooseDate=new Date(lease_end);
+    // if(frequency === "Monthly"){
+    //     chooseDate.setMonth(chooseDate.getMonth()+1);
+    // }else if(frequency === "Yearly"){
+    //     chooseDate.setMonth(chooseDate.getMonth()+12);
+    // }
+    // let futureDate = chooseDate.getFullYear()+'-'+('0'+(chooseDate.getMonth()+1)).slice(-2)+'-'+('0'+(chooseDate.getDate())).slice(-2);
+    // //  alert(futureDate);
+    // // e.target.value && 
+    // lease_end !=='' && setLease_date(futureDate);
+    // setLease_date(futureDate);
+    setFrequency(e.target.value)
+    console.log("lease_frequency",e.target.value)
+    handleSetDate(lease_end,e.target.value);
+}
+
+const handleSetDate = (date,lease_frequency) => {
+    var chooseDate=new Date(date);
+    if(lease_frequency === "Monthly"){
+        chooseDate.setMonth(chooseDate.getMonth()+1);
+    }else if(lease_frequency === "Yearly"){
+        chooseDate.setMonth(chooseDate.getMonth()+12);
+    } else {
+        chooseDate.setMonth(chooseDate.getMonth()+1);
+    }
+    let futureDate = chooseDate.getFullYear()+'-'+('0'+(chooseDate.getMonth()+1)).slice(-2)+'-'+('0'+(chooseDate.getDate())).slice(-2);
+    lease_end !=='' && setLease_date(futureDate);
+}
+
+const handleRenewedChange = (e) => {
+    handleSetDate(lease_end,frequency);
+    setRenewed(e.target.value);
+}
+
+const handleLeaseEndChange = (e) => {
+    handleSetDate(e.target.value,frequency);
+    setLease_end(e.target.value);
+}
+
+const leasedateChange = () => {
+    console.log("lease_end",lease_end)
+    var date = new Date(lease_end);
+    date.setDate(date.getDate() + 30);
+    // date.setDate(date.getFullYear());
+    console.log("lease_end::",date)
+  return date;
+  
+}
     const tabs = [
         {pathname : "/tenant", label : "Tenants "},
         {pathname : "/Lease", label : "Lease"},
@@ -219,8 +302,9 @@ const LenderDetails = (props) => {
                             </div>
                             <div className="col-md-6">
                                 <div className="form-group">
+                                    {console.log("lease_end",lease_end)}
                                     <label htmlFor="lease_end" className="req">Lease End Date</label>
-                                    <input type="date" value={lease_end} onChange={e=>setLease_end(e.target.value)}className="form-control" />
+                                    <input type="date" value={lease_end} onChange={e=>handleLeaseEndChange(e)}className="form-control" />
                                 </div>
                             </div>
                         </div>
@@ -230,7 +314,7 @@ const LenderDetails = (props) => {
                             <div className="col-md-6">
                                 <div className="form-group">
                                     <label htmlFor="Frequency" className="req">Frequency</label>
-                                    <select className="form-control" value={frequency} onChange={e=> setFrequency(e.target.value)} >
+                                    <select className="form-control" value={frequency} onChange={e=>handleFrequencyChange(e)} >
                                         <option value="" disabled>Select</option>
                                         <option value="Monthly">Monthly</option>
                                         <option value="Yearly">Yearly</option>
@@ -263,6 +347,37 @@ const LenderDetails = (props) => {
                                 </div>
                             </div>
                         </div>
+                        <div className="row">
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label htmlFor="Renewed">Renewed ?</label>
+                                    <select className="form-control" value={renewed} onChange={e => handleRenewedChange(e)} >
+                                        <option value="" disabled>Select</option>
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        {renewed === "Yes" ?
+                            <div className="row">
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label htmlFor="Lease Amount">Lease Amount</label>
+                                        <input type="text" placeholder="Lease Amount" value={lease_amount} onChange={e => setLease_amount(e.target.value)} className="form-control" />
+                                    </div>
+                                </div>
+                              
+                                <div className="col-md-6">
+                                    {console.log("lease_date",lease_date)}
+                                    <div className="form-group">
+                                        <label htmlFor="lease_end" className="req">Lease Date</label>
+                                        <input type="date" value={lease_date} onChange={e=>setLease_date(e.target.value)}  className="form-control" readOnly/>
+                                    </div>
+                                </div>
+                            </div>
+                            :
+                            null}
                         <div className="row ">
                             <div className="col-md-8">
                                 <div className="form-group">
@@ -280,10 +395,16 @@ const LenderDetails = (props) => {
                             <div className="col-md-4" style={{ marginTop: "2%" }}>
                                 {/* <a type="button" className="btn btn-primary btn-sm addNewItem " href={download ? download : "javascript:void(0)"}>
                                     <span className="glyphicon glyphicon-download-alt"> </span> Download Attachment</a> */}
-                                    <button type="button"  className="btn btn-primary btn-sm addNewItem " href={download ? download : "javascript:void(0)"} download={document}>
-                                    <span className="glyphicon glyphicon-download-alt"> </span> Download Attachment
+                                    {/* <button type="button"  className="btn btn-primary btn-sm addNewItem " href={download ? download : "javascript:void(0)"} download={document}>
+                                    <span className="glyphicon glyphicon-download-alt"> </span>
                                 </button>
-                                <button type="button" className="btn btn-primary btn-sm addNewItem " onClick={() => handleDelete(id)}><span className="glyphicon glyphicon-trash"> </span> Delete Attachment </button>
+                                <button type="button" className="btn btn-primary btn-sm addNewItem " onClick={() => handleDelete(id)}><span className="glyphicon glyphicon-trash"> </span> </button>
+                                <button type="button" className="btn btn-primary btn-sm addNewItem " onClick={() => handleDelete(id)}><span className="glyphicon glyphicon-eye-open"> </span> </button> */}
+                                <div className="dflex">
+                                    <i className="glyphicon glyphicon-eye-open primary  btn-lg addNewItemlogo" value={document}  onClick={() => handleOpen(id)}></i>
+                                    <i className="glyphicon glyphicon-download-alt primary  btn-lg addNewItemlogo" value={document} onClick={() => handleDownload(id)} ></i>
+                                    <i className="glyphicon glyphicon-trash primary  btn-lg d-flex addNewItemlogo1" value={document} onClick={() => handleDelete(id)}></i>
+                                </div>
                             </div>
                         </div>
                         <div className="row ">

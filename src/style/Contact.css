@@ -43,6 +43,9 @@ table.dataTable.no-footer {
     overflow-y: scroll;
     
 }
+.emaillabel{
+    margin-left: 25px;
+}
   
 .modal_content {
     background-color: white;
@@ -105,7 +108,9 @@ table.dataTable.no-footer {
     visibility: visible;
 }
 
-
+.bothmo_email {
+    margin-top: 30px;
+}
 
 
 

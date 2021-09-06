@@ -14,12 +14,13 @@ const Contact = (props) => {
     let house_id = props.location.state.house_id ? props.location.state.house_id : "";
     const [groupName, setGroupName] = useState('');
     const [contactPerson, setContactPerson] = useState('');
-    const [phonenumber, setPhoneNumber] = useState('');
-    const [landline, setLandline] = useState('');
+    const [phonetype1, setphonetype1] = useState('');
+    const [phonetype2, setphonetype2] = useState('');
+    const [phone1, setphone1] = useState('');
+    const [phone2, setphone2] = useState('');
     const [email, setEmail] = useState('');
     const [company, setCompany] = useState('');
     const [address, setAddress] = useState('');
-    const [mobile, setMobile] = useState('');
     const [streetName, setStreetName] = useState('');
     const [url, setUrl] = useState('');
     const [city, setCity] = useState('');
@@ -52,12 +53,13 @@ const Contact = (props) => {
         if(props.contactDetails && props.contactDetails.length > 0){
             setGroupName(props.contactDetails[0].groupname);
             setContactPerson(props.contactDetails[0].contactperson);
-            setPhoneNumber(props.contactDetails[0].phonenumber);
-            setLandline(props.contactDetails[0].landline);
+            setphonetype1(props.contactDetails[0].phonenumber);
+            setphonetype2(props.contactDetails[0].phonenumber1);
+            setphone1(props.contactDetails[0].phone1);
             setEmail(props.contactDetails[0].email);
             setCompany(props.contactDetails[0].companyname);
             setAddress(props.contactDetails[0].address);
-            setMobile(props.contactDetails[0].mono);
+            setphone2(props.contactDetails[0].phone2);
             setUrl(props.contactDetails[0].url);
             setComment(props.contactDetails[0].comment);
             setHouseId(props.contactDetails[0].house_id);
@@ -94,9 +96,10 @@ const Contact = (props) => {
         let data = {
             "groupname": groupName,
             "contactperson": contactPerson ? contactPerson : company,
-            "phonenumber": phonenumber,
-            "mono" : mobile,
-            "landline" : landline,
+            "phonetype1": phonetype1,
+            "phonetype2": phonetype2,
+            "phone2" : phone2,
+            "phone1" : phone1,
             "email" : email,
             "companyname" : company,
             "address" : address,
@@ -136,11 +139,11 @@ const Contact = (props) => {
             NotificationManager.error("Error Message", "Company Name cannot be empty.");
             return false;
         } 
-        else if(phonenumber === "" || phonenumber === undefined){
+        else if(phonetype1 === "" || phonetype1 === undefined){
             NotificationManager.error("Error Message", "Phonenumber cannot be empty.");
             return false;
         }
-        else if(mobile === "" || mobile === undefined){
+        else if(phone1 === "" || phone1 === undefined){
             NotificationManager.error("Error Message", "Mobile cannot be empty.");
             return false;
         }else if(email === "" || email === undefined) {
@@ -329,30 +332,44 @@ const Contact = (props) => {
                             </div>
                         </div>
                         <div className="row">
-                            <div className="col-md-4">
+                            <div className="col-md-6">
                                 <div className="form-group">
-                                    <label htmlFor="phonenumber" className="req">Phone Number</label>
-                                    <select className="form-control" value={phonenumber} onChange={e => setPhoneNumber(e.target.value)} >
+                                    <label htmlFor="phonenumber" className="req">Phone Type</label>
+                                    <select className="form-control" value={phonetype1} onChange={e => setphonetype1(e.target.value)} >
                                         <option value="" disabled>Select</option>
                                         <option value="Mobile">Mobile</option>
                                         <option value="Landline">Landline</option>
                                        
-                                    </select>{console.log("phonenumber",phonenumber)}
+                                    </select>{console.log("phonenumber",phonetype1)}
                                 </div>
                             </div>
-                            <div className="col-md-4">
+                            <div className="col-md-6">
                                 <div className="form-group inputGroup">
-                                    <label htmlFor="landline" className="req">Phone 1</label>
-                                    <input id="phoneNumberFormat" type="text" placeholder="Phone 1" value={mobile} onChange={e => setMobile(e.target.value)}  className="form-control" />
+                                    <label htmlFor="phone1" className="req">Phone 1</label>
+                                    <input  maxLength="12" type="text" placeholder="Phone 1" value={phone1} onChange={e => setphone1(e.target.value)}  className="form-control" />
                                 </div>
                             </div>
-                            <div className="col-md-4">
+                            </div>
+                            <div className="row">
+                             <div className="col-md-6">
+                                <div className="form-group">
+                                    <label htmlFor="phonenumber" >Phone Type</label>
+                                    <select className="form-control" value={phonetype2} onChange={e => setphonetype2(e.target.value)} >
+                                        <option value="" disabled>Select</option>
+                                        <option value="Mobile">Mobile</option>
+                                        <option value="Landline">Landline</option>
+                                       
+                                    </select>{console.log("phonenumber",phonetype2)}
+                                </div>
+                            </div>
+                            <div className="col-md-6">
                                 <div className="form-group inputGroup">
-                                    <label htmlFor="mobile" >Phone 2</label>
-                                    <input  maxLength="12" type="text" placeholder="Phone 2" value={landline} onChange={e => setLandline(e.target.value)} className="form-control" />
+                                    <label htmlFor="phone1" >Phone 2</label>
+                                    <input  maxLength="12" type="text" placeholder="Phone 2" value={phone2} onChange={e => setphone2(e.target.value)} className="form-control" />
                                 </div>
                             </div>
                         </div>
+                        
                         <div className="row">
                             <div className="col-md-6">
                                 <div className="form-group inputGroup">

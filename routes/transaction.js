@@ -466,6 +466,36 @@ const removeCommas = (nStr) =>{
 	}
 });
 
+// * Get All Transaction Details
+//  */
+ router.post("/gettransactionsAllData", async (req, res) => {
+	if (!req.body.house_id) {
+		res.send(result.response(422, "", "house_id is empty"));
+	}else
+	{	con.connect(function(err) {
+		// var sql = "SELECT transactions.id, account_name, is_deleted,date, contact_person, type, amount, comments,receipt, created_at, entered_by, contacts.groupname,contacts.companyname From transactions INNER JOIN contacts ON transactions.account_name = contacts.id where is_deleted = 0 and transactions.house_id='"+req.body.house_id+"'";
+		let transactionAllData = [];
+		var sql = "SELECT * From transactions order by id desc"
+		con.query(sql, function (err, transactions) {
+			if (err) {
+				console.log("reas::err",err)
+				res.send(
+					result.response(
+						500,
+						err,
+						"OOPS, Something went wrong !, Please try again"
+					)
+				);
+			} 
+			else {
+				
+				transactionAllData = [...transactions]
+				res.send(result.response(200, transactions, "Transaction All Details"));
+				
+			}
+		});
+	})}
+});
 
 /**
  * Delete single Transaction

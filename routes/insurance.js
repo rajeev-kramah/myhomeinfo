@@ -59,9 +59,11 @@ router.post("/", upload.single("attachment"), async (req, res) => {
 	let attachments = "";
 	let company_name = req.body.company_name;
 	let agent_name = req.body.agent_name;
+	let contact_person = req.body.contact_person;
 	let company_address = req.body.company_address;
 	let company_phone = req.body.company_phone;
 	let company_email = req.body.company_email;
+	let provider_phone = req.body.provider_phone;
 	let reminder_date = req.body.reminder_date;
 	let reminder_phone = req.body.reminder_phone;
 	let reminder_email = req.body.reminder_email;
@@ -75,10 +77,10 @@ router.post("/", upload.single("attachment"), async (req, res) => {
             attachments = req.file.path;
         }
 
-		var sql = "INSERT INTO insurances (provider, insurance_number, effective_date, expiry_date, premium, provider_url, renewed, attachments, company_name, agent_name, company_address, company_phone, company_email, reminder_date, reminder_phone, reminder_email, reminder_alternate_email, comments, status, house_id) VALUES ('"+provider+"', '"+insurance_number+"', '"+effective_date+"', '"+expiry_date+"', '"+premium+"', '"+provider_url+"','"+renewed+"', '"+attachments+"', '"+company_name+"', '"+agent_name+"', '"+company_address+"', '"+company_phone+"', '"+company_email+"', '"+reminder_date+"', '"+reminder_phone+"', '"+reminder_email+"', '"+reminder_alternate_email+"', '"+comments+"', '"+status+"', '"+house_id+"')";
+		var sql = "INSERT INTO insurances (provider, insurance_number, provider_phone,effective_date, expiry_date, premium, provider_url, renewed, attachments, company_name, agent_name, contact_person,company_address, company_phone, company_email, reminder_date, reminder_phone, reminder_email, reminder_alternate_email, comments, status, house_id) VALUES ('"+provider+"', '"+insurance_number+"','"+provider_phone+"', '"+effective_date+"', '"+expiry_date+"', '"+premium+"', '"+provider_url+"','"+renewed+"', '"+attachments+"', '"+company_name+"', '"+agent_name+"', '"+contact_person+"', '"+company_address+"', '"+company_phone+"', '"+company_email+"', '"+reminder_date+"', '"+reminder_phone+"', '"+reminder_email+"', '"+reminder_alternate_email+"', '"+comments+"', '"+status+"', '"+house_id+"')";
 
 		if(id){
-			sql = "UPDATE insurances SET provider = '"+provider+"', insurance_number = '"+insurance_number+"', effective_date = '"+effective_date+"', expiry_date = '"+expiry_date+"', premium = '"+premium+"', provider_url = '"+provider_url+"', renewed = '"+renewed+"', company_name = '"+company_name+"', agent_name = '"+agent_name+"', company_address = '"+company_address+"', company_phone = '"+company_phone+"', company_email = '"+company_email+"', reminder_date = '"+reminder_date+"', reminder_phone = '"+reminder_phone+"', reminder_email = '"+reminder_email+"', reminder_alternate_email = '"+reminder_alternate_email+"', comments = '"+comments+"', status = '"+status+"'";
+			sql = "UPDATE insurances SET provider = '"+provider+"', insurance_number = '"+insurance_number+"', effective_date = '"+effective_date+"', expiry_date = '"+expiry_date+"', premium = '"+premium+"', provider_url = '"+provider_url+"', renewed = '"+renewed+"', company_name = '"+company_name+"', agent_name = '"+agent_name+"',contact_person = '"+contact_person+"', company_address = '"+company_address+"', company_phone = '"+company_phone+"', company_email = '"+company_email+"', reminder_date = '"+reminder_date+"', provider_phone = '"+provider_phone+"',reminder_phone = '"+reminder_phone+"', reminder_email = '"+reminder_email+"', reminder_alternate_email = '"+reminder_alternate_email+"', comments = '"+comments+"', status = '"+status+"'";
 
 			if(attachments) {
 				sql += ", attachments = '"+attachments+"'";

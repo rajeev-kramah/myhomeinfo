@@ -17,7 +17,7 @@
     --lightGray: #F1F5FA;
 }
 .house-header .inactive-title {
-	font-weight: 500 !important;
+	font-weight: 900 !important;
 }
 .rdt_Table,
 .rdt_Pagination{
@@ -446,4 +446,8 @@ section {
     font-weight: 500 !important;
     margin-left: 10px;
     font-size:14px;
+}
+.checkedPhone {
+    display: flex;
+    align-items: center;
 }

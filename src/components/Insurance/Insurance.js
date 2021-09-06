@@ -15,7 +15,7 @@ const Insurance = (props) => {
 
     const [insurance_number, setInsurance_number] = useState('');
     const [provider, setProvider] = useState('');
-    const [contactPerson, setContactPerson] = useState('');
+    const [contact_person, setContactPerson] = useState('');
     const [effective_date, setEffective_date] = useState(Util.getCurrentDate("-"));
     const [expiry_date, setExpiry_date] = useState(Util.getCurrentDate("-"));
     const [provider_phone, setProvider_phone] = useState('');
@@ -37,8 +37,6 @@ const Insurance = (props) => {
     const [house_id, setHouse_id] = useState(houseid);
     const [id, setId] = useState('');
     const [status, setStatus] = useState('Active');
-
-
     const [showGroup, setShowGroup] = useState(false);
     const [attachment, setAttachment] = useState('');
     const [attachment_name, setAttachment_name] = useState('');
@@ -65,8 +63,8 @@ const Insurance = (props) => {
             setCompany_email(props.insuranceDetails[0].company_email);
             setCompany_address(props.insuranceDetails[0].company_address);
             setReminder_date(props.insuranceDetails[0].reminder_date);
-            setReminder_phone(props.insuranceDetails[0].reminder_phone);
-            setReminder_email(props.insuranceDetails[0].reminder_email);
+            // setReminder_phone(props.insuranceDetails[0].reminder_phone);
+            // setReminder_email(props.insuranceDetails[0].reminder_email);
             setReminder_alternate_email(props.insuranceDetails[0].reminder_alternate_email);
             setComments(props.insuranceDetails[0].comments);
             setHouse_id(props.insuranceDetails[0].house_id);
@@ -74,19 +72,22 @@ const Insurance = (props) => {
             setAttachment_name(props.insuranceDetails[0].attachments.split('-')[1]);
             setDownload(props.insuranceDetails[0].attachments ?( "../files/" + props.insuranceDetails[0].attachments.substr(11))  :"");
         }
-
+        if(props.accountDetails && props.accountDetails.length > 0) {
+            setReminder_email(props.accountDetails[0].email);
+            setReminder_phone(props.accountDetails[0].mono);
+        }
         let data = {
             "house_id":house_id
         }
         props.getContact(data);
-    },[props.insuranceDetails]);
+    },[props.insuranceDetails,props.accountDetails]);
 
     const handleSubmit = () => {
         
         let data = {
             "insurance_number": insurance_number,
             "provider" : provider,
-            "contact_person" : contactPerson,
+            "contact_person" : contact_person,
             "provider_phone": provider_phone,
             "effective_date": effective_date,
             "expiry_date": expiry_date,
@@ -186,6 +187,8 @@ const Insurance = (props) => {
     }
 
     const handleDelete = (id) => {
+       setAttachment_name("");
+        setAttachments("")
         props.getSingleInsurance({id : id, delete : "doc"})
         NotificationManager.error("Success Message", "Attachment deleted");
     }
@@ -340,9 +343,9 @@ const Insurance = (props) => {
                     <div className="col-md-2">
                         <div className="form-group">
                             <label htmlFor="Insurance Number" >Contact Person</label>
-                            <input type="text" placeholder="Provider Name" value={contactPerson} onChange={e=> {
+                            <input type="text" placeholder="Provider Name" value={contact_person} onChange={e=> {
                                     setContactPerson(e.target.value)
-                            }} className="form-control" />
+                            }} className="form-control" readOnly/>
                         </div>
                     </div>
                     <div className="col-md-2">
@@ -353,9 +356,9 @@ const Insurance = (props) => {
                             }} className="form-control" />
                         </div>
                     </div>
-                    <div className="col-md-3">
+                    {/* <div className="col-md-3">
                         <img onClick={()=>togglePopup()} className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="row">
                     <div className="col-md-3"></div>
@@ -402,7 +405,7 @@ const Insurance = (props) => {
                             <label htmlFor="name">Agent Name</label>
                             <input type="text" placeholder="Agent Name" value={agent_name} onChange={e=> {
                                 setAgent_name(e.target.value)
-                                }} className="form-control" />
+                                }} className="form-control" readOnly/>
                         </div>
                     </div>
                     <div className="col-md-2">
@@ -414,7 +417,7 @@ const Insurance = (props) => {
                         </div>
                     </div>
                     <div className="col-md-3">
-                        <img onClick={()=>togglePopup()} className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/>
+                        {/* <img onClick={()=>togglePopup()} className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/> */}
                     </div>
                 </div>
                 <div className="row">
@@ -495,7 +498,7 @@ const Insurance = (props) => {
                                 <div className="form-group">
                                     <label htmlFor="Remind On" className="">Renewal-Reminder Date</label>
                                     <input type="date" style={{textTransform:'uppercase'}} placeholder="Remind On" value={reminder_date} onChange={e=> {
-                                         setReminder_date(e.target.value)
+                                         setReminder_date(new Date(e.target.value).toDateString().toString());
                                     }} className="form-control"/>
                                 </div>
                             </div>
@@ -510,38 +513,51 @@ const Insurance = (props) => {
                             <div className="col-md-2">
                                 <div className="form-group">
                                     <label htmlFor="Alternate Email" className="">Reminder Email Id</label>
-                                    <input type="email" placeholder="Reminder Email" value={reminder_alternate_email} onChange={e=> setReminder_alternate_email(e.target.value)} className="form-control" />
+                                    <input type="email" placeholder="Reminder Email" value={reminder_email} onChange={e=> setReminder_email(e.target.value)} className="form-control" />
                                 </div>
                             </div>
                         </div>
-                        <div className="row ">
+                        <div className="row">
                             <div className="col-md-3"></div>
                             <div className="col-md-6">
-                                <div className="form-group">
+                                 <div className="form-group">
                                     <label htmlFor="attachment">Attachments</label>
                                     <label htmlFor="file" className="fileContainer">
                                         <div className="attachfile" align="center">
                                             <i>Attach Policy &amp; Receipt</i>
                                             <p>{attachment_name ? attachment_name : ""}</p>
-                                           
+
                                         </div>
-                                      <input type="file" style={{height:"0px"}}  id="file" onChange={(event)=>handleDocumentUpload(event)} className="form-control" style={{"visibility":"hidden"}} />
+                                        <input type="file" style={{ height: "0px" }} id="file" onChange={(event) => handleDocumentUpload(event)} className="form-control" style={{ "visibility": "hidden" }} />
                                     </label>
                                 </div>
-                            </div>
-                        <div className="row">
-                            <div className="col-md-3"></div>
-                            <div className="col-md-6" style={{marginTop:"-20px", marginBottom:"10px"}}>
-                                <button type="button"  className="btn btn-primary btn-sm addNewItem " href={download ? download : "javascript:void(0)"} download={attachments}>
-                                    <span className="glyphicon glyphicon-download-alt"> </span> Download Attachment
-                                </button>
-                                <button type="button"  className="btn btn-primary btn-sm addNewItem pull-right " style={{marginRight:"0px"}} onClick={()=>handleDelete(id)}>
-                                    <span className="glyphicon glyphicon-trash"> </span> Delete Attachment 
-                                </button>
-                            </div>
+                                </div>
                         </div>
-                      
+                        {/* <div className="row "> */}
+                            {/* <div className="col-md-3"></div> */}
+                            {/* <div className="col-md-12">
+                                <
+                            </div>
+                        </div> */}
+                <div className="row">
+                    <div className="col-md-3"></div>
+                    {/* <div className="col-md-6" style={{marginTop:"-20px", marginBottom:"10px"}}>
+                                        <button type="button"  className="btn btn-primary btn-sm addNewItem " href={download ? download : "javascript:void(0)"} download={attachments}>
+                                            <span className="glyphicon glyphicon-download-alt"> </span> Download Attachment
+                                        </button>
+                                        <button type="button"  className="btn btn-primary btn-sm addNewItem pull-right " style={{marginRight:"0px"}} onClick={()=>handleDelete(id)}>
+                                            <span className="glyphicon glyphicon-trash"> </span> Delete Attachment 
+                                        </button>
+                                    </div> */}
+
+                    <div className="dflex">
+                        <i className="glyphicon glyphicon-eye-open primary  btn-lg addNewItemlogo1232" value={attachment} ></i>
+                        <i className="glyphicon glyphicon-download-alt primary  btn-lg addNewItemlogo1232" value={attachment}  ></i>
+                        <i className="glyphicon glyphicon-trash primary  btn-lg d-flex addNewItemlogo1232" value={attachment} onClick={()=>handleDelete(id)}></i>
                     </div>
+                </div>
+                      
+                    
                     
                 </div>
                 <div className="row footer ">
@@ -566,7 +582,8 @@ const mapStateToProps = (state) =>
 ({
     insuranceDetails : state.Insurance.insuranceDetails.data,
     houseDetails: state.House.houseDetail.data,
-    contactList : state.Contact.contacts.data
+    contactList : state.Contact.contacts.data,
+    accountDetails : state.Account.accountDetails.data
     
 });
 

@@ -246,9 +246,9 @@ const Provider = (props) => {
                 <div className="row">
                     <div className="col-md-3"></div>
                     <div className="col-md-6">
-                        <div className="divWithContact">
-                                
-                                <div className="form-group">
+                        {/* <div className="divWithContact"> */}
+                            {/* <div className="row"> */}
+                                {/* <div className="form-group col-md-6">
                                     <label htmlFor="name">Warranty Provider</label>
                                         <select className="form-control" value={warranty_provider} onChange={e=> handleOnChange(e)}>
                                             <option value="" disabled>Select</option>
@@ -267,24 +267,57 @@ const Provider = (props) => {
                                         </select>
                                 </div>
 
-                                <div className="form-group">
+                                <div className="form-group col-md-6">
                                     <label htmlFor="Contact Person" className="req">Contact Person</label>
                                     <input type="text" placeholder="Contact Person" value={contact_person} onChange={e=> {
                                             setContact_person(e.target.value)
                                     }} className="form-control" />
-                                </div>
+                                </div> */}
+                                {/* </div> */}
+                               
                             
                               
-                                <div onClick={()=>togglePopup()} > <img className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/></div>
+                                {/* <div onClick={()=>togglePopup()} > <img className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/></div> */}
                             
-                            </div>
+                            {/* </div> */}
                        
                         <div className="row">
-                        <div className="col-md-6">
+                            <div className="col-md-6">
+                            <div className="form-group">
+                                    <label htmlFor="name" className="req">Warranty Provider</label>
+                                        <select className="form-control" value={warranty_provider} onChange={e=> handleOnChange(e)}>
+                                            <option value="" disabled>Select</option>
+                                            {
+                                                props.contactList ? (
+                                                    props.contactList.map((data)=>{
+                                                        if(data.groupname == "Expenses&Warranty"){
+                                                            return(
+                                                                <option value={data.id}>{data.companyname}</option>
+                                                            )
+                                                        }
+                                                      
+                                                    })
+                                                ): ""
+                                            }
+                                        </select>
+                                </div>
+                            </div>
+                            <div className="col-md-6">
+                                 <div className="form-group">
+                                    <label htmlFor="Contact Person" >Contact Person</label>
+                                    <input type="text" placeholder="Contact Person" value={contact_person} onChange={e=> {
+                                            setContact_person(e.target.value)
+                                    }} className="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-md-6">
                                 <div className="form-group">
                                     <label htmlFor="Email ID" className="">Email ID</label>
-                                    <input type="email" placeholder="Email ID" value={email} onChange={e=> {
-                                            setEmail(e.target.value)
+                                    <input type="email" placeholder="Email ID" value={email} onChange={e => {
+                                        setEmail(e.target.value)
                                     }} className="form-control" />
                                 </div>
                             </div>

@@ -292,7 +292,7 @@ const LoanDetails = (props) => {
                                 </div>
                             </div>
                              <div className="col-md-4">
-                                {/* <div className="form-group">
+                                <div className="form-group">
                                     <label htmlFor="begindate" className="req">Loan Maturity Date </label>
                                     <input type="date" value={loanclosuredate} onChange={e=>{
                                             setLoanbegindate(e.target.value);
@@ -302,8 +302,8 @@ const LoanDetails = (props) => {
                                             setLoanclosuredate(laonC.join("-"))
 
                                     }} className="form-control" />
-                                </div> */}
-                                <div className="form-group">
+                                </div>
+                                {/* <div className="form-group">
                                     <label htmlFor="closure">Loan Maturity Date</label>
                                     <input type="date" value={loanclosuredate} onChange={e=> {
                                         setLoanclosuredate(e.target.value)
@@ -319,25 +319,24 @@ const LoanDetails = (props) => {
                                     }
                                     } className="form-control" />
                                     {/* <input type="date" value={loanclosuredate} onChange={e=> setLoanclosuredate(e.target.value)} className="form-control" /> */}
-                                </div>
+                                {/* </div> */} 
                             </div>
                             <div className="col-md-4">
-                                <div className="form-group">
-                                    <label htmlFor="closure">Loan Closure Date</label>
-                                    <input type="date" value={loanclosuredate} onChange={e=> {
-                                        setLoanclosuredate(e.target.value)
-                                        var past_date = new Date(e.target.value);
-                                        var current_date = new Date();
-                                        var difference = (past_date.getFullYear() - current_date.getFullYear()) * 12 + (past_date.getMonth() - current_date.getMonth());
-                                        if(difference <= 0) {
-                                            setStatus('Closed');
-                                        }else{
-                                            setStatus('Active');
+                            <div className="form-group">
+                                <label htmlFor="closure">Loan Closure Date</label>
+                                <input type="date" value={loanclosuredate} onChange={e=> {
+                                    setLoanclosuredate(e.target.value)
+                                    var past_date = new Date(e.target.value);
+                                    var current_date = new Date();
+                                    var difference = (past_date.getFullYear() - current_date.getFullYear()) * 12 + (past_date.getMonth() - current_date.getMonth());
+                                    if(difference <= 0) {
+                                        setStatus('Closed');
+                                    }else{
+                                        setStatus('Active');
                                         }
-
                                     }
                                     } className="form-control" />
-                                    {/* <input type="date" value={loanclosuredate} onChange={e=> setLoanclosuredate(e.target.value)} className="form-control" /> */}
+                                     {/* <input type="date" value={loanclosuredate} onChange={e=> setLoanclosuredate(e.target.value)} className="form-control" />  */}
                                 </div>
                             </div>
                         </div>

@@ -46,7 +46,9 @@ const LenderDetails = (props) => {
         props.getLoanTransaction({loan_id:props.loanDetails[0].id});
     }
     useEffect(()=> {
+        console.log("loanDetails",props.loanDetails)
         if(props.loanDetails && props.loanDetails.length > 0) {
+           
             setLoantype(props.loanDetails[0].loantype);
             setEscrowAmount(props.loanDetails[0].escrowamount);
             setLname(props.loanDetails[0].lname);
@@ -238,8 +240,8 @@ const LenderDetails = (props) => {
                 <div className="row">
                     <div className="col-md-3 imgTop"></div>
                     <div className="col-md-6 house-form pt-25">
-                        <div className="divWithContact">
-                            <div className="form-group">
+                        <div className="row">
+                            <div className="form-group col-md-6">
                                 <label htmlFor="type" className="req">Loan Type</label>
                                 <select className="form-control" value={loantype} onChange={e=> setLoantype(e.target.value)} >
                                     <option value="" disabled>Select</option>
@@ -249,33 +251,38 @@ const LenderDetails = (props) => {
                                 </select>
                             </div>
                            
-                            <div className="form-group">
+                            <div className="form-group col-md-6">
                                 <label htmlFor="name">Lender Name</label>
-                                
                                     <select className="form-control" value={lname} onChange={e=> handleOnChange(e)}>
                                         <option value="" disabled>Select</option>
-                                    
                                         {
                                             props.contactList ? (
                                                 props.contactList.map((data)=>{
                                                     if(data.groupname.split('&')[0] == "Expenses" && data.groupname.split('&')[1]== "Loans"){
-                                                        return(
+                                                        if(loantype !== "Mortgage"){console.log("data.companyname",data.contactperson)
+                                                           //if(data.companyname.split('&')[0] !== "Wells Fargo - Escrow" && data.contactperson.split('&')[0] !== "city bank - 74test - Escrow" && data.contactperson.split('&')[0] !== "Wells Fargo -  - Escrow" )
+                                                           if(!data.companyname.includes("Escrow") && !data.contactperson.includes("Escrow"))
+                                                               { return (
+                                                                    <option value={data.id}>{data.companyname} - ({data.contactperson})</option>
+                                                                )}
+                                                        }
+                                                        else  { return (
                                                             <option value={data.id}>{data.companyname} - ({data.contactperson})</option>
-                                                        )
+                                                        )}
                                                     }
                                                 })
                                             ): ""
                                         }
                                     </select>
                             </div>
-                            <div onClick={()=>togglePopup()} ><img className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/>  </div>
+                            {/* <div onClick={()=>togglePopup()} ><img className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/>  </div> */}
                            
                         </div>
                         <div className="row">
                             <div className="col-md-6">
                                 <div className="form-group inputGroup">
                                     <label htmlFor="contactPerson">Lender Contact Person</label>
-                                    <input type="text" placeholder="Lender Contact Person" value={lcontactperson} onChange={e=> setLcontactperson(e.target.value)} className="form-control" />
+                                    <input type="text" placeholder="Lender Contact Person" value={lcontactperson} onChange={e=> setLcontactperson(e.target.value)} className="form-control" readOnly/>
                                 </div>
                             </div>
                             <div className="col-md-6">

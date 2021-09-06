@@ -85,7 +85,7 @@ const DocumntsList = (props) => {
                             pathname : "/document",
                             state : {house_id : house_id}
                         }} className="btn btn-primary btn-sm addNewItem pull-right">
-                        <span className="glyphicon glyphicon-plus"> </span> Add New Document
+                        <span className="glyphicon glyphicon-plus"> </span> Folder
                     </Link>
                 </div>
             </div>
