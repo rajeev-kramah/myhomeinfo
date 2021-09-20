@@ -14,8 +14,8 @@ const Tenant = (props) => {
     
     let houseId = props.location.state.house_id ? props.location.state.house_id : "";
     
-    const [lease_begin,setLease_begin] = useState('');
-    const [lease_end,setLease_end] = useState('');
+    const [lease_begin,setLease_begin] = useState(Util.getCurrentDate("-"));
+    const [lease_end,setLease_end] = useState(Util.getCurrentDate("-"));
     const [frequency,setFrequency] = useState('');
     const [rent,setRent] = useState('');
     const [rent_due_by,setRent_due_by] = useState('');
@@ -44,8 +44,8 @@ const Tenant = (props) => {
     useEffect(()=> {
         if(props.leaseDetails && props.leaseDetails.length > 0) {
             setId(props.leaseDetails[0].id);
-            setLease_begin(props.leaseDetails[0].lease_begin);
-            setLease_end(props.leaseDetails[0].lease_end);
+            setLease_begin(props.leaseDetails[0].lease_begin ? props.leaseDetails[0].lease_begin : Util.getCurrentDate("-"));
+            setLease_end(props.leaseDetails[0].lease_end ? props.leaseDetails[0].lease_end : Util.getCurrentDate("-"));
             setFrequency(props.leaseDetails[0].frequency);
             setRent(props.leaseDetails[0].rent);
             setRent_due_by(props.leaseDetails[0].rent_due_by);
@@ -153,17 +153,7 @@ const Tenant = (props) => {
     } 
 
 
-    const handleOnChange = (e) => {
-        setRealtor_name(e.target.value);
-        for(var i=0; i<props.contactList.length; i++){
-            if(props.contactList[i]['groupname'] == "Expenses&Realtor" && e.target.value == props.contactList[i]['companyname']){
-                setRealtor_phone(props.contactList[i].mono);
-                setRealtor_email(props.contactList[i].email);
-                break;
-            }
-        }
-    }
-
+   
     const tabs = [
         {pathname : "/tenant", label : "Tenants"},
         {pathname : "/Lease", label : "Lease"},
@@ -173,28 +163,44 @@ const Tenant = (props) => {
     ]
 
 
+    const handleOnChange = (e) => {
+        setRealtor_name(e.target.value);
+        if(props.contactList)
+     {   for(var i=0; i<props.contactList.length; i++){
+            if( e.target.value == props.contactList[i]['companyname']){
+              console.log("leaseDtaa",props.contactList[i])
+                setRealtor_phone(props.contactList[i].phone1);
+                setRealtor_email(props.contactList[i].email);
+                break;
+            }
+        }}
+    }
 
     const handleOnChange1 = (e) => {
         setTenant_name1(e.target.value);
-        for(var i=0; i<props.contactList.length; i++){
+        if(props.contactList)
+        {for(var i=0; i<props.contactList.length; i++){
+            console.log("tenantphone1",props.contactList[i])
             if(e.target.value === props.contactList[i]['companyname']){
-                setTenant_email1(props.contactList[i].contactperson);
-                setTenant_phone1(props.contactList[i].mono);
+                setTenant_email1(props.contactList[i].email);
+                setTenant_phone1(props.contactList[i].phone1);
                 break;
             }
-        }
+        }}
     }
 
 
     const handleOnChange2 = (e) => {
         setTenant_name2(e.target.value);
-        for(var i=0; i<props.contactList.length; i++){
+        if(props.contactList)
+       { for(var i=0; i<props.contactList.length; i++){
+           console.log("tenantphone2",props.contactList[i])
             if(e.target.value === props.contactList[i]['companyname']){
-                setTenant_email2(props.contactList[i].contactperson);
-                setTenant_phone2(props.contactList[i].mono);
+                setTenant_email2(props.contactList[i].email);
+                setTenant_phone2(props.contactList[i].phone1);
                 break;
             }
-        }
+        }}
     }
 
     const isNumericInput = (event) => {
@@ -272,17 +278,15 @@ const Tenant = (props) => {
                                     <label htmlFor="Tenant 1 Name">Tenant 1 Name</label>
                                     <select className="form-control" value={tenant_name1} onChange={e => handleOnChange1(e)}>
                                         <option value="" disabled>Select</option>
-
                                         {
-                                            props.contactList ? (
+                                            props.contactList && (
                                                 props.contactList.map((data) => {
-
-                                                    return (
-                                                        <option value={data.companyname}>{data.companyname}</option>
-                                                    )
-
+                                                    if (data.groupname === "Income&Tenants") 
+                                                    {return (
+                                                        <option value={data.companyname}>{data.companyname} - ({data.contactperson}) </option>
+                                                    )}
                                                 })
-                                            ) : ""
+                                            ) 
                                         }
                                     </select>
                                 </div>
@@ -315,17 +319,15 @@ const Tenant = (props) => {
                                         <label htmlFor="Tenant 2 Name">Tenant 2 Name</label>
                                         <select className="form-control" value={tenant_name2} onChange={e => handleOnChange2(e)}>
                                             <option value="" disabled>Select</option>
-
                                             {
-                                                props.contactList ? (
+                                                props.contactList && (
                                                     props.contactList.map((data) => {
-
-                                                        return (
-                                                            <option value={data.companyname}>{data.companyname}</option>
-                                                        )
-
+                                                        if (data.groupname === "Income&Tenants") 
+                                                        {return (
+                                                            <option value={data.companyname}>{data.companyname} - ({data.contactperson})</option>
+                                                        )}
                                                     })
-                                                ) : ""
+                                                ) 
                                             }
                                         </select>
                                     </div>
@@ -395,7 +397,7 @@ const Tenant = (props) => {
                                                     props.contactList.map((data) => {
                                                         if (data.groupname === "Expenses&Realtors") {
                                                             return (
-                                                                <option value={data.companyname}>{data.companyname}</option>
+                                                                <option value={data.companyname}>{data.companyname} - ({data.contactperson})</option>
                                                             )
                                                         }
                                                     })

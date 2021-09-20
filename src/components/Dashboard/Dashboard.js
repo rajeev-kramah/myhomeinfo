@@ -690,7 +690,7 @@ const Dashboard = (props) => {
                                     return (
                                         <React.Fragment>
                                             {loanData.status === "Active" ? 
-                                            <>
+                                            <React.Fragment>
                                             {console.log("loandata",loanData)}
                                             <small className="text-muted card-text w30">{loanData.loantype}</small>
                                             <small className="text-muted card-text w30">Loan balance</small>
@@ -698,7 +698,7 @@ const Dashboard = (props) => {
                                             <span className="card-text w30">{loanData.lname}</span>
                                             <span className="card-text w30">{loanData.endingloan}</span>
                                             <span className="card-text w30">{loanData.paidInstallment}/{loanData.totalInstallment}</span>
-                                            </>:""}
+                                            </React.Fragment>:""}
                                         </React.Fragment>
                                     )
                                 })

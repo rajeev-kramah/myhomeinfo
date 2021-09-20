@@ -112,9 +112,14 @@ table.dataTable.no-footer {
     margin-top: 30px;
 }
 
+.d_flex {
+    display: flex;
+    align-items: center;
+}
 
-
-
+.mt-10{
+    margin-top: 10px;
+}
 
 
 

@@ -98,11 +98,15 @@ const ReportList = (props) => {
         var textB = b.companyname.toUpperCase();
         return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
     });
+    const[isOpen, setIsopen] = React.useState(false)
     return (
         <div className="container-fluid contact">
             {console.log("report",reportType)}
-            <h4>Generate Reports</h4>
-            <div className="contact-form pt-25">
+            <div className="list-flex">
+                <h4>Generate Reports</h4>
+                <i className="glyphicon glyphicon-info-sign btn-lg info-logo" data-toggle="modal" data-target="#exampleModal" onClick={() => setIsopen(true)}></i>
+            </div>
+            <div className="contact-form pt-25 mt-10">
                 <div className="row report">
                     <div className="col-md-3 ">
                         <div className="form-group reportType">
@@ -271,6 +275,23 @@ const ReportList = (props) => {
                     </Link>
                 </div> */}
             </div>
+            {isOpen === true &&
+                <div className="modal" id="exampleModal" tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" den="true">
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel"></h5>
+                                <button type="button" className="close" onClick={() => setIsopen(false)}>
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     )
 }

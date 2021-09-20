@@ -69,7 +69,8 @@ router.post("/", async (req, res) => {
                             "OOPS, Something went wrong !, Please try again"
                             )
                         );
-                    } else {
+                    } 
+					else {
 						var mailOptions = {
 							from: emailid,
 							to: email,

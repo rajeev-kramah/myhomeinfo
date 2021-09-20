@@ -4,8 +4,11 @@ var nodemailer = require('nodemailer');
 var fs = require('fs');
 var registration = fs.createReadStream('./routes/registration/index.html',{encoding:'utf-8'});
 var forget = fs.createReadStream('./routes/forget/index.html',{encoding:'utf-8'});
+var adminCreation = fs.createReadStream('./routes/adminCreation/index.html',{encoding:'utf-8'});
+var expiredMail = fs.createReadStream('./routes/expiredMail/index.html',{encoding:'utf-8'});
+
 const con = require("./config");
-const emailid = "myhomeinfo.ca@gmail.com"
+const emailid = "myhomeinfo.ca89@gmail.com"
 
 const bcrypt = require("bcrypt");
 const saltRound = 10;
@@ -15,11 +18,11 @@ function sendMail(mailOptions){
 		service: 'gmail',
 		host: "smtp.example.com",
 		port: 587,
-		secure: false, // upgrade later with STARTTLS
+		secure: true, // upgrade later with STARTTLS
 		pool: true,
 		auth: {
-			user: "mksinghnitc@gmail.com",
-			pass: "manoharkumarsingh@89"
+			user: "myhomeinfo.ca89@gmail.com",
+			pass: "home123$%"
 		}
 	});
 	
@@ -47,11 +50,18 @@ router.post("/", async (req, res) => {
 	let zipcode = req.body.zipcode;
 	let refferedby = req.body.refferedby;
 	let maxProperty = req.body.maxProperty;
-	let substartdate = req.body.substartdate ? req.body.substartdate : new Date();
-	let subenddate = req.body.subenddate ?  req.body.subenddate : new Date(new Date().setFullYear(new Date().getFullYear() + 1));
-	let mono = req.body.mono;
 	let password = req.body.password;
+	let newDate = new Date()
+	let subDate = newDate.getFullYear()+'-'+('0'+(newDate.getMonth()+1)).slice(-2)+'-'+('0'+(newDate.getDate())).slice(-2);
+	let subendDate = (newDate.getFullYear()+1)+'-'+('0'+(newDate.getMonth()+1)).slice(-2)+'-'+('0'+(newDate.getDate())).slice(-2);
+	let substartdate = req.body.substartdate ? req.body.substartdate : subDate;
+	let subenddate = req.body.subenddate ?  req.body.subenddate : subendDate;
+	let mono = req.body.mono;
+	let account_status = req.body.account_status;
+	let payment_amount = req.body.payment_amount;
+	let payment_date = req.body.payment_date;
 	con.connect(function(err) {
+		var sql = "";
 		var sql = "SELECT * From owner where email='"+req.body.email+"' OR mono = '"+req.body.mono+"'";
 		con.query(sql, function (err, user) {
 			console.log(user);
@@ -76,8 +86,9 @@ router.post("/", async (req, res) => {
 				// 		);
 				// 	}
 				// 	hash_pass = hash;
-					var sql = "INSERT INTO owner (name, email, username, address, zipcode, refferedby,maxProperty, substartdate, subenddate, mono, password) VALUES ('"+name+"', '"+email+"', '"+username+"', '"+address+"', '"+zipcode+"', '"+refferedby+"', '"+substartdate+"', '"+subenddate+"', '"+mono+"', '"+password+"')";
+					 sql = "INSERT INTO owner (name, email, username, address, zipcode, refferedby, substartdate, subenddate, mono, password,account_status,payment_amount,payment_date) VALUES ('"+name+"', '"+email+"', '"+username+"', '"+address+"', '"+zipcode+"', '"+refferedby+"','"+substartdate+"', '"+subenddate+"', '"+mono+"', '"+password+"','"+account_status+"' ,'"+payment_amount+"' ,'"+payment_date+"' )";
 					con.query(sql, function (err, user) {
+						console.log("sql::",sql)
 						if (err) {
 							res.send(
 								result.response(
@@ -90,7 +101,7 @@ router.post("/", async (req, res) => {
 							var mailOptions = {
 								from: emailid,
 								to: email,
-								subject: 'New Account Opening',
+								subject: 'New Acoount Opening',
 								html: registration
 							};
 							sendMail(mailOptions)
@@ -105,11 +116,154 @@ router.post("/", async (req, res) => {
 					});
 				//});
 			}
+			
 		});
 	});
 });
-
 /**
+ * Create Admin User
+ */
+ router.post("/admin", async (req, res) => {
+	// id, name, email, username, address, zipcode, refferedby, substartdate, subenddate, mono, password
+	let email = req.body.email;
+	let username = req.body.username;
+	let maxProperty = req.body.maxProperty;
+	let password = req.body.password;
+	let newDate = new Date()
+	let subDate = newDate.getFullYear()+'-'+('0'+(newDate.getMonth()+1)).slice(-2)+'-'+('0'+(newDate.getDate())).slice(-2);
+	let subendDate = (newDate.getFullYear()+1)+'-'+('0'+(newDate.getMonth()+1)).slice(-2)+'-'+('0'+(newDate.getDate())).slice(-2);
+	let substartdate = req.body.substartdate ? req.body.substartdate : subDate;
+	let subenddate = req.body.subenddate ?  req.body.subenddate : subendDate;
+	let mono = req.body.mono;
+	let account_status = req.body.account_status;
+	let firstname = req.body.firstname;
+	let lastname = req.body.lastname;
+	let role = req.body.role;
+	let renewalDate = req.body.renewalDate;
+	let spaceUsage = req.body.spaceUsage;
+	let id = req.body.id;
+	con.connect(function(err) {
+		var sql = "";
+		var sql = "SELECT * From owner where email='"+req.body.email+"' OR mono = '"+req.body.mono+"'";
+		con.query(sql, function (err, user) {
+			if (user.length > 0 && id === '') {
+				res.send(
+					result.response(
+						200,
+						{},
+						"Email Or Mobile No already exist !"
+					)
+				);
+			
+			}
+			 else 
+			{
+				let hash_pass = "";
+				// bcrypt.hash(password, saltRound, function(er, hash) {
+				// 	if(er) {
+				// 		res.send(
+				// 			result.response(
+				// 				500,
+				// 				er,
+				// 				"OOPS, Something went wrong !, Please try again"
+				// 			)
+				// 		);
+				// 	}
+				// 	hash_pass = hash;
+					sql = "INSERT INTO owner (email, username,firstname,lastname,maxProperty,role,renewalDate,spaceUsage, substartdate, subenddate, mono, password,account_status) VALUES ('"+email+"', '"+username+"','"+firstname+"','"+lastname+"','"+maxProperty+"','"+role+"','"+renewalDate+"','"+spaceUsage+"','"+substartdate+"', '"+subenddate+"', '"+mono+"', '"+password+"','"+account_status+"' )";
+				  
+					if(id){
+						sql = "UPDATE owner SET email= '"+email+"',username= '"+username+"',firstname= '"+firstname+"',lastname= '"+lastname+"',maxProperty= '"+maxProperty+"',role= '"+role+"',renewalDate= '"+renewalDate+"',spaceUsage= '"+spaceUsage+"',substartdate= '"+substartdate+"',subenddate= '"+subenddate+"',mono= '"+mono+"',password= '"+password+"',account_status= '"+account_status+"' WHERE id = '"+id+"'";
+					}
+					con.query(sql, function (err, user) {
+						if (err) {
+							res.send(
+								result.response(
+									500,
+									err,
+									"OOPS, Something went wrong !, Please try again"
+								)
+							);
+						} 
+						else {
+							 sql = "SELECT * From owner order by id desc";
+							var lastTab = false; 
+							if(id){
+							  if(req.body.lastTab){
+								lastTab =  true;
+							  }
+							  admin = {user}
+								res.send(
+									result.response(
+										200,
+										admin,
+										"Updated successfully!",
+										lastTab
+									)
+								);
+							} 
+							 {
+								adminCreation.on('data', function (chunk) {
+    
+									let msg = chunk.replace("%USERNAME%", email);
+									 msg = msg.replace("%PASSWORD%",password);
+									
+									adminCreation = msg;
+									var mailOptions = {
+										from: emailid,
+										to: email,
+										subject: 'New User Registration. ',
+										html: adminCreation
+									};
+									sendMail(mailOptions)
+									admin = {user}
+									res.send(
+									result.response(
+										200,
+										user,
+										"Congratulation ! You have successfully created user !"
+									)
+									);
+								});
+								//console.log("adminCreation",adminCreation);
+							
+						
+							
+							}
+						}
+					});
+				//});
+			}
+		});
+	});
+});
+// role listing
+
+router.post("/roleOfUser", async (req, res) => {
+	if (!req.body.id) {
+		res.send(result.response(422, "", "User is empty"));
+	} else {
+		con.connect(function(err) {
+			var sql = "SELECT * FROM roleofuser"
+			con.query(sql, function (err, user) {
+				if (err) {
+					res.send(
+						result.response(
+							500,
+							err,
+							"OOPS, Something went wrong !, Please try again"
+						)
+					);
+				}else {
+					userRoleList = [...user]
+					res.send(result.response(200, userRoleList, "User Details"));
+				}
+			});
+		});
+	}
+  });
+/**
+
  * Read one user details
  */
  router.post("/userdeatils", async (req, res) => {
@@ -117,7 +271,7 @@ router.post("/", async (req, res) => {
 		res.send(result.response(422, "", "User is empty"));
 	} else {
 		con.connect(function(err) {
-			var sql = "SELECT id, name, email, username, address, zipcode, refferedby,maxProperty, substartdate, subenddate, mono FROM owner where id ='"+req.body.id+"'";
+			var sql = "SELECT *  FROM owner where id ='"+req.body.id+"'";
 			con.query(sql, function (err, user) {
 				if (err) {
 					res.send(
@@ -142,7 +296,267 @@ router.post("/", async (req, res) => {
 		});
 	}
   });
+// * Get All user Details list
+//  */
+router.post("/getuserAllData", async (req, res) => {
+	// if (!req.body.house_id) {
+	// 	res.send(result.response(422, "", "house_id is empty"));
+	// }else
+	{	con.connect(function(err) {
+		// var sql = "SELECT transactions.id, account_name, is_deleted,date, contact_person, type, amount, comments,receipt, created_at, entered_by, contacts.groupname,contacts.companyname From transactions INNER JOIN contacts ON transactions.account_name = contacts.id where is_deleted = 0 and transactions.house_id='"+req.body.house_id+"'";
+		let userList = [];
+		var sql = "SELECT * From owner order by id desc"
+		con.query(sql, function (err, user) {
+			if (err) {
+				res.send(
+					result.response(
+						500,
+						err,
+						"OOPS, Something went wrong !, Please try again"
+					)
+				);
+			} 
+			else {
+				console.log("mail",req.body.sentmailId)
+				if(req.body.sentmailId)
+				{let currentDate = new Date()
+				let expiryAlertDate = (currentDate.getFullYear())+'-'+('0'+(currentDate.getMonth()+1)).slice(-2)+'-'+('0'+(currentDate.getDate()-1)).slice(-2);
+		
+				let userData = user.map((item) => {
+					let subEndDate = new Date(item.subenddate)
+					let subendDate = (subEndDate.getFullYear())+'-'+('0'+(subEndDate.getMonth()+1)).slice(-2)+'-'+('0'+(subEndDate.getDate()-1)).slice(-2);
+				
+					if(subendDate === expiryAlertDate) {
+						expiredMail.on('data', function (chunk) {
+    
+							let msg = chunk.replace("%CUSTOMER NAME%", item.username);
+							 msg = msg.replace("%PLAN%",item.substartdate);
+							expiredMail = msg;
+							
+						var mailOptions = {
+							from: emailid,
+							to: item.email,
+							subject: 'Your Account Will Be Expired Tommorrow, Please Renew It To Keep In Touch... ',
+							html: expiredMail
+						};
+						sendMail(mailOptions)
+							});
+					}
+				})
+				res.send(result.response(200, {}, "Your Account Will Be Expired Tommorrow, Please Renew It To Keep In Touch..."));
+			}
+			else
+			{	userList = [...user]
+				res.send(result.response(200, userList, "User All Data"));	}		
+			}
+		});
+	})}
+});
 
+/**
+ * Get single User data
+ */
+ router.post("/getsingleuser", async (req, res) => {
+	if (!req.body.id) {
+		res.send(result.response(422, "", "Id is empty"));
+	} else {
+		con.connect(function(err) {
+			var sql = "SELECT * From owner where id='"+req.body.id+"'";
+			con.query(sql, function (err, user) {
+				if (err) {
+					res.send(
+						result.response(
+							500,
+							err,
+							"OOPS, Something went wrong !, Please try again"
+						)
+					);
+				} else if (user.length === 0) {
+					res.send(
+						result.response(
+							404,
+							{},
+							"User does not found !"
+						)
+					);
+				} else {
+					res.send(result.response(200, user, "User Details"));
+				}
+			});
+		});
+	}
+  });
+/**
+ * Delete single User
+ */
+ router.post("/deletesingleUser", async (req, res) => {
+	if (!req.body.id) {
+		res.send(result.response(422, "", "Id is empty"));
+	} else {
+		con.connect(function(err) {
+
+			var sql = "delete From owner where id='"+req.body.id+"'";
+			con.query(sql, function (err, user) {
+				if (err) {
+					res.send(
+						result.response(
+							500,
+							err,
+							"OOPS, Something went wrong !, Please try again"
+						)
+					);
+				} else if (user.length === 0) {
+					res.send(
+						result.response(
+							404,
+							{},
+							"User does not found !"
+						)
+					);
+				} else {
+					let userList = [];
+					var sql = "SELECT * From owner order by id desc";
+					con.query(sql, function (err, user) {
+						if (err) {
+							res.send(
+								result.response(
+									500,
+									err,
+									"OOPS, Something went wrong !, Please try again"
+								)
+							);
+						} else if (user.length === 0) {
+							res.send(
+								result.response(
+									404,
+									{},
+									"Users does not found !"
+								)
+							);
+						} else {
+							userList = [...user]
+							res.send(result.response(200, userList, "User deleted successfully!"));
+						}
+					});
+				}
+			});
+		});
+	}
+});
+
+/**
+ * DeActive single User
+ */
+ router.post("/deActiveUser", async (req, res) => {
+	if (!req.body.id) {
+		res.send(result.response(422, "", "Id is empty"));
+	} else {
+		con.connect(function(err) {
+			var sql = "update owner set account_status = 'Expired' where id='"+req.body.id+"'";
+			con.query(sql, function (err, user) {
+				if (err) {
+					res.send(
+						result.response(
+							500,
+							err,
+							"OOPS, Something went wrong !, Please try again"
+						)
+					);
+				} else if (user.length === 0) {
+					res.send(
+						result.response(
+							404,
+							{},
+							"User does not found !"
+						)
+					);
+				} else {
+					let userList = [];
+					var sql = "SELECT * From owner order by id desc";
+					con.query(sql, function (err, user) {
+						if (err) {
+							res.send(
+								result.response(
+									500,
+									err,
+									"OOPS, Something went wrong !, Please try again"
+								)
+							);
+						} else if (user.length === 0) {
+							res.send(
+								result.response(
+									404,
+									{},
+									"Users does not found !"
+								)
+							);
+						} else {
+							userList = [...user]
+							res.send(result.response(200, userList, "User Deactivate successfully!"));
+						}
+					});
+				}
+			});
+		});
+	}
+});
+/**
+ * Active single User
+ */
+ router.post("/activeUser", async (req, res) => {
+	if (!req.body.id) {
+		res.send(result.response(422, "", "Id is empty"));
+	} else {
+     
+		con.connect(function(err) {
+			var sql = "update owner set account_status = 'Active' where id='"+req.body.id+"'";
+			con.query(sql, function (err, user) {
+				if (err) {
+					res.send(
+						result.response(
+							500,
+							err,
+							"OOPS, Something went wrong !, Please try again"
+						)
+					);
+				} else if (user.length === 0) {
+					res.send(
+						result.response(
+							404,
+							{},
+							"User does not found !"
+						)
+					);
+				} else {
+					let userList = [];
+					var sql = "SELECT * From owner order by id desc";
+					con.query(sql, function (err, user) {
+						if (err) {
+							res.send(
+								result.response(
+									500,
+									err,
+									"OOPS, Something went wrong !, Please try again"
+								)
+							);
+						} else if (user.length === 0) {
+							res.send(
+								result.response(
+									404,
+									{},
+									"Users does not found !"
+								)
+							);
+						} else {
+							userList = [...user]
+							res.send(result.response(200, userList, "User Activate successfully!"));
+						}
+					});
+				}
+			});
+		});
+	}
+});
 /**
  * User Login
  */
@@ -156,7 +570,7 @@ router.post("/", async (req, res) => {
 			let password = req.body.password;
 			let email = req.body.email;
 
-			var sql = "SELECT owner.id, name, email, username, password, subenddate from owner where email = '"+email+"' AND password='"+password+"'";
+			var sql = "SELECT owner.id, name, email, username, password, subenddate,role ,country from owner where email = '"+email+"' AND password='"+password+"'";
 
 			con.query(sql, function (err, user) {
 				if (err) {
@@ -177,7 +591,7 @@ router.post("/", async (req, res) => {
 					);
 				} else {
 					//let hash = user[0]['password'];
-					sql = "SELECT substartdate, subenddate from owner where email = '"+email+"'";
+					sql = "SELECT substartdate, subenddate ,role from owner where email = '"+email+"'";
 					con.query(sql, function (err, user) {
 						if(err) {
 							res.send(
@@ -190,7 +604,7 @@ router.post("/", async (req, res) => {
 						} else {
 							let startdate = user[0]['substartdate'];
 							let enddate = user[0]['subenddate'];
-
+							
 							if(startdate === '' || enddate === '') {
 								res.send(
 									result.response(
@@ -207,7 +621,9 @@ router.post("/", async (req, res) => {
 							// Comparing dates
 							enddate = Math.floor(enddate.getTime() / 86400000);
 							current = Math.floor(current.getTime() / 86400000);
-
+							let role = user[0]['role'];
+						if(role != 1 ){
+							console.log("role::2")
 							if(enddate < current) {
 								res.send(
 									result.response(
@@ -217,6 +633,7 @@ router.post("/", async (req, res) => {
 									)
 								);
 							}
+						}
 						}
 					});
 
@@ -425,10 +842,14 @@ router.post("/updateuser", async (req, res) => {
 	let substartdate = req.body.substartdate;
 	let subenddate = req.body.subenddate;
 	let mono = req.body.mono;
+	let account_status = req.body.account_status;
+	let payment_amount = req.body.payment_amount;
+	let payment_date = req.body.payment_date;
+	
 
 	con.connect(function(err) {
 		
-		var sql = "Update owner set name = '"+name+"', email='"+email+"', username='"+username+"', address='"+address+"', zipcode='"+zipcode+"', refferedby='"+refferedby+"',maxProperty='"+maxProperty+"', substartdate='"+substartdate+"', subenddate='"+subenddate+"', mono='"+mono+"' where id = '"+id+"'";
+		var sql = "Update owner set name = '"+name+"', email='"+email+"', username='"+username+"', address='"+address+"', zipcode='"+zipcode+"', refferedby='"+refferedby+"',maxProperty='"+maxProperty+"', substartdate='"+substartdate+"', subenddate='"+subenddate+"', mono='"+mono+"',account_status='"+account_status+"',payment_amount='"+payment_amount+"',payment_date='"+payment_date+"' where id = '"+id+"'";
 
 		con.query(sql, function (err, user) {
 			if (err) {
@@ -440,7 +861,7 @@ router.post("/updateuser", async (req, res) => {
 					)
 				);
 			} else {
-				sql =  "SELECT id, name, email, username, address, zipcode, refferedby, maxProperty , substartdate, subenddate, mono FROM owner WHERE id='"+id+"'"
+				sql =  "SELECT * FROM owner WHERE id='"+id+"'"
 				con.query(sql, function (err, users) {
 					console.log("users",users)
 					if (err) {

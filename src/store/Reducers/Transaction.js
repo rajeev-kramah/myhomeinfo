@@ -4,6 +4,7 @@ import {
     GET_TRANSACTION,
     GET_SINGLE_TRANSACTION,
     DELETE_TRANSACTION,
+    UNDELETE_TRANSACTION,
     GET_TRANSACTION_All
 } from "../actionTypes";
 
@@ -39,6 +40,11 @@ export default (state=initialState, action) => {
             return {
                 ...state,
                 transactions:action.payload
+            };
+        case UNDELETE_TRANSACTION:
+            return {
+                ...state,
+                transactionAllData: action.payload
             }
         default:
             return state;

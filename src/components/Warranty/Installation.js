@@ -6,6 +6,7 @@ import { NotificationManager } from "react-notifications";
 import { addWarranty } from "../../store/Actions/Warranty";
 import { Util } from "../../Datamanipulation/Util";
 import Tab from "../../Reusable/Tab";
+import NumberFormat from "react-number-format";
 
 const Installtion = (props) => {
 
@@ -22,10 +23,10 @@ const Installtion = (props) => {
     const [model_no, setModel_no] = useState('');
     const [color, setColor] = useState('');
     const [product_price, setProduct_price] = useState('');
-    const [mfg_warranty_start_date, setMfg_warranty_start_date] = useState('');
-    const [mfg_warranty_end_date, setMfg_warranty_end_date] = useState('');
-    const [extended_warranty_start_date, setExtended_warranty_start_date] = useState('');
-    const [extended_warranty_end_date, setExtended_warranty_end_date] = useState('');
+    const [mfg_warranty_start_date, setMfg_warranty_start_date] = useState(Util.getCurrentDate("-"));
+    const [mfg_warranty_end_date, setMfg_warranty_end_date] = useState(Util.getCurrentDate("-"));
+    const [extended_warranty_start_date, setExtended_warranty_start_date] = useState(Util.getCurrentDate("-"));
+    const [extended_warranty_end_date, setExtended_warranty_end_date] = useState(Util.getCurrentDate("-"));
     const [installation_date, setInstallation_date] = useState(Util.getCurrentDate("-"));
     const [installation_company_name, setInstallation_company_name] = useState('');
     const [installed_by, setInstalled_by] = useState('');
@@ -50,11 +51,11 @@ const Installtion = (props) => {
             setModel_no(props.warrantyDetails[0].model_no);
             setColor(props.warrantyDetails[0].color);
             setProduct_price(props.warrantyDetails[0].product_price);
-            setMfg_warranty_start_date(props.warrantyDetails[0].mfg_warranty_start_date);
-            setMfg_warranty_end_date(props.warrantyDetails[0].mfg_warranty_end_date);
-            setExtended_warranty_start_date(props.warrantyDetails[0].extended_warranty_start_date);
-            setExtended_warranty_end_date(props.warrantyDetails[0].extended_warranty_end_date);
-            setInstallation_date(props.warrantyDetails[0].installation_date);
+            setMfg_warranty_start_date(props.warrantyDetails[0].mfg_warranty_start_date ? props.warrantyDetails[0].mfg_warranty_start_date : Util.getCurrentDate("-"));
+            setMfg_warranty_end_date(props.warrantyDetails[0].mfg_warranty_end_date ? props.warrantyDetails[0].mfg_warranty_end_date : Util.getCurrentDate("-"));
+            setExtended_warranty_start_date(props.warrantyDetails[0].extended_warranty_start_date ? props.warrantyDetails[0].extended_warranty_start_date : Util.getCurrentDate("-"));
+            setExtended_warranty_end_date(props.warrantyDetails[0].extended_warranty_end_date ?props.warrantyDetails[0].extended_warranty_end_date : Util.getCurrentDate("-"));
+            setInstallation_date(props.warrantyDetails[0].installation_date ? props.warrantyDetails[0].installation_date:Util.getCurrentDate("-"));
             setInstallation_company_name(props.warrantyDetails[0].installation_company_name);
             setInstalled_by(props.warrantyDetails[0].installed_by);
             setContact_number(props.warrantyDetails[0].contact_number);
@@ -107,7 +108,7 @@ const Installtion = (props) => {
 
         let valid = validate();
         if(valid) {
-            props.addWarranty(form)
+            props.addWarranty(form);
             props.history.push({
                 pathname: 'warranty-list',
                 state: {
@@ -235,9 +236,9 @@ const Installtion = (props) => {
                                 <div className="col-md-6">
                                     <div className="form-group">
                                         <label htmlFor="Installtion Company Name" className="">Installtion Company Name</label>
-                                        <input type="text" placeholder="Installtion Company Name" value={ installation_company_name} onChange={e=>{
-                                            setInstallation_company_name(e.target.value)
-                                        }} className="form-control" />
+                                            <input type="text" placeholder="Installtion Company Name" value={ installation_company_name} onChange={e=>{
+                                                setInstallation_company_name(e.target.value)
+                                            }} className="form-control" />
                                     </div>
                                 </div>
                             </div>
@@ -261,7 +262,22 @@ const Installtion = (props) => {
                                 <div className="col-md-12">
                                     <div className="form-group">
                                         <label htmlFor="Installation Charges" className="">Installation Charges</label>
-                                        <input type="text" placeholder="Installation Charges" value={Util.addCommas(installation_charges ? installation_charges : 0)} onChange={e=> setInstallation_charges(e.target.value)} className="form-control" />
+                                        <NumberFormat
+                                        placeholder="Installtion Charges"
+                                        thousandsGroupStyle="thousand"
+                                        className="form-control"
+                                        value={installation_charges ? installation_charges : 0}
+                                        decimalSeparator="."
+                                        type="text"
+                                        thousandSeparator={true}
+                                        allowNegative={true}
+                                        decimalScale={2}
+                                        fixedDecimalScale={true}
+                                        allowEmptyFormatting={true}
+                                        allowLeadingZeros={false}
+                                        onChange={e =>setInstallation_charges(e.target.value)}
+                                        isNumericString={true} />
+                                        {/* <input type="text" placeholder="Installation Charges" value={Util.addCommas(installation_charges ? installation_charges : 0)} onChange={e=> setInstallation_charges(e.target.value)} className="form-control" /> */}
                                     </div>
                                 </div>
                             </div>

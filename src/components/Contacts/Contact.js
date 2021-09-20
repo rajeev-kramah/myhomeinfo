@@ -8,6 +8,7 @@ import {Util} from "../../Datamanipulation/Util";
 import {getGroup } from "../../store/Actions/contact";
 import Tab from "../../Reusable/Tab";
 import {getLoanTransaction} from "../../store/Actions/Loan";
+import NumberFormat from "react-number-format";
 
 const Contact = (props) => {
      
@@ -33,16 +34,15 @@ const Contact = (props) => {
     const [showGroup, setShowGroup] = useState(false);
     const [add_to_home_cost, setAdd_to_home_cost] = useState(0);
     const [transaction_type, setTransaction_type] = useState("");
-    const [transaction_amount, setTransaction_amount] = useState("0.00");
+    const [transaction_amount, setTransaction_amount] = useState("");
     const [auto_post, setAuto_post] = useState(0);
     const [posting_frequency, setPosting_frequency] = useState("");
     const [posting_date, setPosting_date] = useState("");
     const [houseno, setHouseno] = useState("");
     const [zipcode, setZipcode] = useState("");
+    const [charLength, setCharLength] = useState("10");
+    const [charLength2, setCharLength2] = useState("10");
     
- 
-    
-
     const togglePopup = () => {
         props.getGroup({house_id: house_id});
         setShowGroup(!showGroup);
@@ -51,10 +51,11 @@ const Contact = (props) => {
 
     useEffect(()=> {
         if(props.contactDetails && props.contactDetails.length > 0){
+            console.log("props.contactDetails0",props.contactDetails[0])
             setGroupName(props.contactDetails[0].groupname);
             setContactPerson(props.contactDetails[0].contactperson);
-            setphonetype1(props.contactDetails[0].phonenumber);
-            setphonetype2(props.contactDetails[0].phonenumber1);
+            setphonetype1(props.contactDetails[0].phonetype1 );
+            setphonetype2(props.contactDetails[0].phonetype2);
             setphone1(props.contactDetails[0].phone1);
             setEmail(props.contactDetails[0].email);
             setCompany(props.contactDetails[0].companyname);
@@ -230,32 +231,67 @@ const Contact = (props) => {
     
     const formatToPhone = (event) => {
         if(isModifierKey(event)) {return;}
-    
         // I am lazy and don't like to type things more than once
         const target = event.target;
         const input = event.target.value.replace(/\D/g,'').substring(0,10); // First ten digits of input only
         const zip = input.substring(0,3);
         const middle = input.substring(3,6);
         const last = input.substring(6,10);
-    
+        
         if(input.length > 6){target.value = `${zip}-${middle}-${last}`;}
         else if(input.length > 3){target.value = `${zip}-${middle}`;}
         else if(input.length > 0){target.value = `${zip}`;}
     };
     
-    const inputElement = document.getElementById('phoneNumberFormat');
-    if(inputElement != null) {
-        inputElement.addEventListener('keydown',enforceFormat);
-        inputElement.addEventListener('keyup',formatToPhone);
+    const formatReset = (event) => {
+        if(isModifierKey(event)) {return;}
+        const target = event.target;
+        const input = event.target.value.replace(/\D/g,'');
+        if(input.length > 0){target.value = `${input}`;}
     }
-
+    
+     const countryValidation = (value) =>{
+        const inputElement = document.getElementById('phoneNumberFormat');
+        if( (value === "USA" || value === "Canada") && inputElement !== null) {
+            setCharLength("12");
+            inputElement.addEventListener('keydown',enforceFormat);
+            inputElement.addEventListener('keyup',formatToPhone);
+        }else if(value === "UK" && inputElement !== null){
+            setCharLength("10");
+            inputElement.addEventListener('keydown',formatReset);
+            inputElement.addEventListener('keyup',formatReset);
+        }
+     }
+     
+     const countryValidation2 = (value) =>{
+        const inputElement = document.getElementById('phoneNumberFormat1');
+        if( (value === "USA" || value === "Canada") && inputElement !== null) {
+            setCharLength2("12");
+            inputElement.addEventListener('keydown',enforceFormat);
+            inputElement.addEventListener('keyup',formatToPhone);
+        }else if(value === "UK" && inputElement !== null){
+            setCharLength2("10");
+            inputElement.addEventListener('keydown',formatReset);
+            inputElement.addEventListener('keyup',formatReset);
+        }
+     }
 
     let tabs = [
         {pathname : "/contact-form", label : "Contact Details"},
         {pathname : "/generate-transaction", label : "Generate Transaction"}
     ]
-   
-
+    
+    const handleCountryChange = (e) =>{
+        setCountry(e.target.value);
+        countryValidation(e.target.value)
+        countryValidation2(e.target.value)
+        setphone1("");
+        setphone2("");
+    }
+    
+    const handlePhone1Change = (e) =>{
+        setphone1(e.target.value);
+    }
     return (
         <div className="container-fluid contact">
             <h4>Contact Details</h4>
@@ -346,7 +382,7 @@ const Contact = (props) => {
                             <div className="col-md-6">
                                 <div className="form-group inputGroup">
                                     <label htmlFor="phone1" className="req">Phone 1</label>
-                                    <input  maxLength="12" type="text" placeholder="Phone 1" value={phone1} onChange={e => setphone1(e.target.value)}  className="form-control" />
+                                    <input  maxLength={charLength} id="phoneNumberFormat" type="text" placeholder="Phone 1" value={phone1} onChange={e => handlePhone1Change(e)}  className="form-control" />
                                 </div>
                             </div>
                             </div>
@@ -365,7 +401,7 @@ const Contact = (props) => {
                             <div className="col-md-6">
                                 <div className="form-group inputGroup">
                                     <label htmlFor="phone1" >Phone 2</label>
-                                    <input  maxLength="12" type="text" placeholder="Phone 2" value={phone2} onChange={e => setphone2(e.target.value)} className="form-control" />
+                                    <input maxLength={charLength2} id="phoneNumberFormat1" type="text" placeholder="Phone 2" value={phone2} onChange={e => setphone2(e.target.value)} className="form-control" />
                                 </div>
                             </div>
                         </div>
@@ -429,8 +465,8 @@ const Contact = (props) => {
                             <div className="col-md-4">
                                 <div className="form-group">
                                     <label htmlFor="country">Country</label>
-                                    <select className="form-control" value={country} disabled onChange={e=> setCountry(e.target.value)} >
-                                        <option value="" disabled>Select</option>
+                                    <select className="form-control" value={country} onChange={e=> handleCountryChange(e)} disabled>
+                                        <option value="" disabled >Select</option>
                                         {
                                         countries.map(country=> {
                                             return(
@@ -460,7 +496,20 @@ const Contact = (props) => {
                             <div className="col-md-6">
                                 <div className="form-group">
                                     <label htmlFor="transaction_amount">Transaction Amount</label>
-                                    <input type="text" placeholder="Transaction Amount" value={transaction_amount} onChange={e=> setTransaction_amount(e.target.value)} className="form-control" />
+                                    <NumberFormat
+                                        thousandsGroupStyle="thousand"
+                                        className="form-control"
+                                        value={Util.addCommas(transaction_amount)}
+                                        decimalSeparator="."
+                                        type="text"
+                                        thousandSeparator={true}
+                                        allowNegative={true}
+                                        decimalScale={2}
+                                        fixedDecimalScale={true}
+                                        allowEmptyFormatting={true}
+                                        allowLeadingZeros={false}
+                                        onChange={e =>setTransaction_amount(e.target.value)}
+                                        isNumericString={true} />
                                 </div>
                             </div>
                         </div>
@@ -515,15 +564,27 @@ const Contact = (props) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="row">
-                            <div className="col-md-12">
+                        <div className="row d_flex">
+                            <div className="col-md-8">
                                 <div className="form-group">
                                     <label htmlFor="comment">Additional Details / Comments</label>
-                                    <input type="text" placeholder="Additional Details / Comments" value={comment} onChange={e=> setComment(e.target.value)} className="form-control" />
+                                    <textarea type="text" rows="4" placeholder="Additional Details / Comments" value={comment} onChange={e=> setComment(e.target.value)} className="form-control" />
+                                </div>
+                            </div>
+                            <div className="col-md-4">
+                                <div className="form-group">
+                                    <label className="checkbox-inline">
+                                        <input type="checkbox" name="homecost" value={add_to_home_cost} onChange={e=> setAdd_to_home_cost(add_to_home_cost  == 0 ? 1 : 0)}  checked={add_to_home_cost === 1 ? "checked" : false}/>Add to Home Cost
+                                    </label>
+                                </div>
+                                <div className="form-group">
+                                    <label className="checkbox-inline" id="post">
+                                        <input type="checkbox" name="post" value={auto_post} onChange={e=> setAuto_post(auto_post  == 0 ? 1 : 0)}  checked={auto_post === 1 ? "checked" : false}/>Auto Post
+                                    </label>
                                 </div>
                             </div>
                         </div>
-                        <div className="row">
+                        {/* <div className="row">
                             <div className="col-md-4"></div>
                             <div className="col-md-4">
                                 <label className="checkbox-inline" id="home1">
@@ -535,7 +596,7 @@ const Contact = (props) => {
                                     <input type="checkbox" name="post" value={auto_post} onChange={e=> setAuto_post(auto_post  == 0 ? 1 : 0)}  checked={auto_post === 1 ? "checked" : false}/>Auto Post
                                 </label>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="col-md-3"></div>
                 </div>

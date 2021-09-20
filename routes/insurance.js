@@ -47,7 +47,7 @@ const upload = multer({
  * Create Insurance
 */
 router.post("/", upload.single("attachment"), async (req, res) => {
-
+console.log("attachment22::",req.body.attachment)
 	let id = req.body.id; 
 	let provider = req.body.provider;
 	let insurance_number = req.body.insurance_number;
@@ -56,7 +56,7 @@ router.post("/", upload.single("attachment"), async (req, res) => {
 	let premium = req.body.premium; 
 	let provider_url = req.body.provider_url;
 	let renewed = req.body.renewed;
-	let attachments = "";
+	let attachments =  req.body.attachment;
 	let company_name = req.body.company_name;
 	let agent_name = req.body.agent_name;
 	let contact_person = req.body.contact_person;
@@ -73,9 +73,9 @@ router.post("/", upload.single("attachment"), async (req, res) => {
 	let house_id = req.body.house_id;
 
 	con.connect(function(err) {
-        if (req.file) {
-            attachments = req.file.path;
-        }
+        // if (req.body.attachment) {
+        //     attachments = req.body.attachment;
+        // }
 
 		var sql = "INSERT INTO insurances (provider, insurance_number, provider_phone,effective_date, expiry_date, premium, provider_url, renewed, attachments, company_name, agent_name, contact_person,company_address, company_phone, company_email, reminder_date, reminder_phone, reminder_email, reminder_alternate_email, comments, status, house_id) VALUES ('"+provider+"', '"+insurance_number+"','"+provider_phone+"', '"+effective_date+"', '"+expiry_date+"', '"+premium+"', '"+provider_url+"','"+renewed+"', '"+attachments+"', '"+company_name+"', '"+agent_name+"', '"+contact_person+"', '"+company_address+"', '"+company_phone+"', '"+company_email+"', '"+reminder_date+"', '"+reminder_phone+"', '"+reminder_email+"', '"+reminder_alternate_email+"', '"+comments+"', '"+status+"', '"+house_id+"')";
 
@@ -101,9 +101,9 @@ router.post("/", upload.single("attachment"), async (req, res) => {
 			} else {
 				var sql = "";
 				if(id) {
-					sql = "select * from insurances where id = '" + id + "'";
+					sql = "SELECT * FROM insurances where id = '" + id + "'";
 				} else {
-					sql =  "SELECT * FROM insurances WHERE ID = (SELECT MAX(ID) FROM insurances)"
+					sql =  "SELECT * FROM insurances WHERE house_id='"+house_id+"'";
 				}
 
 				if(req.body.lastTab){
@@ -169,8 +169,8 @@ router.post("/", upload.single("attachment"), async (req, res) => {
 							)
 						);
 					} else if (insurnce.length > 0) {
-						let path = insurnce[0]['attachments'].substr(11);
-						path = "public\\files\\" + path;
+						let path = insurnce[0]['attachments']
+						// path = "public\\files\\" + path;
 						removeFile(path);
 					}
 				});

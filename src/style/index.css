@@ -24,6 +24,10 @@
     padding-left : 5% !important;
     padding-right : 5% !important;
 }
+.padding-4 .rdt_Table{
+    padding-left : 4% !important;
+    padding-right : 4% !important;
+}
 
 .logo-img{
     width: 15%;
@@ -450,4 +454,19 @@ section {
 .checkedPhone {
     display: flex;
     align-items: center;
+}
+.active_color {
+    color: #0FD965;
+}
+.deactive_color {
+    color: #FF0000;
+}
+.delete_icon {
+    border: 0;
+    background: none;
+    color: #FF0000;
+    font-size: 20px;
+}
+.d-flex {
+    display: flex;
 }

@@ -98,7 +98,7 @@ export const getContactById = (data) => {
         await Contact.getContactById(data)
         .then(res => {
             
-            if(res.status === 200 || res.status === 404 || res.status === 422 || res.status ===204 ) {
+            if(res.status === 200 || res.status === 404 || res.status === 422 || res.status === 204 ) {
                 var data = {
                     type: GET_CONTACT,
                     payload: res

@@ -57,6 +57,27 @@ export const Authentication = {
 
 	resetPassword(data) {
 		return ApiService.post(url + "users/reset", data);
+	},
+	admin(data) {
+		return ApiService.post(url + "users/admin", data);
+	},
+	getroleOfUser(data) {
+		return ApiService.post(url + "users/roleOfUser", data);
+	},
+	getuserAllData(data) {
+		return ApiService.post(url + "users/getuserAllData", data);
+	},
+	deleteUser(data) {
+		return ApiService.post(url + "users/deletesingleUser", data);
+	},
+	activateUser(data) {
+		return ApiService.post(url + "users/activeUser", data);
+	},
+	deActivateUser(data) {
+		return ApiService.post(url + "users/deActiveUser", data);
+	},
+	getsingleUser(data) {
+		return ApiService.post(url + "users/getsingleuser", data);
 	}
 };
 
@@ -243,7 +264,6 @@ export const Insurance = {
 
 export const Transaction = {
 	addTransaction(data) {
-		console.log("resT::1",data)
 		return ApiService.post(url + "transaction", data);
 	},
 
@@ -261,6 +281,10 @@ export const Transaction = {
 
 	deleteTransaction(data) {
 		return ApiService.post(url + "transaction/delete", data);
+	},
+
+	unDeleteTransaction(data) {
+		return ApiService.post(url + "transaction/undelete", data);
 	}
 }
 

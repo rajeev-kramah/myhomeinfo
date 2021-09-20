@@ -47,18 +47,17 @@ const upload = multer({
  * Create Gallery
 */
 router.post("/", upload.single("attachment"), async (req, res) => {
-	console.log("request", req.body.house_id, req.body.groupType)
 	let id = req.body.id;
-	let attachment = "";
+	let attachment = req.body.attachment;
 	let house_id = req.body.house_id;
 	// let album_name = req.body.groupType;
 	let album_name = req.body.album_name;
 
 	con.connect(function (err) {
-		if (req.file) {
-			attachment = req.file.path;
-			attachment = '../files/' + attachment.substr(12);
-		}
+		// if (req.file) {
+		// 	attachment = req.file.path;
+		// 	attachment = '../files/' + attachment.substr(12);
+		// }
 
 		var sql = "INSERT INTO gallery (attachment, house_id, album_name) VALUES ('" + attachment + "', '" + house_id + "', '" + album_name + "')";
 

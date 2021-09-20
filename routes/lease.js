@@ -65,6 +65,7 @@ router.post("/", upload.single("document"), async (req, res) => {
     let pets = req.body.pets;
     let deposit = req.body.deposit;
     let renewed = req.body.renewed;
+	let lease_date = req.body.lease_date;
     let realtor_name = req.body.realtor_name;
 	let realtor_phone = req.body.realtor_phone;
 	let realtor_email = req.body.realtor_email;
@@ -80,10 +81,10 @@ router.post("/", upload.single("document"), async (req, res) => {
             document = req.file.path;
         }
 
-		var sql = "INSERT INTO lease (lease_begin, lease_end, frequency, rent, rent_due_by, rental_insurance, tenant_name1, document, tenant_email1, tenant_phone1, tenant_name2, tenant_email2, tenant_phone2, people,lease_amount, pets, deposit, renewed, realtor_name, realtor_phone, realtor_email, hmo_space, space_description, comment, house_id) VALUES ('"+lease_begin+"', '"+lease_end+"', '"+frequency+"', '"+rent+"', '"+rent_due_by+"', '"+rental_insurance+"','"+tenant_name1+"','"+document+"', '"+tenant_email1+"', '"+tenant_phone1+"', '"+tenant_name2+"', '"+tenant_email2+"', '"+tenant_phone2+"', '"+people+"','"+lease_amount+"','"+pets+"','"+deposit+"', '"+renewed+"', '"+realtor_name+"', '"+realtor_phone+"', '"+realtor_email+"', '"+hmo_space+"', '"+space_description+"', '"+comment+"', '"+house_id+"')";
+		var sql = "INSERT INTO lease (lease_begin, lease_end, frequency, rent, rent_due_by, rental_insurance, tenant_name1, document, tenant_email1, tenant_phone1, tenant_name2, tenant_email2, tenant_phone2, people,lease_amount, pets, deposit, renewed, lease_date, realtor_name, realtor_phone, realtor_email, hmo_space, space_description, comment, house_id) VALUES ('"+lease_begin+"', '"+lease_end+"', '"+frequency+"', '"+rent+"', '"+rent_due_by+"', '"+rental_insurance+"','"+tenant_name1+"','"+document+"', '"+tenant_email1+"', '"+tenant_phone1+"', '"+tenant_name2+"', '"+tenant_email2+"', '"+tenant_phone2+"', '"+people+"','"+lease_amount+"','"+pets+"','"+deposit+"', '"+renewed+"', '"+lease_date+"',  '"+realtor_name+"', '"+realtor_phone+"', '"+realtor_email+"', '"+hmo_space+"', '"+space_description+"', '"+comment+"', '"+house_id+"')";
 
 		if(id){
-			sql = "UPDATE lease SET lease_begin = '"+lease_begin+"', lease_end = '"+lease_end+"', frequency = '"+frequency+"', rent = '"+rent+"', rent_due_by = '"+rent_due_by+"', rental_insurance = '"+rental_insurance+"', tenant_name1 = '"+tenant_name1+"', tenant_email1 = '"+tenant_email1+"', tenant_phone1= '"+tenant_phone1+"', tenant_name2 = '"+tenant_name2+"', tenant_email2 = '"+tenant_email2+"', tenant_phone2 = '"+tenant_phone2+"', people = '"+people+"',lease_amount = '"+lease_amount+"', pets = '"+pets+"', deposit = '"+deposit+"', renewed = '"+renewed+"', realtor_name = '"+realtor_name+"', realtor_phone = '"+realtor_phone+"', realtor_email = '"+realtor_email+"', hmo_space = '"+hmo_space+"', space_description = '"+space_description+"', comment = '"+comment+"', house_id = '"+house_id+"'";
+			sql = "UPDATE lease SET lease_begin = '"+lease_begin+"', lease_end = '"+lease_end+"', frequency = '"+frequency+"', rent = '"+rent+"', rent_due_by = '"+rent_due_by+"', rental_insurance = '"+rental_insurance+"', tenant_name1 = '"+tenant_name1+"', tenant_email1 = '"+tenant_email1+"', tenant_phone1= '"+tenant_phone1+"', tenant_name2 = '"+tenant_name2+"', tenant_email2 = '"+tenant_email2+"', tenant_phone2 = '"+tenant_phone2+"', people = '"+people+"',lease_amount = '"+lease_amount+"', pets = '"+pets+"', deposit = '"+deposit+"', renewed = '"+renewed+" ', lease_date ='"+lease_date+" ', realtor_name = '"+realtor_name+"', realtor_phone = '"+realtor_phone+"', realtor_email = '"+realtor_email+"', hmo_space = '"+hmo_space+"', space_description = '"+space_description+"', comment = '"+comment+"', house_id = '"+house_id+"'";
 
 			if(document) {
 				sql += ", document = '"+document+"'";
@@ -110,7 +111,7 @@ router.post("/", upload.single("document"), async (req, res) => {
                 }
 
                 if(req.body.lastTab){
-					sql =  "SELECT id, lease_begin, lease_end, rent, rent_due_by, rental_insurance FROM lease WHERE house_id='"+house_id+"'";
+					sql =  "SELECT * FROM lease WHERE house_id='"+house_id+"'";
 				}
 				con.query(sql, function (err, lease) {
 					if (err) {

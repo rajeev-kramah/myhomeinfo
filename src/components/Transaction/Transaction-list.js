@@ -1,35 +1,36 @@
 import React, { useEffect,useState } from 'react';
 import "../../style/Contact.css";
 import { Link } from "react-router-dom";
-import { getTransaction,getSingleTransaction,getTransactionAllData} from "../../store/Actions/Transaction";
+import { getTransaction,getSingleTransaction,getTransactionAllData,unDeleteTransaction} from "../../store/Actions/Transaction";
 import { connect } from "react-redux";
 import Table from "../../Reusable/Table";
 import { Util } from "../../Datamanipulation/Util";
 
-    
-    
-    const TransactionList = (props) => {
-        console.log("props::22",props)
+const TransactionList = (props) => {
+   
         let house_id = props.location.state.house_id ? props.location.state.house_id : ""; 
         props.getSingleTransaction({id : "true"});
         // props.getTransactionAllData();
         
         const [active, setActive] = useState("Transactions");
-        const [transaction, setTransaction] = useState(false);
+        const [transaction, setTransaction] = useState(true);
         const [deletedTransaction, setDeletedTransaction] = useState(true);
+        const [is_deleted, setIs_deleted] = useState();
         const [deletedTransactionArry, setDeletedTransactionArry] = useState([]);
         const [loanclosuredate, setLoanclosuredate] = useState('')
         const [loanHouse_id, setLoanHouse_id] = useState('')
         const [endDate, setEndDate] = useState('')
+        const [id, setId] = useState('');
         const [date, setDate] = useState(Util.getCurrentDate("-"));
+        const[isOpen, setIsopen] = useState(false)
         
         useEffect(()=> {
             if(props.transactionAllData && props.transactionAllData.length > 0) {
-               
                 let transactionsArr = [];
                 transactionsArr = props.transactionAllData !== undefined && props.transactionAllData.filter(item => item.is_deleted === 1);
                 setDeletedTransactionArry(transactionsArr);
-                console.log("props.transactionAllData:::",props.transactionAllData,transactionsArr)
+                setId(transactionsArr[0].id,"transactionsArr[0].id")
+               
             }
           else {
                 let data = {
@@ -58,17 +59,30 @@ import { Util } from "../../Datamanipulation/Util";
             
             }
         }, [props.loanDetails])
+
         const handleDocType = (type) => {
-            setActive(type);
-            setTransaction(false ? true :false)
+            type === "1"
+            ? setTransaction(true)
+            : setTransaction(false);
+            // setActive(type);
+            // setTransaction(!transaction)
             setDeletedTransaction(true)
         }
-        const handleDocType2 = (type) => {
-            setActive(type);
-            setTransaction(true)
-            setDeletedTransaction(false ? true :false)
+        // const handleDocType2 = (type) => {
+        //     setActive(type);
+        //     setTransaction(true)
+        //     setDeletedTransaction(!deletedTransaction)
+        // }
+        const handleUndelete =(Id,houseId,tabType)=>{
+            handleDocType(tabType)
+            // console.log("houseId,tabType",Id,houseId,tabType)
+            let data = {
+                "id": Id,
+                "house_id" : house_id,
+            }
+            props.unDeleteTransaction(data)
+          
         }
-
         const header = ["Account Name", "Transaction Date", "Contact Person", "Type", "Amount","Comments", "Receipt","Entry Date & Time", "Entered By"]
         var columns = [
             { 
@@ -89,21 +103,11 @@ import { Util } from "../../Datamanipulation/Util";
             { name: 'Transaction Date', selector: 'date', sortable: true, cell: row => Util.dateFormat(row.date)},
         ];
 
-        const headerOfDel_Data = ["Account Name", "Transaction Date", "Contact Person", "Type", "Amount","Comments", "Receipt","Entry Date & Time", "Entered By"]
+        const headerOfDel_Data = ["Account Name", "Transaction Date", "Contact Person", "Type", "Amount","Comments", "Receipt","Entry Date & Time", "Entered By","Actions"]
 
         var columnsOfDel_Data = [
-            // { 
-            //     name: 'Account Name', 
-            //     selector: 'companyname', 
-            //     sortable: true, 
-            //     cell: row =>
-            //     row.ltransaction == "*" ? row.companyname+"*" :
-            //         <Link data-tag="allowRowEvents" role="link" to={{pathname : "transaction", state:{house_id : house_id}}}>{row.account_name}
-            //         </Link>
-                   
-            //     },
           
-            { name: 'Account Name', selector: 'companyname', sortable: true, },
+            { name: 'Account Name', selector: 'account_name', sortable: true, },
             { name: 'Contact Person', selector: 'contact_person', sortable: true, },
             { name: 'Type', selector: 'type', sortable: true, },
             { name: 'Amount', selector: 'amount', sortable: true },
@@ -112,23 +116,30 @@ import { Util } from "../../Datamanipulation/Util";
             { name: 'Entered By', selector: 'entered_by', sortable: true, },
             { name: 'Entry Date & Time', selector: 'created_at', sortable: true, cell: row => Util.dateFormat(row.created_at)},
             { name: 'Transaction Date', selector: 'date', sortable: true, cell: row => Util.dateFormat(row.date)},
+            { 
+                name: 'Actions', 
+                selector: 'house_id', 
+                sortable: true, 
+                cell: row =><button className="btn btn-primary  addNewItem" onClick={()=>handleUndelete(row.id,house_id,"Deleted Transactions")}>Undelete</button>
+                    // <Link data-tag="allowRowEvents" role="link"  to={{pathname : "transaction-list", state:{house_id : house_id}}}>Undeleted</Link>
+            },
         ];
-
-
-
-
         return (
             <div className="container-fluid contact">
-                <h4>Transactions</h4>
-                <div className="contact-form pt-25">
+                <div className="list-flex">
+                    <h4>Transactions</h4>
+                    <i className="glyphicon glyphicon-info-sign btn-lg info-logo" data-toggle="modal" data-target="#exampleModal" onClick={() => setIsopen(true)}></i>
+                </div>
+                <div className="contact-form pt-25 mt-10">
                 <div className="row top-bar">
                     <div className="col-md-12">
-                        <span className={active === "Transactions"? "active-bar mr-50": "mr-50"} onClick={(e)=> handleDocType("Transactions")}>Transactions</span>
-                        <span className={active === "Deleted Transactions"? "active-bar mr-50": "mr-50"} onClick={(e)=> handleDocType2("Deleted Transactions")}>Deleted Transactions</span>
+                        <span className={transaction ? "active-bar mr-50": "mr-50"} onClick={(e)=> handleDocType("1")}>Transactions</span>
+                        <span className={!transaction ? "active-bar mr-50": "mr-50"} onClick={(e)=> handleDocType("2")}>Deleted Transactions</span>
                     </div>
                 </div>
-               {!transaction ?
-                    <>
+                { console.log("houseId,tabType::",transaction,deletedTransaction,props.transactions,deletedTransactionArry)}
+               {transaction ?
+                    <React.Fragment>
                         <Table header={header} columns={columns} url={"/transaction"} getSingleData={props.getSingleTransaction} tableId="transaction" data={props.transactions} house_id={house_id} />
                         <div className="row footer">
                             {/* <Link to={{
@@ -144,20 +155,39 @@ import { Util } from "../../Datamanipulation/Util";
                             state : {house_id : house_id}
                         }} className="btn btn-primary btn-sm addNewItem pull-right" role="button">
                         <span className="glyphicon glyphicon-plus"> </span> Loan Transaction
-                    </Link> :<>You are not allowed for New Transaction Because Your Loan is Closed </>
+                    </Link> :<React.Fragment>You are not allowed for New Transaction Because Your Loan is Closed </React.Fragment>
                    }
                         </div>
-                    </>
-               : null}
-               {!deletedTransaction ?
-               
-                      <Table header={headerOfDel_Data} columns={columnsOfDel_Data}  getSingleData={props.getSingleTransaction} url={"/transaction"} 
-                       tableId="transactionid" data={deletedTransactionArry}  />
-               : null}
+                    </React.Fragment>
+               :  <Table header={headerOfDel_Data} columns={columnsOfDel_Data}  
+               getSingleData={props.getSingleTransaction}
+                tableId="transactionid" data={deletedTransactionArry} />}
+               {/* {!deletedTransaction ?
+                      <Table header={headerOfDel_Data} columns={columnsOfDel_Data}  
+                      getSingleData={props.getSingleTransaction}
+                       tableId="transactionid" data={deletedTransactionArry} />
+               : null} */}
                {/* {console.log("stateTrans12::",props.transactionDeletedData[0].is_deleted)} */}
                
                    
                 </div>
+                {isOpen === true &&
+                <div className="modal" id="exampleModal" tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" den="true">
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel"></h5>
+                                <button type="button" className="close" onClick={() => setIsopen(false)}>
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
             </div>
         )
     }
@@ -178,7 +208,8 @@ import { Util } from "../../Datamanipulation/Util";
     const mapDispatchToProps = {
         getTransaction,
         getSingleTransaction,
-        getTransactionAllData
+        getTransactionAllData,
+        unDeleteTransaction
     }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TransactionList);

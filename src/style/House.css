@@ -232,3 +232,13 @@
 #down1{
     margin: 1px;
 }
+.blueIcon {
+    color: var(--blue);
+    cursor: pointer;
+}
+.mt-80{
+    margin-top: 80px;
+}
+.font-size-20{
+    font-size: 20px;
+}

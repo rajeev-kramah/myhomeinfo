@@ -73,3 +73,7 @@
 #insurance{
     margin-top: 50px;
 }
+.d_flex {
+    display: flex;
+    align-items: center;
+}

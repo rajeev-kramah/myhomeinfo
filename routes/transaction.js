@@ -7,7 +7,6 @@ const fs = require("fs");
 const removeFile = (path) => {
     fs.unlink(path, (err) => {
         if(err) {
-            console.log(err);
             return false;
         } else {
             return true;
@@ -478,7 +477,6 @@ const removeCommas = (nStr) =>{
 		var sql = "SELECT * From transactions order by id desc"
 		con.query(sql, function (err, transactions) {
 			if (err) {
-				console.log("reas::err",err)
 				res.send(
 					result.response(
 						500,
@@ -553,7 +551,67 @@ const removeCommas = (nStr) =>{
 								)
 							);
 						} else {
+						
 							res.send(result.response(200, transactions, "Transaction deleted successfully!"));
+						}
+					});
+				}
+			});
+		});
+	}
+});
+/**
+ * Undelete single Transaction
+ */
+ router.post("/undelete", async (req, res) => {
+	if (!req.body.id) {
+		res.send(result.response(422, "", "Id is empty"));
+	} else {
+     
+       
+		con.connect(function(err) {
+			var sql = "update transactions set is_deleted=0 where id='"+req.body.id+"'";
+			con.query(sql, function (err, transactions) {
+				if (err) {
+					res.send(
+						result.response(
+							500,
+							err,
+							"OOPS, Something went wrong !, Please try again"
+						)
+					);
+				} else if (transactions.length === 0) {
+					res.send(
+						result.response(
+							404,
+							{},
+							"Transactions does not found !"
+						)
+					);
+				} else {
+					// var sql = "SELECT id, account_name, date, contact_person, type, amount, comments,receipt, created_at, entered_by From transactions where is_deleted = 1 and house_id='"+req.body.house_id+"'";
+					let transactionAllData = [];
+					var sql = "SELECT * From transactions order by id desc"
+					con.query(sql, function (err, transactions) {
+						if (err) {
+							res.send(
+								result.response(
+									500,
+									err,
+									"OOPS, Something went wrong !, Please try again"
+								)
+							);
+						} else if (transactions.length === 0) {
+							res.send(
+								result.response(
+									404,
+									{},
+									"Transaction does not found !"
+								)
+							);
+						} else {
+							transactionAllData = [...transactions]
+							res.send(result.response(200, transactionAllData,"Transaction Undeleted successfully!"));
 						}
 					});
 				}

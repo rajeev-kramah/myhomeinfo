@@ -3,74 +3,19 @@ import { connect } from "react-redux";
 import { addGallery, getGallery, deleteGallery } from "../../store/Actions/Gallery";
 import { NotificationManager } from "react-notifications";
 import Slider from "react-slick";
-
-const IMAGES =
-    [{
-        src: "https://c2.staticflickr.com/9/8817/28973449265_07e3aa5d2e_b.jpg",
-        thumbnail: "https://c2.staticflickr.com/9/8817/28973449265_07e3aa5d2e_n.jpg",
-        thumbnailWidth: 320,
-        thumbnailHeight: 174,
-        isSelected: true,
-        caption: "After Rain (Jeshu John - designerspics.com)"
-    },
-    {
-        src: "https://c2.staticflickr.com/9/8356/28897120681_3b2c0f43e0_b.jpg",
-        thumbnail: "https://c2.staticflickr.com/9/8356/28897120681_3b2c0f43e0_n.jpg",
-        thumbnailWidth: 320,
-        thumbnailHeight: 212,
-        tags: [{ value: "Ocean", title: "Ocean" }, { value: "People", title: "People" }],
-        caption: "Boats (Jeshu John - designerspics.com)"
-    },
-    {
-        src: "https://c2.staticflickr.com/9/8356/28897120681_3b2c0f43e0_b.jpg",
-        thumbnail: "https://c2.staticflickr.com/9/8356/28897120681_3b2c0f43e0_n.jpg",
-        thumbnailWidth: 320,
-        thumbnailHeight: 212,
-        tags: [{ value: "Ocean", title: "Ocean" }, { value: "People", title: "People" }],
-        caption: "Boats (Jeshu John - designerspics.com)"
-    },
-
-    {
-        src: "https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_b.jpg",
-        thumbnail: "https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_n.jpg",
-        thumbnailWidth: 320,
-        thumbnailHeight: 212
-    },
-    {
-        src: "https://c2.staticflickr.com/9/8817/28973449265_07e3aa5d2e_b.jpg",
-        thumbnail: "https://c2.staticflickr.com/9/8817/28973449265_07e3aa5d2e_n.jpg",
-        thumbnailWidth: 320,
-        thumbnailHeight: 174,
-        isSelected: true,
-        caption: "After Rain (Jeshu John - designerspics.com)"
-    },
-    {
-        src: "https://c2.staticflickr.com/9/8356/28897120681_3b2c0f43e0_b.jpg",
-        thumbnail: "https://c2.staticflickr.com/9/8356/28897120681_3b2c0f43e0_n.jpg",
-        thumbnailWidth: 320,
-        thumbnailHeight: 212,
-        tags: [{ value: "Ocean", title: "Ocean" }, { value: "People", title: "People" }],
-        caption: "Boats (Jeshu John - designerspics.com)"
-    },
-    {
-        src: "https://c2.staticflickr.com/9/8356/28897120681_3b2c0f43e0_b.jpg",
-        thumbnail: "https://c2.staticflickr.com/9/8356/28897120681_3b2c0f43e0_n.jpg",
-        thumbnailWidth: 320,
-        thumbnailHeight: 212,
-        tags: [{ value: "Ocean", title: "Ocean" }, { value: "People", title: "People" }],
-        caption: "Boats (Jeshu John - designerspics.com)"
-    },
-
-    {
-        src: "https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_b.jpg",
-        thumbnail: "https://c4.staticflickr.com/9/8887/28897124891_98c4fdd82b_n.jpg",
-        thumbnailWidth: 320,
-        thumbnailHeight: 212
-    }]
+import S3 from "aws-s3";
 
 
 const Galleries = (props) => {
-    console.log('props.gallery', props)
+
+    const config = {
+        bucketName: "robimageuploads",
+        // dirName: 'photos', /* optional */
+        region: "us-east-2",
+        accessKeyId: "AKIAIQ6IWC4PTG4WIZ5A",
+        secretAccessKey: "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",
+      };
+      const S3Client = new S3(config);
     let houseId = props.location.state.house_id ? props.location.state.house_id : "";
     const [id, setId] = useState('');
     const [attachment, setAttachment] = useState('');
@@ -82,17 +27,23 @@ const Galleries = (props) => {
     // const [groupType, setGroupType] = useState('group_1');
     const [groupTypeOption, setGroupTypeOption] = useState('group_1');
     const [active, setActive] = useState("Home");
-
+      
+      
     useEffect(() => {
         if (attachment) {
-            var form = new FormData();
-            form.append('id', id);
-            form.append('house_id', house_id);
-            form.append("attachment", attachment);
-            form.append("album_name", album_name);
-            console.log('form', form)
-            props.addGallery(form);
-            setAttachment("");
+   
+            { S3Client.uploadFile(attachment,attachment.name)
+                .then((data) => {  
+                    var form = new FormData();
+                    form.append('id', id);
+                    form.append('house_id', house_id);
+                    form.append("attachment", data.location);
+                    form.append("album_name", album_name);
+                    props.addGallery(form);
+                    console.log("dataofimg",form) 
+                    setAttachment("");})
+            }
+            
         }
     }, [attachment]);
 
@@ -105,7 +56,6 @@ const Galleries = (props) => {
     // }, [album_name]);
 
     useEffect(() => {
-        console.log("groupTypeOption",groupTypeOption)
         // var form = new FormData();
         // form.append('id', id);
         // form.append('house_id', house_id);
@@ -148,10 +98,14 @@ const Galleries = (props) => {
         slidesToShow: props.galleries !== undefined && props.galleries.length > 3 ? 3 : props.galleries !== undefined && props.galleries.length,
         slidesToScroll: 3
     };
+    const [isOpen, setIsopen] = React.useState(false)
     return (
         <div className="container-fluid loan">
-            <h4>Gallery</h4>
-            <div className="contact-form">
+            <div className="list-flex">
+                <h4>Gallery</h4>
+                <i className="glyphicon glyphicon-info-sign btn-lg info-logo" data-toggle="modal" data-target="#exampleModal" onClick={() => setIsopen(true)}></i>
+            </div>
+            <div className="contact-form mt-10">
                 <div className="row top-bar">
                     <div className="col-md-12">
                         <span className={active === "Home" ? "active-bar mr-50" : "mr-50"} onClick={(e) => handleDocType("Home")}>Home</span>
@@ -166,7 +120,6 @@ const Galleries = (props) => {
                                 setAlbum_name(e.target.value)
                                 setGroupname("Select");
                             }} checked={album_name == "group_1" ? "checked" : ""} />
-                            {console.log("groupType", album_name)}
                             &nbsp;
                             <label htmlFor="group_1">Group-1</label>
                             &nbsp;&nbsp;
@@ -182,7 +135,7 @@ const Galleries = (props) => {
                                 <div className="attachfile" align="center">
                                     <i>Click here to attach Image</i>
                                     <p>{docName ? docName : ""}</p>
-
+                                  
                                 </div>
                                 <input type="file" style={{ height: "0px" }} id="file" onChange={(event) => handleDocumentUpload(event)} className="form-control" style={{ "visibility": "hidden" }} accept="audio/*,video/*,image/*" />
                             </label>
@@ -210,41 +163,47 @@ const Galleries = (props) => {
             </div>
 
             {/* *Galary Code */}
-                <div className="contact-form galary">
-                    <h4>{groupTypeOption === "group_1" ? "Group 1" : "Group 2"} </h4>
-                    {console.log("props.galleries::",props.galleries)}
-                    <div className="row">
-                        <Slider {...settings}>
-                            {
-                                props.galleries !== undefined && props.galleries.map((image) => {
-                                    return (
-                                        <div className="col-md-3">
-                                            <div className="imageArea">
-                                                <img src={image.attachment} id="img-upload"/>
-                                            </div>
-                                            <div className="galaryBody">
-                                                <div className="date">{image.uploaded_at}</div>
-                                                <div className="deleteImage">
-                                                    <span className="glyphicon glyphicon-trash" onClick={(e) => handleDelete(image.id)}></span>
-                                                </div>
+            <div className="contact-form galary">
+                <h4>{groupTypeOption === "group_1" ? "Group 1" : "Group 2"} </h4>
+                <div className="row">
+                    <Slider {...settings}>
+                        {
+                            props.galleries !== undefined && props.galleries.map((image) => {
+                                return (
+                                    <div className="col-md-3">
+                                        <div className="imageArea">
+                                            <img src={image.attachment} id="img-upload" />
+                                        </div>
+                                        <div className="galaryBody">
+                                            <div className="date">{image.uploaded_at}</div>
+                                            <div className="deleteImage">
+                                                <span className="glyphicon glyphicon-trash" onClick={(e) => handleDelete(image.id)}></span>
                                             </div>
                                         </div>
-                                    )
-                                })
-                            }
-                        </Slider>
+                                    </div>
+                                )
+                            })
+                        }
+                    </Slider>
+                </div>
+                {isOpen === true &&
+                    <div className="modal" id="exampleModal" tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" den="true">
+                        <div className="modal-dialog" role="document">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title" id="exampleModalLabel"></h5>
+                                    <button type="button" className="close" onClick={() => setIsopen(false)}>
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div className="modal-body">
+                                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    </div>
-                        
-
-
-
-
-
-
-
-
-
+                }
+            </div>
             {/* Galary Code Completed */}
         </div>
     )
@@ -252,7 +211,6 @@ const Galleries = (props) => {
 
 
 const mapStateToProps = (state) => (
-    console.log("state.Gallery", state.Gallery.galleries.data),
     {
         galleries: state.Gallery.galleries.data
     });

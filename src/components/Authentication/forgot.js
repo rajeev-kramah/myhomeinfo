@@ -47,7 +47,7 @@ const Forgot = (props) => {
 
 						<div className="col-md-3"></div>
 						<div className="col-md-6">
-							<h4 className="tc pb-30">Forget Password</h4>
+							<h4 className="tc pb-30">Forgot Password</h4>
 
 							<div className="form-group">
 								<label htmlFor="email">Email Id</label>
@@ -63,7 +63,7 @@ const Forgot = (props) => {
 							</div>
 
 							<div className="form-group tc">
-								<p className="pt-30 ml-15" >Not registered yet? 
+								<p className="pt-30 " >Not registered yet? 
 									<Link to="/signup" className="primary-button"> Create an Account</Link>
 								</p>
 							</div>

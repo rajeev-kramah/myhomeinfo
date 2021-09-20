@@ -4,7 +4,8 @@ import {
     GET_TRANSACTION,
     GET_TRANSACTION_All,
     GET_SINGLE_TRANSACTION,
-    DELETE_TRANSACTION
+    DELETE_TRANSACTION,
+    UNDELETE_TRANSACTION
 } from "../actionTypes";
 
 import { NotificationManager } from "react-notifications";
@@ -32,7 +33,6 @@ export const addTransaction = (data) => {
 }
 
 export const getTransaction = (data) => {
-    console.log("res123",data);
     return async (dispatch) => {
         await Transaction.getTransaction(data)
         .then(res => {
@@ -63,7 +63,6 @@ export const getTransactionAllData = (data) => {
                 dispatch(data);
             }
         }).catch(error => {
-            console.log("res123::",error);
             throw (error);
         });
     }
@@ -93,6 +92,26 @@ export const deleteTransaction = (data) => {
             if(res.status === 200  || res.status === 404 || res.status === 422) {
                 var data = {
                     type: DELETE_TRANSACTION,
+                    payload: res
+                }
+                dispatch(data);
+                NotificationManager.success("Success Message", res.statusText);
+                // return res;
+            } else {
+                NotificationManager.error("Error Message", res.statusText)
+            }
+        }).catch(error => {
+            throw(error);
+        });
+    }
+}
+export const unDeleteTransaction = (data) => {
+    return async (dispatch) => {
+        await Transaction.unDeleteTransaction(data)
+        .then(res => {
+            if(res.status === 200  || res.status === 404 || res.status === 422) {
+                var data = {
+                    type: UNDELETE_TRANSACTION,
                     payload: res
                 }
                 dispatch(data);

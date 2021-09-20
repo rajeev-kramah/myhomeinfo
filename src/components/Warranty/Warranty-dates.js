@@ -23,9 +23,9 @@ const WarrantyDates = (props) => {
     const [color, setColor] = useState('');
     const [product_price, setProduct_price] = useState('');
     const [mfg_warranty_start_date, setMfg_warranty_start_date] = useState(Util.getCurrentDate("-"));
-    const [mfg_warranty_end_date, setMfg_warranty_end_date] = useState('');
+    const [mfg_warranty_end_date, setMfg_warranty_end_date] = useState(Util.getCurrentDate("-"));
     const [extended_warranty_start_date, setExtended_warranty_start_date] = useState(Util.getCurrentDate("-"));
-    const [extended_warranty_end_date, setExtended_warranty_end_date] = useState('');
+    const [extended_warranty_end_date, setExtended_warranty_end_date] = useState(Util.getCurrentDate("-"));
     const [installation_date, setInstallation_date] = useState('');
     const [installation_company_name, setInstallation_company_name] = useState('');
     const [installed_by, setInstalled_by] = useState('');
@@ -49,10 +49,10 @@ const WarrantyDates = (props) => {
             setModel_no(props.warrantyDetails[0].model_no);
             setColor(props.warrantyDetails[0].color);
             setProduct_price(props.warrantyDetails[0].product_price);
-            setMfg_warranty_start_date(props.warrantyDetails[0].mfg_warranty_start_date);
-            setMfg_warranty_end_date(props.warrantyDetails[0].mfg_warranty_end_date);
-            setExtended_warranty_start_date(props.warrantyDetails[0].extended_warranty_start_date);
-            setExtended_warranty_end_date(props.warrantyDetails[0].extended_warranty_end_date);
+            setMfg_warranty_start_date(props.warrantyDetails[0].mfg_warranty_start_date ?props.warrantyDetails[0].mfg_warranty_start_date : Util.getCurrentDate("-"));
+            setMfg_warranty_end_date(props.warrantyDetails[0].mfg_warranty_end_date ? props.warrantyDetails[0].mfg_warranty_end_date :Util.getCurrentDate("-"));
+            setExtended_warranty_start_date(props.warrantyDetails[0].extended_warranty_start_date ? props.warrantyDetails[0].extended_warranty_start_date : Util.getCurrentDate("-"));
+            setExtended_warranty_end_date(props.warrantyDetails[0].extended_warranty_end_date?props.warrantyDetails[0].extended_warranty_end_date:Util.getCurrentDate("-"));
             setInstallation_date(props.warrantyDetails[0].installation_date);
             setInstallation_company_name(props.warrantyDetails[0].installation_company_name);
             setInstalled_by(props.warrantyDetails[0].installed_by);
