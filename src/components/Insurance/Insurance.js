@@ -11,8 +11,6 @@ import ContactModal from "../Contacts/Contact-Modal";
 import NumberFormat from "react-number-format";
 import S3 from "aws-s3";
 import JsFileDownloader from "js-file-downloader";
-import { data } from 'jquery';
-
 
 const Insurance = (props) => {
 

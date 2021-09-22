@@ -8,6 +8,7 @@ import { Util } from "../../Datamanipulation/Util";
 import Tab from "../../Reusable/Tab";
 import { getContact } from "../../store/Actions/contact";
 import ContactModal from "../Contacts/Contact-Modal";
+import NumberFormat from "react-number-format";
 
 
 const Tenant = (props) => {
@@ -16,6 +17,7 @@ const Tenant = (props) => {
     
     const [lease_begin,setLease_begin] = useState(Util.getCurrentDate("-"));
     const [lease_end,setLease_end] = useState(Util.getCurrentDate("-"));
+    const [lease_date, setLease_date] = useState(Util.getCurrentDate("-"));
     const [frequency,setFrequency] = useState('');
     const [rent,setRent] = useState('');
     const [rent_due_by,setRent_due_by] = useState('');
@@ -37,12 +39,14 @@ const Tenant = (props) => {
     const [space_description, setSpace_description] = useState('');
     const [document, setDocument] = useState('');
     const [comment,setComment] = useState('');
+    const [lease_amount, setLease_amount] = useState('');
     const [id, setId] = useState('');
     const [house_id, setHouse_id] = useState(houseId);
     const [showGroup, setShowGroup] = useState(false);
 
     useEffect(()=> {
         if(props.leaseDetails && props.leaseDetails.length > 0) {
+            console.log("props.leaseDetails", props.leaseDetails[0])
             setId(props.leaseDetails[0].id);
             setLease_begin(props.leaseDetails[0].lease_begin ? props.leaseDetails[0].lease_begin : Util.getCurrentDate("-"));
             setLease_end(props.leaseDetails[0].lease_end ? props.leaseDetails[0].lease_end : Util.getCurrentDate("-"));
@@ -60,6 +64,7 @@ const Tenant = (props) => {
             setPets(props.leaseDetails[0].pets);
             setDeposit(props.leaseDetails[0].deposit);
             setRenewed(props.leaseDetails[0].renewed);
+            setLease_amount(props.leaseDetails[0].lease_amount);
             setRealtor_name(props.leaseDetails[0].realtor_name);
             setRealtor_phone(props.leaseDetails[0].realtor_phone);
             setRealtor_email(props.leaseDetails[0].realtor_email);
@@ -71,8 +76,7 @@ const Tenant = (props) => {
         }
     }, [props.leaseDetails]);
 
-    props.getContact({house_id: house_id});
-    
+       
      const handleSubmit = () => {
         let data = {
             "id": id,
@@ -92,6 +96,8 @@ const Tenant = (props) => {
             "pets": pets,
             "deposit": deposit,
             "renewed": renewed,
+            "lease_amount" : lease_amount,
+            "lease_date": lease_date,
             "realtor_name": realtor_name,
             "realtor_phone": realtor_phone,
             "realtor_email": realtor_email,
@@ -108,13 +114,12 @@ const Tenant = (props) => {
         }
 
         form.append("document", document);
-        form.append("lastTab", true)
-
+      
         let valid = validate();
         if(valid) {
             props.addLease(form)
             props.history.push({
-                pathname: 'lease-list',
+                pathname: 'lease',
                 state: {
                     house_id : house_id
                 }
@@ -143,14 +148,7 @@ const Tenant = (props) => {
         props.getContact(data);
     };
 
-    const handlePrevious = () => {
-        props.history.push({
-            pathname: 'lease',
-            state: {
-                house_id : house_id
-            }
-        });
-    } 
+   
 
 
    
@@ -262,7 +260,7 @@ const Tenant = (props) => {
         }
     
      }
-
+   
     return (
         <div className="container-fluid house">
             <h4>Add Lease Details</h4>
@@ -369,7 +367,21 @@ const Tenant = (props) => {
                             <div className="col-md-4">
                                 <div className="form-group">
                                     <label htmlFor="Security Deposit">Security Deposit</label>
-                                    <input type="text" value={deposit} onChange={e=>setDeposit(e.target.value)} className="form-control" />
+                                    <NumberFormat
+                                        thousandsGroupStyle="thousand"
+                                        className="form-control"
+                                        value={deposit}
+                                        decimalSeparator="."
+                                        type="text"
+                                        thousandSeparator={true}
+                                        allowNegative={true}
+                                        decimalScale={2}
+                                        fixedDecimalScale={true}
+                                        allowEmptyFormatting={true}
+                                        allowLeadingZeros={false}
+                                        onChange={e => setDeposit(e.target.value)}
+                                        isNumericString={true} />
+                                    {/* <input type="text" value={deposit} onChange={e=>setDeposit(e.target.value)} className="form-control" /> */}
                                 </div>
                             </div>
                         </div>
@@ -440,8 +452,8 @@ const Tenant = (props) => {
                     </div>
                     <div className="col-md-5">
                         <div className="btn-group pull-right" role="group" aria-label="...">
-                            <button type="button" className="btn btn-primary btn-sm addNewItem " onClick={handlePrevious}><span className="glyphicon glyphicon-arrow-left"></span>Previous</button>
-                            <button type="button"  className="btn btn-primary btn-sm addNewItem disable " disabled="disabled">Next <span className="glyphicon glyphicon-arrow-right"> </span></button>
+                            <button type="button" className="btn btn-primary btn-sm addNewItem disable" disabled="disabled" ><span className="glyphicon glyphicon-arrow-left"></span>Previous</button>
+                            <button type="button"  className="btn btn-primary btn-sm addNewItem" onClick={handleSubmit}>Next <span className="glyphicon glyphicon-arrow-right"> </span></button>
                         </div>
                     </div>
                 </div>

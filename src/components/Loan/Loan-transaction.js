@@ -280,23 +280,7 @@ const LoanTransaction = (props) => {
                             <div className="col-md-4">
                                 <div className="form-group">
                                     <label htmlFor="Rate of Interest(%)">Rate of Interest(%)</label>
-                                    <NumberFormat
-                                        placeholder="Rate of Interest(%)"
-                                        thousandsGroupStyle="thousand"
-                                        className="form-control"
-                                        value={rateofinterest}
-                                        decimalSeparator="."
-                                        type="text"
-                                        thousandSeparator={true}
-                                        allowNegative={true}
-                                        decimalScale={2}
-                                        fixedDecimalScale={true}
-                                        allowEmptyFormatting={true}
-                                        allowLeadingZeros={false}
-                                        onChange={e => setRateofinterest(e.target.value)}
-                                        isNumericString={true}
-                                        readOnly />
-                                    {/* <input type="text" placeholder="Rate of Interest(%)" value={rateofinterest} onChange={e=> setRateofinterest(e.target.value)} className="form-control" readOnly/> */}
+                                    <input type="text" placeholder="Rate of Interest(%)" value={rateofinterest} onChange={e=> setRateofinterest(e.target.value)} className="form-control" readOnly/>
                                 </div>
                             </div>
                         </div>
@@ -348,6 +332,7 @@ const LoanTransaction = (props) => {
 
 
 const mapStateToProps = (state) => (
+    console.log("state.Loan",state.Loan),
     {
         loanDetails: state.Loan.loanDetails.data,
         loanTransaction: state.Loan.loanTransaction.data

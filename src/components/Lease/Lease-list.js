@@ -7,6 +7,21 @@ import Table from "../../Reusable/Table";
 import { Util } from "../../Datamanipulation/Util";
 
 const LeaseList = (props) => {
+
+
+    useEffect(()=> {
+        if(props.leases && props.leases.length > 0) 
+        {
+            // setId(props.userData[0].id)
+        }
+      else {
+            let data = {
+                "house_id":house_id
+            }
+            props.getLease(data);
+        }
+    },[props.userData]);
+
     let house_id = props.location.state.house_id ? props.location.state.house_id : "";
     props.getSingleLease({id : "true"});
     
@@ -41,7 +56,7 @@ const LeaseList = (props) => {
             name: 'Tenant Name', 
             selector: 'tenant_name1', 
             sortable: true, 
-            cell: row => <Link data-tag="allowRowEvents" role="link" to={{pathname : "lease", state:{house_id : house_id}}}>{row.tenant_name1}</Link>
+            cell: row => <Link data-tag="allowRowEvents" role="link" to={{pathname : "tenant", state:{house_id : house_id}}}>{row.tenant_name1}</Link>
         },
         { name: 'Tenant Phono No.', selector: 'tenant_phone1', sortable: true, },
         { name: 'Tenant Email', selector: 'tenant_email1', sortable: true, },
@@ -75,10 +90,10 @@ const LeaseList = (props) => {
                 <i className="glyphicon glyphicon-info-sign btn-lg info-logo" data-toggle="modal" data-target="#exampleModal" onClick={() => setIsopen(true)}></i>
             </div>
             <div className="loan-inner padding-4">
-            <Table header={header} url={"/lease"} columns={columns} getSingleData={props.getSingleLease} tableId="lease" data={props.leases}  house_id={house_id}/>
+            <Table header={header} url={"/tenant"} columns={columns} getSingleData={props.getSingleLease} tableId="lease" data={props.leases}  house_id={house_id}/>
                 <div className="row footer">
                     <Link to={{
-                            pathname : "/lease",
+                            pathname : "/tenant",
                             state : {house_id : house_id}
                         }} className="btn btn-primary btn-sm addNewItem pull-right">
                         <span className="glyphicon glyphicon-plus"> </span> Add New Lease

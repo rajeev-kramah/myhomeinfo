@@ -8,14 +8,28 @@ import S3 from "aws-s3";
 
 const Galleries = (props) => {
 
-    const config = {
-        bucketName: "robimageuploads",
-        // dirName: 'photos', /* optional */
-        region: "us-east-2",
-        accessKeyId: "AKIAIQ6IWC4PTG4WIZ5A",
-        secretAccessKey: "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",
-      };
-      const S3Client = new S3(config);
+// aws-s3 uploader//
+const config = {
+    bucketName: "myhomeinfouseruploads",
+    // dirName: 'photos', /* optional */
+    region: "us-west-2",
+    accessKeyId: "AKIARSK5NHWUX4TJHVXB",
+    secretAccessKey: "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",
+  };
+  const S3Client = new S3(config);
+  const generate_random_string = (string_length) => {
+    let random_string = "";
+    let random_ascii;
+    let ascii_low = 65;
+    let ascii_high = 90;
+    for (let i = 0; i < string_length; i++) {
+      random_ascii = Math.floor(
+        Math.random() * (ascii_high - ascii_low) + ascii_low,
+      );
+      random_string += String.fromCharCode(random_ascii);
+    }
+    return random_string;
+  };
     let houseId = props.location.state.house_id ? props.location.state.house_id : "";
     const [id, setId] = useState('');
     const [attachment, setAttachment] = useState('');
@@ -31,19 +45,23 @@ const Galleries = (props) => {
       
     useEffect(() => {
         if (attachment) {
-   
-            { S3Client.uploadFile(attachment,attachment.name)
-                .then((data) => {  
-                    var form = new FormData();
-                    form.append('id', id);
-                    form.append('house_id', house_id);
-                    form.append("attachment", data.location);
-                    form.append("album_name", album_name);
-                    props.addGallery(form);
-                    console.log("dataofimg",form) 
-                    setAttachment("");})
-            }
+            console.log("console_album_name",album_name)
+            const newFileName =
+            generate_random_string(4) +
+            attachment.name.split(".").slice(0, -1).join(".");
             
+            S3Client.uploadFile(attachment,newFileName)
+            .then((data) => {  
+                var form = new FormData();
+                form.append('id', id);
+                form.append('house_id', house_id);
+                form.append("attachment", data.location);
+                form.append("album_name", album_name);
+                props.addGallery(form);
+                console.log("dataofimg",form) 
+                setAttachment("");
+                setGroupTypeOption(album_name);
+            })
         }
     }, [attachment]);
 
@@ -56,10 +74,11 @@ const Galleries = (props) => {
     // }, [album_name]);
 
     useEffect(() => {
-        // var form = new FormData();
-        // form.append('id', id);
-        // form.append('house_id', house_id);
-        // form.append("album_name", groupTypeOption);
+        console.log("console_groupTypeOption",groupTypeOption)
+    //   if(props.galleries && props.galleries > 0)
+    //   {
+    //     setGroupTypeOption(props.galleries[0].album_name) 
+    //   }
         props.getGallery({ album_name: groupTypeOption, house_id: house_id });
     }, [groupTypeOption])
 
@@ -73,12 +92,21 @@ const Galleries = (props) => {
 
     const handleAlbumsChange = (e) => {
         setGroupTypeOption(e.target.value);
+        // setGroupTypeOption(props.galleries[0].album_name) 
     }
 
-    const handleDelete = (id) => {
-        props.deleteGallery({ id: id, house_id: house_id, album_name: groupTypeOption });
-        // NotificationManager.error("Success Message", "Attachment deleted");
-    }
+    const handleDelete = (id,docFile) => {
+        const newFileName = docFile.split('/')[3]
+        S3Client.deleteFile(newFileName).then((data) => {
+            if(data.fileName !== undefined)
+            {
+                props.deleteGallery({ id: id, house_id: house_id, album_name: groupTypeOption });
+            }
+            else {
+                props.deleteGallery({ id: id, house_id: house_id, album_name: groupTypeOption });
+            }
+        } )
+       }
 
     const handleDocType = (type) => {
         setActive(type);
@@ -165,24 +193,29 @@ const Galleries = (props) => {
             {/* *Galary Code */}
             <div className="contact-form galary">
                 <h4>{groupTypeOption === "group_1" ? "Group 1" : "Group 2"} </h4>
+                {console.log("console_1",props.galleries)}
                 <div className="row">
                     <Slider {...settings}>
                         {
-                            props.galleries !== undefined && props.galleries.map((image) => {
-                                return (
-                                    <div className="col-md-3">
-                                        <div className="imageArea">
-                                            <img src={image.attachment} id="img-upload" />
-                                        </div>
-                                        <div className="galaryBody">
-                                            <div className="date">{image.uploaded_at}</div>
-                                            <div className="deleteImage">
-                                                <span className="glyphicon glyphicon-trash" onClick={(e) => handleDelete(image.id)}></span>
+                            props.galleries !== undefined && props.galleries.map((image) =>
+                             {
+                                // if(image.album_name === groupTypeOption) {
+                                    return (
+                                        <div className="col-md-3">
+                                            <div className="imageArea">
+                                                <img src={image.attachment} id="img-upload" />
+                                            </div>
+                                            <div className="galaryBody">
+                                                <div className="date">{image.uploaded_at}</div>
+                                                <div className="deleteImage">
+                                                    <span className="glyphicon glyphicon-trash" onClick={(e) => handleDelete(image.id,image.attachment)}></span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                )
-                            })
+                                    )
+                                // }
+                            }
+                            )
                         }
                     </Slider>
                 </div>

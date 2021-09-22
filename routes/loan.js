@@ -242,7 +242,7 @@ router.post("/gettransaction", async (req, res) => {
 /** Get transaction*/
 router.post("/getMortgageTransaction", async (req, res) => {
 	con.connect(function(err) {
-		var sql = "SELECT loan.id, loantype, lname, lcontactperson, laddress, lphno, lemail, lurl, purchaseprice, downpayment, loanamount, rateofinterest, loanterm, loannumber, escrow, mortgage, loanbegindate, propertytax, doc_path, additionaldetails, loanclosuredate, status, escrowPayee, propertytaxPayee, loan.house_id, pmtno, paymentdate, beginingamount, scheduledpayment, extrapayment, totalpayment, principal, interest, endingbalance, cumulativeinterest, loan_id, contacts.groupname,contacts.companyname From loan INNER JOIN loantransaction as lt on loan.id = lt.loan_id INNER JOIN contacts ON loan.lname = contacts.id where loan.loantype = 'Mortgage' AND loan.house_id='"+req.body.house_id+"'";
+		var sql = "SELECT loan.id, loantype, lname, lcontactperson, laddress, lphno, lemail, lurl, purchaseprice, downpayment, loanamount, rateofinterest, loanterm, loannumber, escrow, mortgage, loanbegindate, propertytax, document, additionaldetails, loanclosuredate, status, escrowPayee, propertytaxPayee, loan.house_id, pmtno, paymentdate, beginingamount, scheduledpayment, extrapayment, totalpayment, principal, interest, endingbalance, cumulativeinterest, loan_id, contacts.groupname,contacts.companyname From loan INNER JOIN loantransaction as lt on loan.id = lt.loan_id INNER JOIN contacts ON loan.lname = contacts.id where loan.loantype = 'Mortgage' AND loan.house_id='"+req.body.house_id+"'";
 		//='"+req.body.loan_id+"'";
 		con.query(sql, function (err, loan) {
 			if (err) {
@@ -300,7 +300,8 @@ router.post("/getMortgageTransaction", async (req, res) => {
  * Create Loan
  */
 router.post("/",upload.single("document"), async (req, res) => {
-		//id, loantype, lname, lcontactperson, laddress, lphno, lemail, lurl, purchaseprice, downpayment, loanamount, rateofinterest, loanterm, loannumber, escrow, mortgage, loanbegindate, propertytax, doc_path, additionaldetails, loanclosuredate, status, escrowPayee, propertytaxPayee, escrowamount, house_id, lcontact_id, escrowcontact_id, propertytaxcontact_id, renewal_maturity_date, renewal_intrest_rate
+	console.log("document12::",req.body.document)
+		//id, loantype, lname, lcontactperson, laddress, lphno, lemail, lurl, purchaseprice, downpayment, loanamount, rateofinterest, loanterm, loannumber, escrow, mortgage, loanbegindate, propertytax, document, additionaldetails, loanclosuredate, status, escrowPayee, propertytaxPayee, escrowamount, house_id, lcontact_id, escrowcontact_id, propertytaxcontact_id, renewal_maturity_date, renewal_intrest_rate
 	let id = req.body.id;
 	let loantype = req.body.loantype;
 	let lname = req.body.lname;
@@ -328,19 +329,20 @@ router.post("/",upload.single("document"), async (req, res) => {
 	let escrowamount = req.body.escrowamount;
 	let renewal_maturity_date = req.body.renewal_maturity_date;
 	let renewal_intrest_rate = req.body.renewal_intrest_rate;
+	let document = req.body.document;
 	
 		con.connect(function(err) {
-				var doc_path = "";
-				console.log(req.file);
-				if (req.file) {
-						doc_path = req.file.path;
-					}
+				// var document = "";
+				// console.log(req.file);
+				// if (req.file) {
+				// 		document = req.file.path;
+				// 	}
 				
-					var sql = "INSERT INTO loan (loantype, lname, lcontactperson, laddress, lphno, lemail, lurl, purchaseprice, downpayment, loanamount, rateofinterest, loanterm, loannumber, escrow, mortgage, loanbegindate, propertytax, doc_path, additionaldetails, loanclosuredate, status, house_id, escrowPayee, propertytaxPayee, escrowamount, renewal_maturity_date, renewal_intrest_rate) VALUES ('"+loantype+"','"+lname+"', '"+lcontactperson+"', '"+laddress+"', '"+lphno+"', '"+lemail+"', '"+lurl+"', '"+purchaseprice+"', '"+downpayment+"', '"+loanamount+"', '"+rateofinterest+"', '"+loanterm+"', '"+loannumber+"', '"+escrow+"', '"+mortgage+"', '"+loanbegindate+"','"+propertytax+"','"+doc_path+"','"+additionaldetails+"','"+loanclosuredate+"','"+status+"','"+house_id+"', '"+escrowPayee+"', '"+propertytaxPayee+"' , '"+escrowamount+"', '"+renewal_maturity_date+"', '"+renewal_intrest_rate+"')";
+					var sql = "INSERT INTO loan (loantype, lname, lcontactperson, laddress, lphno, lemail, lurl, purchaseprice, downpayment, loanamount, rateofinterest, loanterm, loannumber, escrow, mortgage, loanbegindate, propertytax, document, additionaldetails, loanclosuredate, status, house_id, escrowPayee, propertytaxPayee, escrowamount, renewal_maturity_date, renewal_intrest_rate) VALUES ('"+loantype+"','"+lname+"', '"+lcontactperson+"', '"+laddress+"', '"+lphno+"', '"+lemail+"', '"+lurl+"', '"+purchaseprice+"', '"+downpayment+"', '"+loanamount+"', '"+rateofinterest+"', '"+loanterm+"', '"+loannumber+"', '"+escrow+"', '"+mortgage+"', '"+loanbegindate+"','"+propertytax+"','"+document+"','"+additionaldetails+"','"+loanclosuredate+"','"+status+"','"+house_id+"', '"+escrowPayee+"', '"+propertytaxPayee+"' , '"+escrowamount+"', '"+renewal_maturity_date+"', '"+renewal_intrest_rate+"')";
 
 				if(id){
-						if(doc_path){
-								sql = "UPDATE loan SET loantype= '"+loantype+"', lname= '"+lname+"', lcontactperson= '"+lcontactperson+"', laddress= '"+laddress+"', lphno= '"+lphno+"', lemail= '"+lemail+"', lurl= '"+lurl+"', purchaseprice= '"+purchaseprice+"', downpayment= '"+downpayment+"', loanamount= '"+loanamount+"', rateofinterest= '"+rateofinterest+"', loanterm= '"+loanterm+"', loannumber= '"+loannumber+"', escrow= '"+escrow+"', mortgage= '"+mortgage+"', loanbegindate= '"+loanbegindate+"', propertytax= '"+propertytax+"', doc_path= '"+doc_path+"', additionaldetails= '"+additionaldetails+"', loanclosuredate= '"+loanclosuredate+"', status= '"+status+"', house_id = '"+house_id+"', escrowPayee = '"+escrowPayee+"', propertytaxPayee = '"+propertytaxPayee+"', escrowamount='"+escrowamount+"', renewal_maturity_date ='"+renewal_maturity_date+"', renewal_intrest_rate = '"+renewal_intrest_rate+"' where id = '"+id+"'";
+						if(document){
+								sql = "UPDATE loan SET loantype= '"+loantype+"', lname= '"+lname+"', lcontactperson= '"+lcontactperson+"', laddress= '"+laddress+"', lphno= '"+lphno+"', lemail= '"+lemail+"', lurl= '"+lurl+"', purchaseprice= '"+purchaseprice+"', downpayment= '"+downpayment+"', loanamount= '"+loanamount+"', rateofinterest= '"+rateofinterest+"', loanterm= '"+loanterm+"', loannumber= '"+loannumber+"', escrow= '"+escrow+"', mortgage= '"+mortgage+"', loanbegindate= '"+loanbegindate+"', propertytax= '"+propertytax+"', document= '"+document+"', additionaldetails= '"+additionaldetails+"', loanclosuredate= '"+loanclosuredate+"', status= '"+status+"', house_id = '"+house_id+"', escrowPayee = '"+escrowPayee+"', propertytaxPayee = '"+propertytaxPayee+"', escrowamount='"+escrowamount+"', renewal_maturity_date ='"+renewal_maturity_date+"', renewal_intrest_rate = '"+renewal_intrest_rate+"' where id = '"+id+"'";
 						}else{
 								sql = "UPDATE loan SET loantype= '"+loantype+"', lname= '"+lname+"', lcontactperson= '"+lcontactperson+"', laddress= '"+laddress+"', lphno= '"+lphno+"', lemail= '"+lemail+"', lurl= '"+lurl+"', purchaseprice= '"+purchaseprice+"', downpayment= '"+downpayment+"', loanamount= '"+loanamount+"', rateofinterest= '"+rateofinterest+"', loanterm= '"+loanterm+"', loannumber= '"+loannumber+"', escrow= '"+escrow+"', mortgage= '"+mortgage+"', loanbegindate= '"+loanbegindate+"', propertytax= '"+propertytax+"', additionaldetails= '"+additionaldetails+"', loanclosuredate= '"+loanclosuredate+"', status= '"+status+"', house_id = '"+house_id+"', escrowPayee = '"+escrowPayee+"', propertytaxPayee = '"+propertytaxPayee+"', escrowamount='"+escrowamount+"', renewal_maturity_date ='"+renewal_maturity_date+"', renewal_intrest_rate = '"+renewal_intrest_rate+"' where id = '"+id+"'";
 						}
@@ -466,7 +468,7 @@ const queryFunc = (sql) =>{
 	} else {
 		con.connect(function(err) {
 			if(req.body.delete == "doc"){
-				sql = "select doc_path from loan where id = '"+req.body.id+"'";
+				sql = "select document from loan where id = '"+req.body.id+"'";
 				con.query(sql, function (err, loan) {
 					if (err) {
 						res.send(
@@ -476,45 +478,35 @@ const queryFunc = (sql) =>{
 								"OOPS, Something went wrong !, Please try again"
 							)
 						);
-					} else if (loan.length === 0) {
+					} else if (loan.length > 0) {
+						let path = loan[0]['document']
+						// path = "public\\files\\" + path;
+						 removeFile(path);
+					} 
+				});
+				sql = "UPDATE loan SET document= '' where id='"+req.body.id+"'";
+				con.query(sql, function (err, loan) {
+					if(err) {
 						res.send(
 							result.response(
-								404,
-								{},
-								"Loan does not found !"
+						  		500,
+						  		err,
+						  		"OOPS, Something went wrong !, Please try again"
 							)
-						);
-					} else {
-						let path = loan[0]['doc_path'].substr(11);
-						path = "public\\files\\" + path;
-						let att = removeFile(path);
-						if(att === false){
-							res.send(
-								result.response(
-									500,
-									{},
-									"Oops! Something went wrong. Please try later."
-								)
-							);
-						} else {
-							sql = "UPDATE loan SET doc_path= '' where id='"+req.body.id+"'";
-							con.query(sql, function(err, house) {
-								if(err) {
-									res.send(
-										result.response(
-											500,
-											err,
-											"Oops! Something went wrong. Please try later."
-										)
-									);
-								}
-							});
-						}
+					  	);
+					}
+					 else if (loan.length === 0) {
+					  	res.send(
+							result.response(
+						  		404,
+						  		{},
+						  		"Loan does not found !"
+							)
+					  	);
 					}
 				});
 			}
-
-
+			
 			var sql = "SELECT * From loan where id='"+req.body.id+"'";
 			con.query(sql, function (err, loan) {
 				if (err) {
@@ -550,7 +542,7 @@ const queryFunc = (sql) =>{
 		res.send(result.response(422, "", "house_id is empty"));
 	} else {
 		con.connect(function(err) {
-			var sql = "SELECT loan.id, loantype, lname, lcontactperson, laddress, lphno, lemail, lurl, purchaseprice, downpayment, loanamount, rateofinterest, loanterm, loannumber, escrow, mortgage, loanbegindate, propertytax, doc_path, additionaldetails, loanclosuredate, status, escrowPayee, propertytaxPayee, escrowamount, loan.house_id, lcontact_id, escrowcontact_id, propertytaxcontact_id, contacts.groupname,contacts.companyname From loan INNER JOIN contacts ON loan.lname = contacts.id where loan.house_id='"+req.body.house_id+"'";
+			var sql = "SELECT loan.id, loantype, lname, lcontactperson, laddress, lphno, lemail, lurl, purchaseprice, downpayment, loanamount, rateofinterest, loanterm, loannumber, escrow, mortgage, loanbegindate, propertytax, document, additionaldetails, loanclosuredate, status, escrowPayee, propertytaxPayee, escrowamount, loan.house_id, lcontact_id, escrowcontact_id, propertytaxcontact_id, contacts.groupname,contacts.companyname From loan INNER JOIN contacts ON loan.lname = contacts.id where loan.house_id='"+req.body.house_id+"'";
 			
 			con.query(sql, function (err, loan) {
 				if (err) {
@@ -585,7 +577,7 @@ const queryFunc = (sql) =>{
 		res.send(result.response(422, "", "Id is empty"));
 	} else {
 		con.connect(function(err) {
-			var sql = "select doc_path from loan where id = '"+req.body.id+"'";
+			var sql = "select document from loan where id = '"+req.body.id+"'";
 			con.query(sql, function (err, loan) {
 				if (err) {
 					res.send(
@@ -596,8 +588,8 @@ const queryFunc = (sql) =>{
 						)
 					);
 				} else if (loan.length > 0) {
-					let path = loan[0]['doc_path'].substr(11);
-					path = "public\\files\\" + path;
+					let path = loan[0]['document']
+					// path = "public\\files\\" + path;
 					removeFile(path);
 				}
 			});

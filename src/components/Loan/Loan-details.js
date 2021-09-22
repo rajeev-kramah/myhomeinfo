@@ -69,7 +69,7 @@ const LoanDetails = (props) => {
       setEscrowstatus(props.loanDetails[0].escrowstatus);
       setDoc_path(props.loanDetails[0].doc_path);
       setEscrowAmount(props.loanDetails[0].escrowamount);
-      setRenewal_maturity_date(props.loanDetails[0].renewal_maturity_date);
+      setRenewal_maturity_date(props.loanDetails[0].renewal_maturity_date ? props.loanDetails[0].renewal_maturity_date :Util.getCurrentDate('-'));
       setRenewal_intrest_rate(props.loanDetails[0].renewal_intrest_rate);
     }
   }, [props.loanDetails])
@@ -109,6 +109,7 @@ const LoanDetails = (props) => {
       'renewal_intrest_rate': renewal_intrest_rate
     }
     var form = new FormData();
+   
 
     for (const key in data) {
       form.append(key, data[key]);
@@ -322,22 +323,7 @@ const LoanDetails = (props) => {
               <div className="col-md-6">
                 <div className="form-group">
                   <label htmlFor="interest" className="req">Rate of Interest(%)</label>
-                  <NumberFormat
-                    placeholder="Rate of Interest(%)"
-                    thousandsGroupStyle="thousand"
-                    className="form-control"
-                    value={rateofinterest}
-                    decimalSeparator="."
-                    type="text"
-                    thousandSeparator={true}
-                    allowNegative={true}
-                    decimalScale={2}
-                    fixedDecimalScale={true}
-                    allowEmptyFormatting={true}
-                    allowLeadingZeros={false}
-                    onChange={e => setRateofinterest(e.target.value)}
-                    isNumericString={true} />
-                  {/* <input type="text" placeholder="Rate of Interest(%)" value={Util.addCommas(rateofinterest)} onChange={e => setRateofinterest(e.target.value)} className="form-control" /> */}
+                    <input type="text" placeholder="Rate of Interest(%)" value={Util.addCommas(rateofinterest)} onChange={e => setRateofinterest(e.target.value)} className="form-control" />
                 </div>
               </div>
               <div className="col-md-6">

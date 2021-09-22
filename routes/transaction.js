@@ -54,7 +54,7 @@ router.post("/", upload.single("receipt"), async (req, res) => {
 	let amount = req.body.amount; 
 	let entered_by = req.body.entered_by;
 	let comments = req.body.comments;
-	let receipt = "";
+	let receipt = req.body.receipt;;
 	let add_to_home_cost = req.body.add_to_home_cost;
 	let add_to_warranty = req.body.add_to_warranty;
 	let debit = req.body.debit;
@@ -69,9 +69,9 @@ router.post("/", upload.single("receipt"), async (req, res) => {
 	let escrowbalance =  req.body.escrowbalance;
 
 	con.connect(function(err) {
-        if (req.file) {
-            receipt = req.file.path;
-        }
+        // if (req.file) {
+        //     receipt = req.file.path;
+        // }
 		var sql = "";
 
 		if(add_to_warranty == 1) {
@@ -366,8 +366,8 @@ const removeCommas = (nStr) =>{
 							)
 						);
 					} else if (transaction.length > 0) {
-						let path = transaction[0]['receipt'].substr(11);
-						path = "public\\files\\" + path;
+						let path = transaction[0]['receipt']
+						// path = "public\\files\\" + path;
 						removeFile(path);
 					}
 				});

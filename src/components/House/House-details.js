@@ -7,8 +7,34 @@ import { connect } from "react-redux";
 import { Util } from "../../Datamanipulation/Util";
 import Tab from "../../Reusable/Tab";
 import NumberFormat from "react-number-format";
+import S3 from "aws-s3";
+import JsFileDownloader from "js-file-downloader";
 
 const HouseDetails = (props) => {
+
+  // aws-s3 uploader//
+  const config = {
+    bucketName: "myhomeinfouseruploads",
+    // dirName: 'photos', /* optional */
+    region: "us-west-2",
+    accessKeyId: "AKIARSK5NHWUX4TJHVXB",
+    secretAccessKey: "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",
+  };
+  const S3Client = new S3(config);
+  const generate_random_string = (string_length) => {
+    let random_string = "";
+    let random_ascii;
+    let ascii_low = 65;
+    let ascii_high = 90;
+    for (let i = 0; i < string_length; i++) {
+      random_ascii = Math.floor(
+        Math.random() * (ascii_high - ascii_low) + ascii_low,
+      );
+      random_string += String.fromCharCode(random_ascii);
+    }
+    return random_string;
+  };
+
   const user = JSON.parse(localStorage.getItem('user'));
   let userCountry = user.country
   const [house, setHouse] = useState('');
@@ -52,29 +78,76 @@ const HouseDetails = (props) => {
       setOwner_id(props.houseDetails.house[0].owner_id);
       setHouseId(props.houseDetails.house[0].id);
       setImg_path(props.houseDetails.house[0].img_path);
-      setPreviewImage(props.houseDetails.house[0].img_path ? ("../files/" + props.houseDetails.house[0].img_path.substr(11)) : "../assets/image/dummy.png");
+      setPreviewImage(props.houseDetails.house[0].img_path ? props.houseDetails.house[0].img_path : "../assets/image/dummy.png");
       //setBlobImage(props.houseDetails.house[0].img_path);
       setCurrency(props.houseDetails.house[0].currency);
-      setDownload(props.houseDetails.house[0].img_path ? ("../files/" + props.houseDetails.house[0].img_path.substr(11)) : "");
+      setDownload(props.houseDetails.house[0].img_path);
     }
   }, [props.houseDetails])
 
   const handleChangeImage = (event) => {
-    setPreviewImage(URL.createObjectURL(event.target.files[0]));
-    setHouseImage(event.target.files[0])
-  }
+    // setPreviewImage(URL.createObjectURL(event.target.files[0]));
+    // setHouseImage(event.target.files[0])
 
-  const handleDeleteImg = () => {
-    setPreviewImage("../assets/image/dummy.png");
-    setHouseImage("");
-    if (houseId) {
-      props.deleteHouseAttachment({ id: houseId });
+    if (img_path !== "undefined" && img_path !== "") {
+      NotificationManager.error("Error Message", "Firstly, you have to delete old Attachment to Add New Attachment");
+    }
+    else {
+      setPreviewImage(URL.createObjectURL(event.target.files[0]));
+      setImg_path(event.target.files[0]);
     }
   }
 
+  // const handleDeleteImg = () => {
+  //   setPreviewImage("../assets/image/dummy.png");
+  //   setHouseImage("");
+  //   if (houseId) {
+  //     props.deleteHouseAttachment({ id: houseId });
+  //   }
+  // }
+
+  // download Document //
+  const downloadFile = (items) => {
+    console.log("download::", items)
+    if (items.name !== undefined) {
+
+    }
+    const fileUrl = items;
+    new JsFileDownloader({
+      url: fileUrl,
+    })
+  };
+
+  const handleDeleteImg = (id, docFile) => {
+    if (docFile.name !== undefined) {
+      setPreviewImage("../assets/image/dummy.png");
+      setImg_path("")
+      NotificationManager.error("Success Message", "Attachment deleted");
+    }
+    else if (docFile) {
+      const newFileName = docFile.split('/')[3]
+      S3Client.deleteFile(newFileName).then((data) => {
+        if (data.message === "File Deleted") {
+          props.deleteHouseAttachment({ id: id, delete: "doc" })
+          setPreviewImage("../assets/image/dummy.png");
+          setImg_path("")
+        }
+        else {
+          NotificationManager.error("Error Message", "Oops!! Somwthing went wrong");
+        }
+      }
+      )
+    }
+    else {
+      NotificationManager.error("Error Message", "There is no Attachment to delete");
+    }
+  }
+
+
+
   const handleSubmit = () => {
 
-    let data = {
+    let formdata = {
       "houseno": house,
       "streetname": street,
       "city": city,
@@ -94,18 +167,42 @@ const HouseDetails = (props) => {
       'currency': currency,
       'ownerEmail': JSON.parse(localStorage.getItem('user')).email
     }
-    var form = new FormData();
+    // var form = new FormData();
 
-    for (const key in data) {
-      form.append(key, data[key]);
-    }
+    // for (const key in formdata) {
+    //   form.append(key, formdata[key]);
+    // }
 
-    form.append("houseImage", houseImage);
+    // form.append("houseImage", houseImage);
 
     let valid = validate();
     if (valid) {
-      props.createHouse(form)
-      props.history.push('/title-holders');
+
+      console.log("vbalid::", img_path)
+      if (img_path.name) {
+        const newFileName =
+          generate_random_string(4) +
+          img_path.name.split(".").slice(0, -1).join(".");
+        S3Client.uploadFile(img_path, newFileName)
+          .then((data) => {
+            var form = new FormData();
+            for (const key in formdata) {
+              form.append(key, formdata[key]);
+            }
+            form.append("img_path", data.location);
+            props.createHouse(form);
+            props.history.push('/title-holders');
+          })
+      }
+      else {
+        var form = new FormData();
+        for (const key in formdata) {
+          form.append(key, formdata[key]);
+        }
+        form.append("lastTab", true)
+        props.createHouse(form);
+        props.history.push('/title-holders');
+      }
     }
   }
 
@@ -183,14 +280,14 @@ const HouseDetails = (props) => {
                 />
               </div>
               <div className="col-md-4"></div>
-              <div className="col-md-4">
-                <div className="d-flex">
-                  <a className="addNewItem attachments1" href={download ? download : "javascript:void(0)"} download={img_path}>
-                    <span className="glyphicon glyphicon-download-alt font-size-20" id="down1"></span>
-                  </a>
-                  <a type="button" className="addNewItem attachments1" href="" onClick={handleDeleteImg}>
-                    <span className="glyphicon glyphicon-trash font-size-20" id="down1"></span>
-                  </a>
+              <div className="">
+                <div className="dflex">
+                  <div onClick={() => downloadFile(img_path)}>
+                    <i className="glyphicon glyphicon-download-alt primary  btn-lg blueIcon" value={img_path}></i>
+                  </div>
+                  <div onClick={() => handleDeleteImg(houseId, img_path)}>
+                    <i className="glyphicon glyphicon-trash primary  btn-lg blueIcon" value={img_path}></i>
+                  </div>
                 </div>
               </div>
             </div>

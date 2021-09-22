@@ -4,8 +4,34 @@ import { addDocument, deleteDocument, getSingleDocument } from "../../store/Acti
 import { connect } from "react-redux";
 import { NotificationManager } from "react-notifications";
 import { Util } from "../../Datamanipulation/Util";
+import JsFileDownloader from "js-file-downloader";
+import S3 from "aws-s3";
 
 const Document = (props) => {
+
+  // aws-s3 uploader//
+  const config = {
+    bucketName: "myhomeinfouseruploads",
+    // dirName: 'photos', /* optional */
+    region: "us-west-2",
+    accessKeyId: "AKIARSK5NHWUX4TJHVXB",
+    secretAccessKey: "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",
+  };
+  const S3Client = new S3(config);
+  const generate_random_string = (string_length) => {
+    let random_string = "";
+    let random_ascii;
+    let ascii_low = 65;
+    let ascii_high = 90;
+    for (let i = 0; i < string_length; i++) {
+      random_ascii = Math.floor(
+        Math.random() * (ascii_high - ascii_low) + ascii_low,
+      );
+      random_string += String.fromCharCode(random_ascii);
+    }
+    return random_string;
+  };
+
   let houseId = props.location.state.house_id ? props.location.state.house_id : "";
   const [date, setDate] = useState(Util.getCurrentDate("-"));
   const [category, setCategory] = useState("");
@@ -26,13 +52,13 @@ const Document = (props) => {
       setDate(props.documentDetails[0].date);
       setHouse_id(props.documentDetails[0].house_id);
       setAttachment(props.documentDetails[0].attachment);
-      setAttachment_name(props.documentDetails[0].attachment.split("-")[1]);
-      setDownload(props.documentDetails[0].attachment ? ("../files/" + props.documentDetails[0].attachment.substr(11)) : "")
+      setAttachment_name(props.documentDetails[0].attachment.split("/")[3]);
+      setDownload(props.documentDetails[0].attachment)
     }
   }, [props.documentDetails])
 
   const handleSubmit = () => {
-    let data = {
+    let formdata = {
       "house_id": house_id,
       'id': id,
       "date": date,
@@ -41,29 +67,109 @@ const Document = (props) => {
       "description": description,
     }
 
-    var form = new FormData();
-    for (const key in data) {
-      form.append(key, data[key]);
+    console.log("vbalid::", attachment)
+    if (attachment.name) {
+      const newFileName =
+        generate_random_string(4) +
+        attachment.name.split(".").slice(0, -1).join(".");
+      S3Client.uploadFile(attachment, newFileName)
+        .then((data) => {
+          var form = new FormData();
+          for (const key in formdata) {
+            form.append(key, formdata[key]);
+          }
+          form.append("attachment", data.location);
+          props.addDocument(form);
+          props.history.push({
+            pathname: "document-list",
+            state: {
+              house_id: house_id
+            }
+          });
+        })
     }
-    form.append("attachment", attachment);
-    props.addDocument(form);
-    props.history.push({
-      pathname: "document-list",
-      state: {
-        house_id: house_id
+    else {
+      var form = new FormData();
+      for (const key in formdata) {
+        form.append(key, formdata[key]);
       }
-    });
+      form.append("lastTab", true)
+      props.addDocument(form);
+      props.history.push({
+        pathname: "document-list",
+        state: {
+          house_id: house_id
+        }
+      });
+    }
+
+    // var form = new FormData();
+    // for (const key in data) {
+    //   form.append(key, data[key]);
+    // }
+    // form.append("attachment", attachment);
+    // props.addDocument(form);
+    // props.history.push({
+    //   pathname: "document-list",
+    //   state: {
+    //     house_id: house_id
+    //   }
+    // });
   }
 
+  // download Document //
+  const downloadFile = (items) => {
+    console.log("download::", items)
+    if (items.name !== undefined) {
 
+    }
+    const fileUrl = items;
+    new JsFileDownloader({
+      url: fileUrl,
+    })
+  };
+
+  const handleViewEvent = (data) => {
+    window.open(data, "_blank");
+  };
+
+  // upload Document //
   const handleDocumentUpload = (event) => {
-    setAttachment(event.target.files[0])
-    setAttachment_name(event.target.files[0]['name']);
+
+    if (attachment !== "undefined" && attachment !== "") {
+      NotificationManager.error("Error Message", "Firstly, you have to delete old Attachment to Add New Attachment");
+    }
+    else {
+      setAttachment(event.target.files[0]);
+      setAttachment_name(event.target.files[0]['name']);
+    }
   }
 
-  const handleDelete = (id) => {
-    props.getSingleDocument({ id: id, delete: "doc" })
-    NotificationManager.error("Success Message", "Attachment deleted");
+    // delete Document //
+  const handleDelete = (id, docFile) => {
+    if (docFile.name !== undefined) {
+      setAttachment_name("");
+      setAttachment("")
+      NotificationManager.error("Success Message", "Attachment deleted");
+    }
+    else if (docFile) {
+      const newFileName = docFile.split('/')[3]
+      S3Client.deleteFile(newFileName).then((data) => {
+        if (data.message === "File Deleted") {
+          props.getSingleDocument({ id: id, delete: "doc" })
+          setAttachment_name("");
+          setAttachment("")
+          NotificationManager.error("Success Message", "Attachment deleted");
+        }
+        else {
+          NotificationManager.error("Error Message", "Oops!! Somwthing went wrong");
+        }
+      }
+      )
+    }
+    else {
+      NotificationManager.error("Error Message", "There is no Attachment to delete");
+    }
   }
 
   const handleDeleteDoc = () => {
@@ -144,11 +250,16 @@ const Document = (props) => {
                                 </button>
                                 <button type="button"  className="btn btn-primary btn-sm addNewItem " onClick={()=>handleDelete(id)}><span className="glyphicon glyphicon-trash"> </span> Delete Attachment </button> */}
               <div className="dflex">
-                <i className="glyphicon glyphicon-eye-open primary btn-lg addNewItemlogo1232" value={document}></i>
-                <a href={download ? download : "javascript:void(0)"} download={document}>
-                <i className="glyphicon glyphicon-download-alt primary btn-lg addNewItemlogo1232" ></i>
-                </a>
-                <i className="glyphicon glyphicon-trash primary  btn-lg d-flex addNewItemlogo1232" value={document} onClick={() => handleDelete(id)}></i>
+                <div onClick={() => handleViewEvent(attachment)}>
+                  <i className="glyphicon glyphicon-eye-open primary btn-lg addNewItemlogo1232" value={attachment}></i>
+                </div>
+                <div onClick={() => downloadFile(attachment)}>
+                  <i className="glyphicon glyphicon-download-alt primary btn-lg addNewItemlogo1232" value={attachment}></i>
+                </div>
+                {/* <a href={download ? download : "javascript:void(0)"} download={attachment}>
+                <i className="glyphicon glyphicon-download-alt primary btn-lg addNewItemlogo1232" ></i> */}
+                {/* </a> */}
+                <i className="glyphicon glyphicon-trash primary  btn-lg d-flex addNewItemlogo1232" value={attachment} onClick={() => handleDelete(id, attachment)}></i>
               </div>
               {/* </div> */}
             </div>

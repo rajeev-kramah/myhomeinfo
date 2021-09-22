@@ -9,8 +9,32 @@ import Tab from "../../Reusable/Tab";
 import ContactModal from "../Contacts/Contact-Modal";
 import { getContact } from "../../store/Actions/contact";
 import NumberFormat from "react-number-format";
+import S3 from "aws-s3";
+import JsFileDownloader from "js-file-downloader";
 
 const AdditionalDetails = (props) => {
+  // aws-s3 uploader//
+  const config = {
+    bucketName: "myhomeinfouseruploads",
+    // dirName: 'photos', /* optional */
+    region: "us-west-2",
+    accessKeyId: "AKIARSK5NHWUX4TJHVXB",
+    secretAccessKey: "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",
+  };
+  const S3Client = new S3(config);
+  const generate_random_string = (string_length) => {
+    let random_string = "";
+    let random_ascii;
+    let ascii_low = 65;
+    let ascii_high = 90;
+    for (let i = 0; i < string_length; i++) {
+      random_ascii = Math.floor(
+        Math.random() * (ascii_high - ascii_low) + ascii_low,
+      );
+      random_string += String.fromCharCode(random_ascii);
+    }
+    return random_string;
+  };
   let houseid = props.location.state.house_id ? props.location.state.house_id : "";
   const [loantype, setLoantype] = useState('');
   const [lname, setLname] = useState('');
@@ -56,6 +80,7 @@ const AdditionalDetails = (props) => {
 
   useEffect(() => {
     if (props.loanDetails && props.loanDetails.length > 0) {
+      // console.log("props.loanDetails::",props.leaseDetails[0].document)
       setLoantype(props.loanDetails[0].loantype);
       setLname(props.loanDetails[0].lname);
       setLcontactperson(props.loanDetails[0].lcontactperson);
@@ -82,10 +107,11 @@ const AdditionalDetails = (props) => {
       setId(props.loanDetails[0].id);
       setEscrowAmount(props.loanDetails[0].escrowamount);
       setEscrowstatus(props.loanDetails[0].escrowstatus);
-      setDocName(props.loanDetails[0].doc_path.split("-")[1]);
-      setDownload(props.loanDetails[0].doc_path ? ("../files/" + props.loanDetails[0].doc_path.substr(11)) : "")
       setRenewal_maturity_date(props.loanDetails[0].renewal_maturity_date);
       setRenewal_intrest_rate(props.loanDetails[0].renewal_intrest_rate);
+      setDocument(props.loanDetails[0].document);
+      setDocName(props.loanDetails[0].document.split('/')[3]);
+      setDownload(props.loanDetails[0].document);
     }
 
     let data = {
@@ -94,20 +120,9 @@ const AdditionalDetails = (props) => {
     props.getContact(data);
   }, [props.loanDetails])
 
-  const handleDocumentUpload = (event) => {
-    setDocument(event.target.files[0])
-    setDocName(event.target.files[0]['name']);
-  }
-
-
-  const handleDelete = (id) => {
-    props.getSingleLoan({ id: id, delete: "doc" })
-    NotificationManager.error("Success Message", "Attachment deleted");
-  }
-
   const handleSubmit = () => {
 
-    let data = {
+    let formdata = {
       "loantype": loantype,
       "lname": lname,
       "lcontactperson": lcontactperson,
@@ -138,24 +153,43 @@ const AdditionalDetails = (props) => {
       'renewal_intrest_rate': renewal_intrest_rate
     }
 
-
-    var form = new FormData();
-    for (const key in data) {
-      form.append(key, data[key]);
-    }
-
-    form.append("document", document);
-    form.append("lastTab", true)
-
     let valid = validate();
     if (valid) {
-      props.addLoan(form)
-      props.history.push({
-        pathname: "loan-transaction",
-        state: {
-          house_id: house_id
+      if(document.name)
+      { const newFileName =
+            generate_random_string(4) +
+            document.name.split(".").slice(0, -1).join(".");
+             S3Client.uploadFile(document,newFileName)
+            .then((data) => {  
+                var form = new FormData();
+                for (const key in formdata) {
+                  form.append(key, formdata[key]);
+                }
+                form.append("lastTab", true)  
+                form.append("document", data.location);
+                props.addLoan(form)
+                props.history.push({
+                  pathname: 'loan-transaction',
+                  state: {
+                      house_id : house_id
+                  }
+              });
+            })
         }
-      });
+        else {
+          var form = new FormData();
+          for (const key in formdata) {
+            form.append(key, formdata[key]);
+          }
+          form.append("lastTab", true) 
+          props.addLoan(form);
+          props.history.push({
+            pathname: 'loan-transaction',
+            state: {
+                house_id : house_id
+            }
+        });
+        }
     }
   }
 
@@ -166,6 +200,66 @@ const AdditionalDetails = (props) => {
     }
     return true;
   }
+ // upload Document //
+ const handleDocumentUpload = (event) => {
+    
+  if(document !== "undefined" && document !== "") {
+    NotificationManager.error("Error Message", "Firstly, you have to delete old Attachment to Add New Attachment");
+  }
+  else 
+  {setDocument(event.target.files[0]);
+  setDocName(event.target.files[0]['name']);
+}  }
+  
+// delete Document //
+const handleDelete = (id,docFile) => {
+  if(docFile.name !== undefined && docFile.name !== "") {
+   
+      setDocName("");
+      setDocument("");
+      NotificationManager.error("Success Message", "Attachment deleted");
+    }
+  else if(docFile){
+    console.log("docFile",docFile)
+    const newFileName = docFile.split('/')[3]
+    S3Client.deleteFile(newFileName).then((data) =>
+    {
+      if(data.message === "File Deleted")
+    {
+      console.log("docFile",data.message);
+      setDocName(" ");
+      setDocument(" ");
+      props.getSingleLoan({ id: id, delete: "doc" })
+  
+    NotificationManager.error("Success Message", "Attachment deleted");
+  }
+      else {
+          NotificationManager.error("Error Message", "Oops!! Somwthing went wrong");
+      }
+    }
+  )
+     }
+      else {
+          NotificationManager.error("Error Message", "There is no Attachment to delete");
+        }     
+  }
+// download Document //
+  const downloadFile = (items) => {
+    console.log("download::",items)
+    if(items.name !== undefined)
+    {
+
+    }
+    const fileUrl = items;
+    new JsFileDownloader({
+      url: fileUrl,
+    })
+  };
+
+  // view Document //
+  const handleViewEvent = (data) => {
+    window.open(data, "_blank");
+  };
 
   const handlePrevious = () => {
     props.history.push('/loan-details');
@@ -333,9 +427,15 @@ const AdditionalDetails = (props) => {
                                 <button type="button"  className="btn btn-primary btn-sm addNewItem " onClick={()=>handleDelete(id)}><span className="glyphicon glyphicon-trash"> </span> Delete Attachment </button>
                                 </div> */}
               <div className="dflex">
-                <i className="glyphicon glyphicon-eye-open primary  btn-lg addNewItemlogo1232" value={document} ></i>
-                <i className="glyphicon glyphicon-download-alt primary  btn-lg addNewItemlogo1232" value={document}  ></i>
-                <i className="glyphicon glyphicon-trash primary  btn-lg d-flex addNewItemlogo1232" value={document} onClick={() => handleDelete(id)}></i>
+              <div onClick={() => handleViewEvent(document)}>
+                  <i className="glyphicon glyphicon-eye-open primary  btn-lg blueIcon" value={document}></i>
+                  </div>
+                  <div onClick={() => downloadFile(document)}>
+                  <i className="glyphicon glyphicon-download-alt primary  btn-lg blueIcon" value={document}></i>
+                  </div>
+                  <i className="glyphicon glyphicon-trash primary  btn-lg  blueIcon" value={document} 
+                  onClick={() => handleDelete(id,document)}></i>
+                
               </div>
             </div>
 

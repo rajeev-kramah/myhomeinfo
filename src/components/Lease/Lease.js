@@ -8,12 +8,38 @@ import Tab from "../../Reusable/Tab";
 import { Util } from "../../Datamanipulation/Util";
 import { getHouseHmo } from "../../store/Actions/house";
 import NumberFormat from "react-number-format";
+import S3 from "aws-s3";
+import JsFileDownloader from "js-file-downloader";
 
 const LenderDetails = (props) => {
+
+ // aws-s3 uploader//
+ const config = {
+  bucketName: "myhomeinfouseruploads",
+  // dirName: 'photos', /* optional */
+  region: "us-west-2",
+  accessKeyId: "AKIARSK5NHWUX4TJHVXB",
+  secretAccessKey: "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",
+};
+const S3Client = new S3(config);
+const generate_random_string = (string_length) => {
+  let random_string = "";
+  let random_ascii;
+  let ascii_low = 65;
+  let ascii_high = 90;
+  for (let i = 0; i < string_length; i++) {
+    random_ascii = Math.floor(
+      Math.random() * (ascii_high - ascii_low) + ascii_low,
+    );
+    random_string += String.fromCharCode(random_ascii);
+  }
+  return random_string;
+};
+
   let houseId = props.location.state.house_id ? props.location.state.house_id : "";
   const [lease_begin, setLease_begin] = useState(Util.getCurrentDate("-"));
   const [lease_end, setLease_end] = useState(Util.getCurrentDate("-"));
-  const [lease_date, setLease_date] = useState(lease_end);
+  const [lease_date, setLease_date] = useState(Util.getCurrentDate("-"));
   const [frequency, setFrequency] = useState('');
   const [rent, setRent] = useState('');
   const [rent_due_by, setRent_due_by] = useState('');
@@ -44,10 +70,11 @@ const LenderDetails = (props) => {
 
   useEffect(() => {
     if (props.leaseDetails && props.leaseDetails.length > 0) {
-      console.log("props.leaseDetails", props.leaseDetails)
+      console.log("props.leaseDetails", props.leaseDetails[0])
       setId(props.leaseDetails[0].id);
       setLease_begin(props.leaseDetails[0].lease_begin ? props.leaseDetails[0].lease_begin : Util.getCurrentDate("-"));
       setLease_end(props.leaseDetails[0].lease_end ? props.leaseDetails[0].lease_end : Util.getCurrentDate("-"));
+      setLease_date(props.leaseDetails[0].lease_date ? props.leaseDetails[0].lease_date : Util.getCurrentDate("-"));
       setFrequency(props.leaseDetails[0].frequency);
       setRent(props.leaseDetails[0].rent);
       setRent_due_by(props.leaseDetails[0].rent_due_by);
@@ -68,11 +95,11 @@ const LenderDetails = (props) => {
       setRealtor_email(props.leaseDetails[0].realtor_email);
       setHmo_space(props.leaseDetails[0].hmo_space);
       setSpace_description(props.leaseDetails[0].space_description);
-      setDocument(props.leaseDetails[0].document);
       setComment(props.leaseDetails[0].comment);
       setHouse_id(props.leaseDetails[0].house_id);
-      setDocName(props.leaseDetails[0].document.split('-')[1]);
-      setDownload(props.leaseDetails[0].document ? ("../files/" + props.leaseDetails[0].document.substr(11)) : "");
+      setDocument(props.leaseDetails[0].document);
+      setDocName(props.leaseDetails[0].document.split('/')[3]);
+      setDownload(props.leaseDetails[0].document);
     }
   }, [props.leaseDetails]);
   const handleOnChange = (e) => {
@@ -93,7 +120,7 @@ const LenderDetails = (props) => {
 
 
   const handleSubmit = () => {
-    let data = {
+    let formdata = {
       "id": id,
       "lease_begin": lease_begin,
       "lease_end": lease_end,
@@ -121,24 +148,46 @@ const LenderDetails = (props) => {
       "house_id": house_id,
       "lease_amount": lease_amount
     }
-    console.log("dataLease", data)
-    var form = new FormData();
-
-    for (const key in data) {
-      form.append(key, data[key]);
-    }
-
-    form.append("document", document);
+    
 
     let valid = validate();
     if (valid) {
-      props.addLease(form)
-      props.history.push({
-        pathname: 'tenant',
-        state: {
-          house_id: house_id
+
+      if(document.name)
+      {    const newFileName =
+            generate_random_string(4) +
+            document.name.split(".").slice(0, -1).join(".");
+             S3Client.uploadFile(document,newFileName)
+            .then((data) => {  
+                var form = new FormData();
+                for (const key in formdata) {
+                  form.append(key, formdata[key]);
+                }
+                form.append("lastTab", true)  
+                form.append("document", data.location);
+                props.addLease(form)
+                props.history.push({
+                  pathname: 'lease-list',
+                  state: {
+                      house_id : house_id
+                  }
+              });
+                })
         }
-      });
+        else {
+          var form = new FormData();
+          for (const key in formdata) {
+            form.append(key, formdata[key]);
+          }
+          form.append("lastTab", true) 
+          props.addLease(form);
+          props.history.push({
+            pathname: 'lease-list',
+            state: {
+                house_id : house_id
+            }
+        });
+        }
     }
   }
 
@@ -174,12 +223,6 @@ const LenderDetails = (props) => {
     return true;
   }
 
-  const handleDocumentUpload = (event) => {
-    setDocument(event.target.files[0])
-    setDocName(event.target.files[0]['name']);
-  }
-
-
   const handleDeleteLease = () => {
     let data = {
       "id": id,
@@ -194,15 +237,6 @@ const LenderDetails = (props) => {
     });
   }
 
-  const handleDelete = (id) => {
-    // console.log("document",document,docName)
-    setDocument("");
-    setDocName("");
-    if (document) {
-      props.getSingleLease({ id: id, delete: "doc" })
-      NotificationManager.error("Success Message", "Attachment deleted");
-    }
-  }
   const handleOpen = (id) => {
     let filename = '../../../public/files/1630410748358-hsbc.jpg';
     let data = require('../../Logo.png');
@@ -275,6 +309,72 @@ const LenderDetails = (props) => {
     return date;
 
   }
+
+ // upload Document //
+ const handleDocumentUpload = (event) => {
+    
+  if(document !== "undefined" && document !== "") {
+    NotificationManager.error("Error Message", "Firstly, you have to delete old Attachment to Add New Attachment");
+  }
+  else 
+  {setDocument(event.target.files[0]);
+  setDocName(event.target.files[0]['name']);
+}  }
+  
+// delete Document //
+const handleDelete = (id,docFile) => {
+  if(docFile.name !== undefined) {
+      setDocName("");
+      setDocument("")
+      NotificationManager.error("Success Message", "Attachment deleted");
+    }
+  else if(docFile){
+    const newFileName = docFile.split('/')[3]
+    S3Client.deleteFile(newFileName).then((data) =>
+    {
+      if(data.message === "File Deleted")
+  {
+    props.getSingleLease({ id: id, delete: "doc" })
+    setDocName("");
+    setDocument("")
+    NotificationManager.error("Success Message", "Attachment deleted");
+  }
+      else {
+          NotificationManager.error("Error Message", "Oops!! Somwthing went wrong");
+      }
+    }
+  )
+     }
+      else {
+          NotificationManager.error("Error Message", "There is no Attachment to delete");
+        }     
+  }
+// download Document //
+  const downloadFile = (items) => {
+    console.log("download::",items)
+    if(items.name !== undefined)
+    {
+
+    }
+    const fileUrl = items;
+    new JsFileDownloader({
+      url: fileUrl,
+    })
+  };
+
+  // view Document //
+  const handleViewEvent = (data) => {
+    window.open(data, "_blank");
+  };
+
+  const handlePrevious = () => {
+    props.history.push({
+        pathname: 'tenant',
+        state: {
+            house_id : house_id
+        }
+    });
+} 
   const tabs = [
     { pathname: "/tenant", label: "Tenants " },
     { pathname: "/Lease", label: "Lease" },
@@ -453,19 +553,15 @@ const LenderDetails = (props) => {
                 </div>
               </div>
               <div className="col-md-4" style={{ marginTop: "2%" }}>
-                {/* <a type="button" className="btn btn-primary btn-sm addNewItem " href={download ? download : "javascript:void(0)"}>
-                                    <span className="glyphicon glyphicon-download-alt"> </span> Download Attachment</a> */}
-                {/* <button type="button"  className="btn btn-primary btn-sm addNewItem " href={download ? download : "javascript:void(0)"} download={document}>
-                                    <span className="glyphicon glyphicon-download-alt"> </span>
-                                </button>
-                                <button type="button" className="btn btn-primary btn-sm addNewItem " onClick={() => handleDelete(id)}><span className="glyphicon glyphicon-trash"> </span> </button>
-                                <button type="button" className="btn btn-primary btn-sm addNewItem " onClick={() => handleDelete(id)}><span className="glyphicon glyphicon-eye-open"> </span> </button> */}
                 <div className="dflex">
-                  <i className="glyphicon glyphicon-eye-open primary  btn-lg addNewItemlogo" value={document} onClick={() => handleOpen(id)}></i>
-                  <a href={download ? download : "javascript:void(0)"} download={document}>
-                    <i className="glyphicon glyphicon-download-alt primary  btn-lg addNewItemlogo" ></i>
-                  </a>
-                  <i className="glyphicon glyphicon-trash primary  btn-lg d-flex addNewItemlogo1" value={document} onClick={() => handleDelete(id)}></i>
+                  <div onClick={() => handleViewEvent(document)}>
+                  <i className="glyphicon glyphicon-eye-open primary  btn-lg blueIcon" value={document}></i>
+                  </div>
+                  <div onClick={() => downloadFile(document)}>
+                  <i className="glyphicon glyphicon-download-alt primary  btn-lg blueIcon" value={document}></i>
+                  </div>
+                  <i className="glyphicon glyphicon-trash primary  btn-lg  blueIcon" value={document} 
+                  onClick={() => handleDelete(id,document)}></i>
                 </div>
               </div>
             </div>
@@ -485,7 +581,7 @@ const LenderDetails = (props) => {
           </div>
           <div className="col-md-4">
             <div className="btn-group pull-right" role="group" aria-label="...">
-              <button type="button" className="btn btn-default btn-sm addNewItem disable" disabled="disabled"><span className="glyphicon glyphicon-arrow-left"></span> Previous</button>
+              <button type="button" className="btn btn-default btn-sm addNewItem" onClick={handlePrevious}><span className="glyphicon glyphicon-arrow-left"></span> Previous</button>
               <button type="button" className="btn btn-primary btn-sm addNewItem" onClick={handleSubmit}>Next <span className="glyphicon glyphicon-arrow-right"> </span></button>
             </div>
           </div>
@@ -497,7 +593,6 @@ const LenderDetails = (props) => {
 
 
 const mapStateToProps = (state) => ({
-  leaseDetails: state.Lease.leaseDetails.data,
   leaseDetails: state.Lease.leaseDetails.data,
   hmoDetails: state.House.houseHmo.data,
 });

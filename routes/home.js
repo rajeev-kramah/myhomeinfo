@@ -64,13 +64,12 @@ router.post("/",upload.single("houseImage"), async (req, res) => {
   let id = req.body.id;
   let currency = req.body.currency;
   let ownerEmail = req.body.ownerEmail;
+  let img_path = req.body.img_path
 
- 
-    con.connect(function(err) {
-        var img_path = "";
-        if (req.file) {
-            img_path = req.file.path;
-          }
+  con.connect(function(err) {
+        // if (req.file) {
+        //     img_path = req.file.path;
+        //   }
         var sql = "INSERT INTO house (houseno, streetname, city, state, country, zip, primaryHouse, yearbuilt, surveyno, purchaseamount, purchasedate, buildername, subdivision, img_path, currency) VALUES ('"+houseno+"', '"+streetname+"', '"+city+"', '"+state+"', '"+country+"', '"+zip+"', '"+primaryHouse+"', '"+yearbuilt+"', '"+surveyno+"', '"+purchaseamount+"', '"+purchasedate+"', '"+buildername+"', '"+subdivision+"', '"+img_path+"', '"+currency+"')";
 
         if(id){
@@ -313,12 +312,12 @@ router.post("/",upload.single("houseImage"), async (req, res) => {
     let details = req.body.details;
     let house_id = req.body.house_id;
     let id =  req.body.id;
-
+    let img_path = req.body.img_path
     con.connect(function(err) {
-        var img_path = "";
-        if (req.file) {
-            img_path = req.file.path;
-        }
+        // var img_path = "";
+        // if (req.file) {
+        //     img_path = req.file.path;
+        // }
 
         var sql = "INSERT INTO realtor (name, phono, email, details, house_id, img_path) VALUES ('"+name+"', '"+phono+"', '"+email+"', '"+details+"', '"+house_id+"','"+img_path+"')";
         if(id){
@@ -630,8 +629,8 @@ router.post("/deletehouseattachment", async (req, res) => {
                         )
                     );
                 } else {
-                    let path = data[0]['img_path'].substr(11);
-                    path = "public\\files\\" + path;
+                    let path = data[0]['img_path'];
+                    // path = "public\\files\\" + path;
                     let att = removeFile(path);
 
                     if(att === false){

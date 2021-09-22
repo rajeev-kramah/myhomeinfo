@@ -23,7 +23,7 @@ export default (state=initialState, action) => {
         }
         return {
             ...state,
-             insurances: action.payload,
+            insurances: action.payload,
             insuranceDetails: action.payload
         };
         case GET_INSURANCE:

@@ -119,6 +119,7 @@ const LenderDetails = (props) => {
       'renewal_maturity_date': renewal_maturity_date,
       'renewal_intrest_rate': renewal_intrest_rate
     }
+    console.log("data00:",data)
     let valid = validate();
     if (valid) {
       props.addLoan(data)

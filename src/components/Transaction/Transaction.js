@@ -75,11 +75,7 @@ const generate_random_string = (string_length) => {
   };
 
 
-  const handleDocumentUpload = (event) => {
-    setDocument(event.target.files[0])
-    setDocName(event.target.files[0]['name']);
-  }
-
+  
   
 
   useEffect(() => {
@@ -131,7 +127,7 @@ const generate_random_string = (string_length) => {
   }, [props.transactionDetails])
 
   const handleSubmit = () => {
-    let data = {
+    let formdata = {
       "account_name": accountName,
       "contact_person": contactPerson,
       "type": transactionType,
@@ -153,11 +149,7 @@ const generate_random_string = (string_length) => {
       "escrowbalance": escrowbalance,
       "escrowStatus": escrowStatus
     }
-    console.log("datatra", data)
-    var form = new FormData();
-    for (const key in data) {
-      form.append(key, data[key]);
-    }
+    
 
     let closeStatus = true;
     let current = new Date(date);
@@ -183,18 +175,41 @@ const generate_random_string = (string_length) => {
 
     if (closeStatus) {
 
-      form.append("receipt", document);
       let valid = validate();
       if (valid) {
-
-        props.addTransaction(form)
-        console.log("closeStatus", props)
-        props.history.push(
-          {
-            pathname: "transaction-list",
-            state: { house_id: house_id }
-          }
-        )
+      if(document.name)
+      { const newFileName =
+        generate_random_string(4) +
+        document.name.split(".").slice(0, -1).join(".");
+         S3Client.uploadFile(document,newFileName)
+        .then((data) => {  
+            var form = new FormData();
+            for (const key in formdata) {
+              form.append(key, formdata[key]);
+            }
+            form.append("receipt", data.location);
+            props.addTransaction(form)
+            props.history.push({
+              pathname: 'transaction-list',
+              state: {
+                  house_id : house_id
+              }
+          });
+            })
+    }
+    else {
+      var form = new FormData();
+      for (const key in formdata) {
+        form.append(key, formdata[key]);
+      }
+      props.addTransaction(form)
+      props.history.push({
+        pathname: 'transaction-list',
+        state: {
+            house_id : house_id
+        }
+    });
+    }
       }
     } else {
       NotificationManager.error("Error Message", "Loan already expired.");
@@ -252,7 +267,15 @@ const generate_random_string = (string_length) => {
     }
     return true;
   }
-
+// upload document //
+const handleDocumentUpload = (event) => {
+  if(document !== "undefined" && document !== "") {
+    NotificationManager.error("Error Message", "Firstly, you have to delete old Attachment to Add New Attachment");
+  }
+  else 
+  { setDocument(event.target.files[0])
+    setDocName(event.target.files[0]['name']);
+}  }
 // delete Document //
 const handleDelete = (id,docFile) => {
   if(docFile.name !== undefined) {
@@ -266,7 +289,7 @@ const handleDelete = (id,docFile) => {
     {
       if(data.message === "File Deleted")
   {
-    props.getSingleInsurance({ id: id, delete: "doc" })
+    props.getSingleTransaction({ id: id, delete: "doc" })
     setDocName("");
     setDocument("")
     NotificationManager.error("Success Message", "Attachment deleted");
