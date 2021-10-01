@@ -15,8 +15,9 @@ export default (state=initialState, action) => {
             return {
                 ...state,
                 events: action.payload
-                
+            
             };
+           
         case GET_EVENT:
             return {
                 ...state,
@@ -30,5 +31,6 @@ export default (state=initialState, action) => {
             };
         default:
             return state;
+           
     }
 }

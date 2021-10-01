@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import "../../style/Loan.css";
 import { Link } from "react-router-dom";
 import { getLink,getSingleLink } from "../../store/Actions/Link";
+import { Util } from "../../Datamanipulation/Util";
 import Table from "../../Reusable/Table";
 
 const LinkList = (props) => {
@@ -11,15 +12,16 @@ const LinkList = (props) => {
 
     const header = ["Name", "Description", "Group", ];
     var columns = [
-        { 
-            name: 'Url Name', 
-            selector: 'urlname', 
-            sortable: true,
-            cell: row => <Link data-tag="allowRowEvents" role="link" to={{pathname : "link", state:{house_id : house_id}}}>{row.urlname}</Link>
-        },
-        { name: 'Added Date', selector: 'date', sortable: true, },
+        { name: 'Added Date', selector: 'date', sortable: true, cell: row => Util.dateFormat(row.date) },
         { name: 'Group', selector: 'groupname', sortable: true, },
         { name: 'Description', selector: 'description', sortable: true, },
+        { 
+        name: 'Url Name', 
+        selector: 'urlname', 
+        sortable: true,
+            cell: row => <Link data-tag="allowRowEvents" role="link" to={{pathname : "link", state:{house_id : house_id}}}>{row.urlname}</Link>
+        },
+        { name: 'Actions', selector: '', sortable: true, },
         // { name: 'Actions', selector: '', sortable: true },
       ];
 
@@ -34,11 +36,14 @@ const LinkList = (props) => {
             }
         }
     }
-
+    const[isOpen, setIsopen] = React.useState(false)
     return (
         <div className="container-fluid loan">
-            <h4>Links List</h4>
-            <div className="loan-inner mt-25">
+            <div className="list-flex">
+                <h4>Links List</h4>
+                <i className="glyphicon glyphicon-info-sign btn-lg info-logo" data-toggle="modal" data-target="#exampleModal" onClick={() => setIsopen(true)}></i>
+            </div>
+            <div className="loan-inner mt-10">
                 <div className="row top-bar">
                     <div className="col-md-12">
                         <span className={active === "Home"? "active-bar mr-50": "mr-50"} onClick={(e)=> handleDocType("Home")}>Home</span>
@@ -56,6 +61,23 @@ const LinkList = (props) => {
                     </Link>
                 </div>
             </div>
+            {isOpen === true &&
+                <div className="modal" id="exampleModal" tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" den="true">
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel"></h5>
+                                <button type="button" className="close" onClick={() => setIsopen(false)}>
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     )
 }

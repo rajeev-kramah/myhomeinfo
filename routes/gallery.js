@@ -5,40 +5,40 @@ const con = require("./config");
 const fs = require("fs");
 
 const removeFile = (path) => {
-    fs.unlink(path, (err) => {
-        if(err) {
-            console.log(err);
-            return false;
-        } else {
-            return true;
-        }
-    });
+	fs.unlink(path, (err) => {
+		if (err) {
+			console.log(err);
+			return false;
+		} else {
+			return true;
+		}
+	});
 }
 
 /** Storage Engine */
 const storage = multer.diskStorage({
-	destination: function(req, file, fn) {
-    	fn(null, "./public/files");
-    },
-    filename: function(req, file, fn) {
-    	fn(null, new Date().getTime().toString() + "-" + file.originalname);
-    }
+	destination: function (req, file, fn) {
+		fn(null, "./public/files");
+	},
+	filename: function (req, file, fn) {
+		fn(null, new Date().getTime().toString() + "-" + file.originalname);
+	}
 });
 
-const fileFilter = function(req, file, callback) {
+const fileFilter = function (req, file, callback) {
 	if (file.mimetype) {
-    	callback(null, true);
-    } else {
-    	callback(null, false);
-    }
+		callback(null, true);
+	} else {
+		callback(null, false);
+	}
 };
 
 const upload = multer({
 	storage: storage,
-    limit: {
-    	fileSize: 1024 * 1024 * 5
-    },
-    fileFilter: fileFilter
+	limit: {
+		fileSize: 1024 * 1024 * 5
+	},
+	fileFilter: fileFilter
 });
 /*Image Upload code complete*/
 
@@ -47,19 +47,20 @@ const upload = multer({
  * Create Gallery
 */
 router.post("/", upload.single("attachment"), async (req, res) => {
-
 	let id = req.body.id;
-	let attachment = "";
+	let attachment = req.body.attachment;
 	let house_id = req.body.house_id;
+	// let album_name = req.body.groupType;
+	let album_name = req.body.album_name;
 
-	con.connect(function(err) {
-        if (req.file) {
-            attachment = req.file.path;
-			attachment = '../files/' + attachment.substr(12);
-        }
+	con.connect(function (err) {
+		// if (req.file) {
+		// 	attachment = req.file.path;
+		// 	attachment = '../files/' + attachment.substr(12);
+		// }
 
-		var sql = "INSERT INTO gallery (attachment, house_id) VALUES ('"+attachment+"', '"+house_id+"')";
-		
+		var sql = "INSERT INTO gallery (attachment, house_id, album_name) VALUES ('" + attachment + "', '" + house_id + "', '" + album_name + "')";
+
 		con.query(sql, function (err, gallery) {
 			if (err) {
 				res.send(
@@ -70,25 +71,26 @@ router.post("/", upload.single("attachment"), async (req, res) => {
 					)
 				);
 			} else {
-				var sql = "SELECT * FROM gallery WHERE house_id = '" + house_id +"'";
-				
+				var sql = "SELECT * FROM gallery WHERE house_id = '" + house_id + "'and album_name='" + album_name + "'";
+
 				con.query(sql, function (err, gallery) {
 					if (err) {
 						res.send(
 							result.response(
-							500,
-							err,
-							"OOPS, Something went wrong !, Please try again"
+								500,
+								err,
+								"OOPS, Something went wrong !, Please try again"
 							)
 						);
 					} else {
-                        res.send(
-                            result.response(
-                                200,
-                                gallery,
-                                "Gallery added Successfiully!"
-                            )
-                        );
+						console.log("request_1", res, req.body.house_id, req.body.groupType)
+						res.send(
+							result.response(
+								200,
+								gallery,
+								"Gallery added Successfiully!"
+							)
+						);
 					}
 				});
 			}
@@ -97,15 +99,19 @@ router.post("/", upload.single("attachment"), async (req, res) => {
 });
 
 
-  /**
- * Get Home gallery
- */
- router.post("/gethomegallery", async (req, res) => {
+/**
+* Get Home gallery
+*/
+router.post("/gethomegallery", async (req, res) => {
 	if (!req.body.house_id) {
 		res.send(result.response(422, "", "house_id is empty"));
 	} else {
-		con.connect(function(err) {
-			var sql = "SELECT * From gallery where house_id='"+req.body.house_id+"'";
+		con.connect(function (err) {
+			//SELECT DISTINCT Country FROM Customers;
+			//album_name
+			var sql = "SELECT * From gallery where house_id='" + req.body.house_id + "' and album_name='" + req.body.album_name + "'";
+			//var sql = "SELECT DISTINCT album_name From gallery where house_id='"+req.body.house_id+"'";
+			console.log('sql', sql);
 			con.query(sql, function (err, gallery) {
 				if (err) {
 					res.send(
@@ -135,12 +141,12 @@ router.post("/", upload.single("attachment"), async (req, res) => {
 /**
  * Delete single gallery
  */
- router.post("/deletesinglegallery", async (req, res) => {
+router.post("/deletesinglegallery", async (req, res) => {
 	if (!req.body.id) {
 		res.send(result.response(422, "", "Id is empty"));
 	} else {
-		con.connect(function(err) {
-			var sql = "select attachment from gallery where id = '"+req.body.id+"'";
+		con.connect(function (err) {
+			var sql = "select attachment from gallery where id = '" + req.body.id + "'";
 			con.query(sql, function (err, gallery) {
 				if (err) {
 					res.send(
@@ -157,7 +163,7 @@ router.post("/", upload.single("attachment"), async (req, res) => {
 				}
 			});
 
-			var sql = "delete From gallery where id='"+req.body.id+"'";
+			var sql = "delete From gallery where id='" + req.body.id + "'";
 			con.query(sql, function (err, gallery) {
 				if (err) {
 					res.send(
@@ -168,7 +174,7 @@ router.post("/", upload.single("attachment"), async (req, res) => {
 						)
 					);
 				} else {
-					var sql = "SELECT * From gallery where house_id='"+req.body.house_id+"'";
+					var sql = "SELECT * From gallery where house_id='" + req.body.house_id + "'and album_name='" + req.body.album_name + "'";
 					con.query(sql, function (err, gallery) {
 						if (err) {
 							res.send(

@@ -190,6 +190,7 @@ export const deleteLoan = (data) => {
                     type: DELETE_LOAN,
                     payload: res
                 }
+                console.log("loan res",data)
                 dispatch(data);
                 NotificationManager.success("Success Message", res.statusText);
             } else {

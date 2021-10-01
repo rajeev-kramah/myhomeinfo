@@ -6,6 +6,7 @@ import { NotificationManager } from "react-notifications";
 import { addWarranty } from "../../store/Actions/Warranty";
 import { Util } from "../../Datamanipulation/Util";
 import Tab from "../../Reusable/Tab";
+import NumberFormat from "react-number-format";
 
 const Warranty = (props) => {
 
@@ -35,8 +36,8 @@ const Warranty = (props) => {
     const [image, setImage] = useState('');
     const [house_id, setHouse_id] = useState('');
 
-    useEffect(()=> {
-        if(props.warrantyDetails && props.warrantyDetails.length > 0) {
+    useEffect(() => {
+        if (props.warrantyDetails && props.warrantyDetails.length > 0) {
             setWarranty_provider(props.warrantyDetails[0].warranty_provider);
             setContact_person(props.warrantyDetails[0].contact_person);
             setEmail(props.warrantyDetails[0].email);
@@ -66,7 +67,7 @@ const Warranty = (props) => {
     }, [props.warrantyDetails])
 
     const handleSubmit = () => {
-        
+
         let data = {
             "warranty_provider": warranty_provider,
             "contact_person": contact_person,
@@ -76,44 +77,44 @@ const Warranty = (props) => {
             "company_address": company_address,
             "product_name": product_name,
             "manufacturer_serial_no": manufacturer_serial_no,
-            "model_type" : model_type,
-            "model_no" : model_no,
-            "color" : color,
-            "product_price" : product_price,
-            "mfg_warranty_start_date" : mfg_warranty_start_date,
-            "mfg_warranty_end_date" : mfg_warranty_end_date,
-            "extended_warranty_start_date" : extended_warranty_start_date,
-            "extended_warranty_end_date" : extended_warranty_end_date,
-            "installation_date" : installation_date,
-            "installation_company_name" : installation_company_name,
-            "installed_by" : installed_by,
-            "contact_number" : contact_number,
+            "model_type": model_type,
+            "model_no": model_no,
+            "color": color,
+            "product_price": product_price,
+            "mfg_warranty_start_date": mfg_warranty_start_date,
+            "mfg_warranty_end_date": mfg_warranty_end_date,
+            "extended_warranty_start_date": extended_warranty_start_date,
+            "extended_warranty_end_date": extended_warranty_end_date,
+            "installation_date": installation_date,
+            "installation_company_name": installation_company_name,
+            "installed_by": installed_by,
+            "contact_number": contact_number,
             "installation_charges": installation_charges,
-            "comments" : comments,
-            "image" : image,
+            "comments": comments,
+            "image": image,
             "house_id": house_id,
-            'id':id
+            'id': id
         }
         var form = new FormData();
-      
+
         for (const key in data) {
             form.append(key, data[key]);
         }
 
         let valid = validate();
-        if(valid) {
+        if (valid) {
             props.addWarranty(form)
             props.history.push({
                 pathname: 'warrantydates',
                 state: {
-                    house_id : house_id
+                    house_id: house_id
                 }
-            }); 
+            });
         }
     }
 
     const validate = () => {
-        if(product_name === '') {
+        if (product_name === '') {
             NotificationManager.error("Error Message", "Product name cannot be empty.");
             return false;
         }
@@ -124,7 +125,7 @@ const Warranty = (props) => {
         props.history.push({
             pathname: 'provider',
             state: {
-                house_id : house_id
+                house_id: house_id
             }
         });
     }
@@ -135,35 +136,35 @@ const Warranty = (props) => {
     }
 
     const tabs = [
-        {pathname : "/provider", label : "Provider"},
-        {pathname : "/warranty", label : "Product Details"},
-        {pathname : "/warrantydates", label : "Warranty Dates"},
-        {pathname : "/installation", label : "Installation Details"},
+        { pathname: "/provider", label: "Provider" },
+        { pathname: "/warranty", label: "Product Details" },
+        { pathname: "/warrantydates", label: "Warranty Dates" },
+        { pathname: "/installation", label: "Installation Details" },
     ]
-    
+
     return (
         <div className="container-fluid house">
             <h4>Add Warranty Item Details</h4>
             <div className="house-form">
-                <Tab loanPage="Product Details" tabs={tabs} id={id} house_id={house_id}/>
+                <Tab loanPage="Product Details" tabs={tabs} id={id} house_id={house_id} />
                 <div className="row">
                     <div className="col-md-3"></div>
-                     <div className="col-md-6">
-                        
+                    <div className="col-md-6">
+
                         <div className="row">
                             <div className="col-md-6">
                                 <div className="form-group">
                                     <label htmlFor="Product Name" className="req">Product Name</label>
-                                    <input type="text" placeholder="Product Name" value={ product_name } onChange={e=> {
-                                            setProduct_name(e.target.value)
+                                    <input type="text" placeholder="Product Name" value={product_name} onChange={e => {
+                                        setProduct_name(e.target.value)
                                     }} className="form-control" />
                                 </div>
                             </div>
                             <div className="col-md-6">
                                 <div className="form-group">
                                     <label htmlFor="Manufacturer">Manufacturer Serial No.</label>
-                                    <input type="text" placeholder="Manufacturer Serial No" value={ manufacturer_serial_no } onChange={e=> {
-                                            setManufacturer_serial_no(e.target.value)
+                                    <input type="text" placeholder="Manufacturer Serial No" value={manufacturer_serial_no} onChange={e => {
+                                        setManufacturer_serial_no(e.target.value)
                                     }} className="form-control" />
                                 </div>
                             </div>
@@ -173,8 +174,8 @@ const Warranty = (props) => {
                             <div className="col-md-6">
                                 <div className="form-group">
                                     <label htmlFor="Model Type">Model Type</label>
-                                    <input type="text" placeholder="Model Type" value={model_type} onChange={e=> {
-                                            setModel_type(e.target.value)
+                                    <input type="text" placeholder="Model Type" value={model_type} onChange={e => {
+                                        setModel_type(e.target.value)
                                     }} className="form-control" />
                                 </div>
                             </div>
@@ -182,8 +183,8 @@ const Warranty = (props) => {
                             <div className="col-md-6">
                                 <div className="form-group">
                                     <label htmlFor="Model Number">Model Number</label>
-                                    <input type="text" placeholder="Model Number" value={model_no} onChange={e=> {
-                                            setModel_no(e.target.value)
+                                    <input type="text" placeholder="Model Number" value={model_no} onChange={e => {
+                                        setModel_no(e.target.value)
                                     }} className="form-control" />
                                 </div>
                             </div>
@@ -194,8 +195,8 @@ const Warranty = (props) => {
                             <div className="col-md-6">
                                 <div className="form-group">
                                     <label htmlFor="Color" className="">Color</label>
-                                    <input type="text" placeholder="Color" value={color} onChange={e=> {
-                                            setColor(e.target.value)
+                                    <input type="text" placeholder="Color" value={color} onChange={e => {
+                                        setColor(e.target.value)
                                     }} className="form-control" />
                                 </div>
                             </div>
@@ -203,9 +204,24 @@ const Warranty = (props) => {
                             <div className="col-md-6">
                                 <div className="form-group">
                                     <label htmlFor="Product Price" className="">Product Price</label>
-                                    <input type="text" placeholder="Product Price" value={ Util.addCommas(product_price ? product_price : 0)} onChange={e=> {
+                                    <NumberFormat
+                                        placeholder="Product Price"
+                                        thousandsGroupStyle="thousand"
+                                        className="form-control"
+                                        value={product_price ? product_price : 0}
+                                        decimalSeparator="."
+                                        type="text"
+                                        thousandSeparator={true}
+                                        allowNegative={true}
+                                        decimalScale={2}
+                                        fixedDecimalScale={true}
+                                        allowEmptyFormatting={true}
+                                        allowLeadingZeros={false}
+                                        onChange={e => setProduct_price(e.target.value)}
+                                        isNumericString={true} />
+                                    {/* <input type="text" placeholder="Product Price" value={ Util.addCommas(product_price ? product_price : 0)} onChange={e=> {
                                             setProduct_price(e.target.value)
-                                    }} className="form-control" />
+                                    }} className="form-control" /> */}
                                 </div>
                             </div>
                         </div>
@@ -221,18 +237,18 @@ const Warranty = (props) => {
                     <div className="col-md-4">
                         <div className="btn-group pull-right" role="group" aria-label="...">
                             <button type="button" className="btn btn-primary btn-sm addNewItem " onClick={handlePrevious}><span className="glyphicon glyphicon-arrow-left"></span>Previous</button>
-                            <button type="button"  className="btn btn-primary btn-sm addNewItem " onClick={handleSubmit}>Next <span className="glyphicon glyphicon-arrow-right"> </span></button>
+                            <button type="button" className="btn btn-primary btn-sm addNewItem " onClick={handleSubmit}>Next <span className="glyphicon glyphicon-arrow-right"> </span></button>
                         </div>
                     </div>
                 </div>
-            </div>   
+            </div>
         </div>
     )
 }
 
 
 const mapStateToProps = (state) => ({
-    warrantyDetails : state.Warranty.warrantyDetails.data
+    warrantyDetails: state.Warranty.warrantyDetails.data
 });
 
 const mapDispatchToProps = {

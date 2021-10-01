@@ -10,13 +10,17 @@ router.post("/", async (req, res) => {
 	let id = req.body.id;
 	let eventDate = req.body.dateTime;
 	let title = req.body.title;
+	let mobile = req.body.mobile;
+	let mobileChecked = req.body.mobileChecked;
+	let email = req.body.email;
+	let emailChecked = req.body.emailChecked;
 	let house_id = req.body.house_id;
 
 	con.connect(function(err) {
-		var sql = "INSERT INTO reminder (start, title, house_id) VALUES ('"+eventDate+"', '"+title+"', '"+house_id+"')";
+		var sql = "INSERT INTO reminder (start, title,mobile,mobileChecked,email,emailChecked,house_id) VALUES ('"+eventDate+"', '"+title+"', '"+email+"','"+emailChecked+"', '"+mobile+"','"+mobileChecked+"','"+house_id+"')";
 
 		if(id){
-			sql = "UPDATE reminder SET eventDate = '"+eventDate+"', title = '"+title+"' where id = '"+id+"'";
+			sql = "UPDATE reminder SET eventDate = '"+eventDate+"', title = '"+title+"' ,email = '"+email+"',emailChecked= '"+emailChecked+"', mobile = '"+mobile+"',mobileChecked = '"+mobileChecked+"' where id = '"+id+"'";
 		}
 		
 		con.query(sql, function (err, event) {

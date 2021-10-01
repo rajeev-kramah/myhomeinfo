@@ -21,6 +21,7 @@ class WarrantyTable extends React.Component {
     }
 
     handleRowClick(id){
+        console.log("clciekee")
         if(this.props.tableId != "amortization"){
             var data = {"id":id};
             this.props.getSingleData(data);

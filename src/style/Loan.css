@@ -17,6 +17,13 @@
 .mt-5 {
     margin-top: 5px;
 }
+.buttondisplay{
+    display: flex;
+    align-items: center;
+}
+.installdetails{
+    margin-right: 0 !important;
+}
 
 .status {
     border-radius: 10px;
@@ -65,4 +72,8 @@
 }
 #insurance{
     margin-top: 50px;
+}
+.d_flex {
+    display: flex;
+    align-items: center;
 }

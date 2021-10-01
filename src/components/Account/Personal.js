@@ -16,14 +16,19 @@ const Personal = (props) => {
     const [address, setAddress] = useState('');
     const [zipcode, setZipcode] = useState('');
     const [refferedby, setRefferedby] = useState('');
+    const [maxProperty, setMaxProperty] = useState('');
     const [substartdate, setSubstartdate] = useState(Util.getCurrentDate("-"));
     const [subenddate, setSubenddate] = useState(Util.getCurrentDate("-"));
     const [mono, setMono] = useState('');
+    const [payment_date, setPayment_date] = useState(Util.getCurrentDate("-"));
+    const [payment_amount, setPayment_amount] = useState("");
+    const [account_status, setAccount_status] = useState("");
 
     const[user, setUser] = useState(Util.getLoggedinUser());
 
     useEffect(()=> {
         if(props.accountDetails && props.accountDetails.length > 0) {
+            console.log("props.accountDetails2",props.accountDetails)
             setId(props.accountDetails[0].id);
             setName(props.accountDetails[0].name);
             setEmail(props.accountDetails[0].email);
@@ -31,9 +36,13 @@ const Personal = (props) => {
             setAddress(props.accountDetails[0].address);
             setZipcode(props.accountDetails[0].zipcode);
             setRefferedby(props.accountDetails[0].refferedby);
+            setMaxProperty(props.accountDetails[0].maxproperty);
             setSubstartdate(props.accountDetails[0].substartdate);
             setSubenddate(props.accountDetails[0].subenddate);
             setMono(props.accountDetails[0].mono);
+            setAccount_status(props.accountDetails[0].account_status);
+            setPayment_date(props.accountDetails[0].payment_date);
+            setPayment_amount(props.accountDetails[0].payment_amount);
         } else {
             let data = {
                 id: user['id']
@@ -51,9 +60,13 @@ const Personal = (props) => {
             "address" : address,
             "zipcode" : zipcode,
             "refferedby" : refferedby,
+            "maxProperty" : maxProperty,
             "substartdate" : substartdate,
             "subenddate" : subenddate,
             "mono" : mono,
+            "payment_date": payment_date,
+            "payment_amount": payment_amount,
+            "account_status": account_status,
             "id": id
         }
         
@@ -211,19 +224,23 @@ const Personal = (props) => {
                                 </div>
                             </div>
                             <div className="col-md-6 ">
+                                <div className="form-group inputGroup">
+                                    <label htmlFor="referred">Maximum Property</label>
+                                    <input type="number" min="0" placeholder="Maximum Property" className="form-control" value={maxProperty} onChange={e=> setMaxProperty(e.target.value)} />
+                                </div>
                             </div>
                         </div>
                         <div className="row pt-25">
                             <div className="col-md-6">
                                 <div className="form-group inputGroup">
                                     <label htmlFor="start">Subscription Start Date</label>
-                                    <input type="date" className="form-control" value={substartdate} onChange={e=> setSubstartdate(e.target.value)} />
+                                    <input type="date" className="form-control" value={substartdate} onChange={e=> setSubstartdate(e.target.value)} readOnly/>
                                 </div>
                             </div>
                             <div className="col-md-6 ">
                                 <div className="form-group inputGroup">
                                     <label htmlFor="end">Subscription End Date</label>
-                                    <input type="date" value={subenddate} onChange={e => setSubenddate(e.target.value)} className="form-control" />
+                                    <input type="date" value={subenddate} onChange={e => setSubenddate(e.target.value)} className="form-control" readOnly />
                                 </div>
                             </div>
                         </div>
@@ -241,8 +258,10 @@ const Personal = (props) => {
     )
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state) => (
+    {
     accountDetails : state.Account.accountDetails.data
+    
 });
 
 const mapDispatchToProps = {

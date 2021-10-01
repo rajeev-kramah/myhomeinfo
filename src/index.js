@@ -8,6 +8,7 @@ import allReducers from "./store/Reducers";
 import Router from "./components/router";
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
+import Footer from './components/Footer';
 
 const composeEnhancers = composeWithDevTools({
 	__REDUX_DEVTOOLS_EXTENSION__: window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
@@ -19,6 +20,7 @@ const store = createStore(allReducers, composeEnhancers(
 ReactDOM.render(
   <Provider store={store}>
     <Router />
+    <Footer />
   </Provider>,
 
   document.getElementById("root")

@@ -54,15 +54,16 @@ import Realtor from "./Lease/Realtor-details";
 import Hmo from "./Lease/HMO-space";
 import Additional from "./Lease/Additional";
 import LeaseList from "./Lease/Lease-list";
-
 import ShareList from "./Shareproperty/Share-list";
 import Share from "./Shareproperty/Share";
 import Report from "./Report/Report";
 import ReportList from "./Report/Report-list";
 import ReminderCalender from "./Reminder/reminder";
 import GenerateTransaction from "./Contacts/GenerateTransaction";
-
-
+import CreateUser from "./Create-User/create-user";
+import EditUser from "./Create-User/edit-user";
+import UserList from "./Create-User/user-list";
+import MailList from "./Create-User/mailList";
 
 
 const Router = (props) => {
@@ -92,7 +93,7 @@ const Router = (props) => {
 			<div>
 				<Switch>
 				{ login ? (
-				<>
+				 <React.Fragment>
 					<Navbar />	
 					
 					<Route path="/generate-transaction" component={GenerateTransaction} />
@@ -130,8 +131,12 @@ const Router = (props) => {
 
 					<Route path="/link" component={Link} />
 					<Route path="/link-list" component={LinkList} />
-					<Route path="/galary" component={Galary} />
+					<Route path="/gallary" component={Galary} />
 
+					<Route path="/create-user" component={CreateUser} />
+					<Route path="/edit-user" component={EditUser} />
+					<Route path="/user-list" component={UserList} />
+					<Route path="/mail-list" component={MailList} />
 					
 					
 					<Route path="/amortization" component={Amortization} />
@@ -156,15 +161,15 @@ const Router = (props) => {
 					{
 						pageType == "dashboard" ? (<Redirect from="/" to="/dashboard" />) : (<Redirect from="/" to="/house-details" />)
 					}
-				</>
+			 </React.Fragment>
 				) : (
-				<>
+				<React.Fragment>
 					<Route path="/" exact component={Login} />
 					<Route path="/forgot" component={Forgot} />
 					<Route path="/signup" component={Signup} />
 					<Route path="/reset-password" component={ResetPassword} />
 					{/* <Redirect from="*" to="/" /> */}
-				</>
+				</React.Fragment>
 				)}
 				<Route path="*" exact={true} component={notFound} />
 				</Switch>

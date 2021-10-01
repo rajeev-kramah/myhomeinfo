@@ -49,7 +49,7 @@ const upload = multer({
 router.post("/", upload.single("attachment"), async (req, res) => {
 
 	let id = req.body.id;
-	let attachment = "";
+	let attachment = req.body.attachment;
 	let date = req.body.date;
 	let category = req.body.category;
 	let docname = req.body.docname;
@@ -57,9 +57,9 @@ router.post("/", upload.single("attachment"), async (req, res) => {
 	let house_id = req.body.house_id;
 
 	con.connect(function(err) {
-        if (req.file) {
-            attachment = req.file.path;
-        }
+        // if (req.file) {
+        //     attachment = req.file.path;
+        // }
 
 		var sql = "INSERT INTO document (date, category, docname, description, attachment, house_id) VALUES ('"+date+"', '"+category+"', '"+docname+"', '"+description+"', '"+attachment+"', '"+house_id+"')";
 

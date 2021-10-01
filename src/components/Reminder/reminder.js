@@ -112,8 +112,10 @@ class Reminder extends React.Component {
 }
 
 
-const mapStateToProps = (state) => ({
-   events : state.Reminder.events.data,
+const mapStateToProps = (state) => (
+  console.log("props.insuranceDetails::",state),
+  {
+  events : state.Reminder.events.data,
    accountDetails : state.Account.accountDetails.data,
    insurances : state.Insurance.insurances.data
 });

@@ -3,12 +3,15 @@ import {
     ADD_TRANSACTION,
     GET_TRANSACTION,
     GET_SINGLE_TRANSACTION,
-    DELETE_TRANSACTION
+    DELETE_TRANSACTION,
+    UNDELETE_TRANSACTION,
+    GET_TRANSACTION_All
 } from "../actionTypes";
 
 const initialState = {
     transactions : {},
-    transactionDetails : {}
+    transactionDetails : {},
+    transactionDeletedData:{}
 }
 
 export default (state=initialState, action) => {
@@ -28,11 +31,21 @@ export default (state=initialState, action) => {
                 ...state,
                 transactionDetails: action.payload
             };
+        case GET_TRANSACTION_All:
+            return {
+                ...state,
+                transactionDeletedData: action.payload
+            };
         case DELETE_TRANSACTION:
             return {
                 ...state,
                 transactions:action.payload
-            }
+            };
+        case UNDELETE_TRANSACTION:
+            return {
+                ...state,
+                transactionDeletedData: action.payload,
+                }
         default:
             return state;
     }
