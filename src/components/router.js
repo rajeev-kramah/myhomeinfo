@@ -66,6 +66,7 @@ import UserList from "./Create-User/user-list";
 import MailList from "./Create-User/mailList";
 
 
+
 const Router = (props) => {
 	const [buttonStatus, setButtonStatus] = useState("")
 	let login  = false;
@@ -82,6 +83,7 @@ const Router = (props) => {
 	if(login && user.housecount > 0){
 		pageType = "dashboard";
 	}
+	console.log("user.housecount:",user.housecount)
 
 	useEffect(() => {
 		props.getGroup();
@@ -92,6 +94,7 @@ const Router = (props) => {
 		<BrowserRouter>
 			<div>
 				<Switch>
+					{console.log("login:",login)}
 				{ login ? (
 				 <React.Fragment>
 					<Navbar />	
@@ -143,7 +146,7 @@ const Router = (props) => {
 					<Route path="/loan-additionals" component={AdditionalDetails} />
 
 					{/* Lease Routing */}
-					<Route path="/lease" component={Lease} />
+					{/* <Route path="/lease" component={Lease} /> */}
 					<Route path="/tenant" component={Tenant} />
 					<Route path="/realtor" component={Realtor} />
 					<Route path="/hmo" component={Hmo} />

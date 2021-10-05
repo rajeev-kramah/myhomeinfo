@@ -226,7 +226,7 @@ const LoanDetails = (props) => {
                       <label htmlFor="price" className="req">Purchase Price</label>
                       <NumberFormat
                         thousandsGroupStyle="thousand"
-                        className="form-control"
+                        className="form-control alignRight"
                         value={purchaseprice}
                         decimalSeparator="."
                         type="text"
@@ -253,7 +253,7 @@ const LoanDetails = (props) => {
                       <NumberFormat
                         placeholder="Down Payment"
                         thousandsGroupStyle="thousand"
-                        className="form-control"
+                        className="form-control alignRight"
                         value={downpayment}
                         decimalSeparator="."
                         type="text"
@@ -280,7 +280,7 @@ const LoanDetails = (props) => {
                         <NumberFormat
                           placeholder="Loan Amount"
                           thousandsGroupStyle="thousand"
-                          className="form-control"
+                          className="form-control alignRight"
                           value={purchaseprice, downpayment}
                           decimalSeparator="."
                           type="text"
@@ -300,7 +300,7 @@ const LoanDetails = (props) => {
                         <NumberFormat
                           placeholder="Loan Amount"
                           thousandsGroupStyle="thousand"
-                          className="form-control"
+                          className="form-control alignRight"
                           value={loanamount}
                           decimalSeparator="."
                           type="text"

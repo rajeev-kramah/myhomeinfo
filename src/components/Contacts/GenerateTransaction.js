@@ -286,7 +286,7 @@ const GenerateTransaction = (props) => {
                                     <label htmlFor="Escrow Deposit">Begining Amount</label>
                                     <NumberFormat
                                         thousandsGroupStyle="thousand"
-                                        className="form-control"
+                                        className="form-control alignRight"
                                         value={escrowDeposit}
                                         decimalSeparator="."
                                         type="text"
@@ -307,7 +307,7 @@ const GenerateTransaction = (props) => {
                                     <label htmlFor="Amount">Amount</label>
                                     <NumberFormat
                                         thousandsGroupStyle="thousand"
-                                        className="form-control"
+                                        className="form-control alignRight"
                                         value={transactionAmount}
                                         decimalSeparator="."
                                         type="text"

@@ -96,7 +96,7 @@ const Transaction = (props) => {
       setProduct_name(props.transactionDetails[0].product_name ? props.transactionDetails[0].product_name : "");
       setWarranty_id(props.transactionDetails[0].warranty_id ? props.transactionDetails[0].warranty_id : "");
       setAddToWarrantyCost(props.transactionDetails[0].add_to_warranty);
-      setDocName(props.transactionDetails[0].receipt.split('/')[4]);
+      setDocName(props.transactionDetails[0].receipt.includes("/") &&props.transactionDetails[0].receipt.split('/')[4].slice(4));
       setDownload(props.transactionDetails[0].receipt);
       setDocument(props.transactionDetails[0].receipt);
       /**Escrow */
@@ -428,7 +428,7 @@ const Transaction = (props) => {
                   <NumberFormat
                     placeholder="Transaction Amount"
                     thousandsGroupStyle="thousand"
-                    className="form-control"
+                    className="form-control alignRight"
                     value={transactionAmount}
                     decimalSeparator="."
                     type="text"

@@ -98,7 +98,7 @@ const generate_random_string = (string_length) => {
       setComment(props.leaseDetails[0].comment);
       setHouse_id(props.leaseDetails[0].house_id);
       setDocument(props.leaseDetails[0].document);
-      setDocName(props.leaseDetails[0].document.split('/')[4]);
+      setDocName( props.leaseDetails[0].document.includes("/") &&props.leaseDetails[0].document.split('/')[4].slice("4"));
       setDownload(props.leaseDetails[0].document);
     }
   }, [props.leaseDetails]);
@@ -414,7 +414,7 @@ const handleDelete = (id,docFile) => {
                   <NumberFormat
                     placeholder="Rent/Month"
                     thousandsGroupStyle="thousand"
-                    className="form-control"
+                    className="form-control alignRight"
                     value={rent}
                     decimalSeparator="."
                     type="text"
@@ -469,7 +469,7 @@ const handleDelete = (id,docFile) => {
                     <NumberFormat
                       placeholder="Lease Amount"
                       thousandsGroupStyle="thousand"
-                      className="form-control"
+                      className="form-control alignRight"
                       value={lease_amount}
                       decimalSeparator="."
                       type="text"

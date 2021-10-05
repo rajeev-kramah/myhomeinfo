@@ -177,7 +177,7 @@ const Subscription = (props) => {
                                     <NumberFormat
                                         placeholder="Payment Amount"
                                         thousandsGroupStyle="thousand"
-                                        className="form-control"
+                                        className="form-control alignRight"
                                         value={payment_amount}
                                         decimalSeparator="."
                                         type="text"

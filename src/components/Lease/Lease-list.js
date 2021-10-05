@@ -10,17 +10,17 @@ import { Util } from "../../Datamanipulation/Util";
 const LeaseList = (props) => {
     const [leaseData, setLeaseData] = useState();
 
-    console.log("conratcDetails", props.contactList);
+
     useEffect(() => {
         if (props.leases && props.leases.length > 0) {
             props.contactList.map((item1, index1) => {
+               
                 const selectedIndex = props.leases.findIndex(val => item1.id === parseInt(val.tenant_name1.split("-")[0]));
-                console.log("selctedadata::",selectedIndex)
-                console.log("selectedIndex", props.leases[selectedIndex]);
-                if (selectedIndex > -1 && selectedIndex !== undefined) {
-                    console.log("selctedadata::",selectedIndex)
+                    if (selectedIndex > -1 && selectedIndex !== undefined) {
                     props.leases[selectedIndex].tenant_phone1 = item1.phone1;
                     props.leases[selectedIndex].tenant_email1 = item1.email;
+                    console.log("conratcDetails", item1);
+
                 }
             })
             setLeaseData(props.leases);
@@ -32,7 +32,7 @@ const LeaseList = (props) => {
             }
             props.getLease(data);
         }
-    }, [props.userData]);
+    }, [props.leases,props.contactList]);
 
     let house_id = props.location.state.house_id ? props.location.state.house_id : "";
     props.getSingleLease({ id: "true" });

@@ -223,7 +223,7 @@ router.post("/delete", async (req, res) => {
 						)
 					);
 				} else {
-					var sql = "SELECT id,companyname,contactperson,phone1,landline,phonenumber,email,url,address,groupname From contacts where house_id='"+req.body.house_id+"'";
+					var sql = "SELECT * From contacts where house_id='"+req.body.house_id+"'";
 					con.query(sql, function (err, contacts) {
 						if (err) {
 							res.send(

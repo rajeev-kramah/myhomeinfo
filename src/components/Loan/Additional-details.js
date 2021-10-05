@@ -111,7 +111,7 @@ const AdditionalDetails = (props) => {
       setRenewal_maturity_date(props.loanDetails[0].renewal_maturity_date);
       setRenewal_intrest_rate(props.loanDetails[0].renewal_intrest_rate);
       setDocument(props.loanDetails[0].document);
-      setDocName(props.loanDetails[0].document.split('/')[4]);
+      setDocName(props.loanDetails[0].document.includes("/")&&props.loanDetails[0].document.split('/')[4].slice(4));
       setDownload(props.loanDetails[0].document);
     }
 
@@ -321,7 +321,7 @@ const handleDelete = (id,docFile) => {
                   <NumberFormat
                     placeholder="Escrow Amount"
                     thousandsGroupStyle="thousand"
-                    className="form-control"
+                    className="form-control alignRight"
                     value={escrowamount ? escrowamount : 0}
                     decimalSeparator="."
                     type="text"
@@ -352,7 +352,7 @@ const handleDelete = (id,docFile) => {
                   <NumberFormat
                     placeholder="Escrow"
                     thousandsGroupStyle="thousand"
-                    className="form-control"
+                    className="form-control alignRight"
                     value={mortgage}
                     decimalSeparator="."
                     type="text"
@@ -403,7 +403,7 @@ const handleDelete = (id,docFile) => {
                 <NumberFormat
                   placeholder="Porperty Tax Amount"
                   thousandsGroupStyle="thousand"
-                  className="form-control"
+                  className="form-control alignRight"
                   value={propertytax}
                   decimalSeparator="."
                   type="text"

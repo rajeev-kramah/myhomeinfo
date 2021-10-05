@@ -207,7 +207,7 @@ const Warranty = (props) => {
                                     <NumberFormat
                                         placeholder="Product Price"
                                         thousandsGroupStyle="thousand"
-                                        className="form-control"
+                                        className="form-control alignRight"
                                         value={product_price ? product_price : 0}
                                         decimalSeparator="."
                                         type="text"

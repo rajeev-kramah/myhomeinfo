@@ -16,10 +16,12 @@ import { getLease } from "../store/Actions/Lease";
 import logo from "../Logo.png";
 import { getHouseDetail } from "../store/Actions/house";
 import { getEvent } from "../store/Actions/Reminder";
+import { useHistory } from "react-router-dom";
 
 
 const Navbar = (props) => {
-   console.log('userDatauserData', props.accountDetails);
+  let history = useHistory();
+   console.log('userDatauserData', props);
  
   const user = JSON.parse(localStorage.getItem('user'));
   let userRole = user.role
@@ -30,7 +32,6 @@ const Navbar = (props) => {
   if (user) {
     var Uname = user ? user["name"] : "";
   }
-
 
   useEffect(() => {
     if (props.house && props.house.length > 0) {
@@ -54,7 +55,9 @@ const Navbar = (props) => {
 
   const handleLogout = () => {
     localStorage.clear();
-    this.props.history.push("/");
+    
+    history.push("/");
+    window.location.reload();
   }
 
   useEffect(() => {
@@ -174,14 +177,17 @@ const Navbar = (props) => {
               </NavLink>
               <ul className="dropdown-menu">
                 <li>
-                  <NavLink className="" to={{
+                  <NavLink className=""
+                   to={{
                     pathname: "/personal",
-                    state: {}
-                  }}><span className="glyphicon glyphicon-user header-color" /> Account Details</NavLink>
+                    state: {}}}
+                  ><span className="glyphicon glyphicon-user header-color" /> Account Details</NavLink>
                 </li>
                 <li>
-                  <NavLink to={"/"} onClick={handleLogout}>
-                    <span className="glyphicon glyphicon-log-in header-color" /> Logout
+                  <NavLink to={{
+                    pathname: "/",
+                    state: {}}} onClick={handleLogout}>
+                    <span  className="glyphicon glyphicon-log-in header-color" /> Logout
                   </NavLink>
                 </li>
                 {userRole === "1" && 

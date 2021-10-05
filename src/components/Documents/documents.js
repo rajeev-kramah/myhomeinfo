@@ -45,6 +45,7 @@ const Document = (props) => {
 
   useEffect(() => {
     if (props.documentDetails && props.documentDetails.length > 0) {
+      console.log("props.documentDetails:: ",props.documentDetails[0] )
       setId(props.documentDetails[0].id);
       setCategory(props.documentDetails[0].category);
       setDocname(props.documentDetails[0].docname);
@@ -52,7 +53,7 @@ const Document = (props) => {
       setDate(props.documentDetails[0].date);
       setHouse_id(props.documentDetails[0].house_id);
       setAttachment(props.documentDetails[0].attachment);
-      setAttachment_name(props.documentDetails[0].attachment.split("/")[4]);
+      setAttachment_name( props.documentDetails[0].attachment.includes("/") &&props.documentDetails[0].attachment.split("/")[4].slice(4));
       setDownload(props.documentDetails[0].attachment)
     }
   }, [props.documentDetails])
@@ -288,7 +289,8 @@ const Document = (props) => {
   )
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state) => (
+  {
   documentDetails: state.Document.documentDetails.data,
   houseDetails: state.House.houseDetail.data
 });

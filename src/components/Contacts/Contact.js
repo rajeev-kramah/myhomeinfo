@@ -507,7 +507,7 @@ const Contact = (props) => {
                   <label htmlFor="transaction_amount">Transaction Amount</label>
                   <NumberFormat
                     thousandsGroupStyle="thousand"
-                    className="form-control"
+                    className="form-control alignRight"
                     value={Util.addCommas(transaction_amount)}
                     decimalSeparator="."
                     type="text"

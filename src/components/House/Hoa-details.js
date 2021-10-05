@@ -316,7 +316,7 @@ const Hoadetails = (props) => {
                             <NumberFormat
                                 placeholder="HOA-Amount"
                                 thousandsGroupStyle="thousand"
-                                className="form-control"
+                                className="form-control alignRight"
                                 value={amount}
                                 decimalSeparator="."
                                 type="text"
@@ -403,7 +403,7 @@ const Hoadetails = (props) => {
                             <NumberFormat
                                 placeholder="HOA-Amount"
                                 thousandsGroupStyle="thousand"
-                                className="form-control"
+                                className="form-control alignRight"
                                 value={amount1}
                                 decimalSeparator="."
                                 type="text"

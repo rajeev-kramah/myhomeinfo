@@ -19,9 +19,9 @@ const Homecost = (props) => {
         { name: 'Category', selector: 'category', sortable: true, },
         { name: 'Payee', selector: 'payee', sortable: true, },
         { name: 'Description', selector: 'description', sortable: true,},
-        { name: 'Expenses', selector: 'credit', sortable: true,},
-        { name: 'Income', selector: 'debit', sortable: true, },
-        { name: 'Home Cost', selector: 'homecost', sortable: true },
+        { name: 'Expenses', selector: 'credit', sortable: true, cell: row => row.credit === "NaN" ? "0.00" : row.credit},
+        { name: 'Income', selector: 'debit', sortable: true, cell: row => row.debit === "NaN" ? "0.00" : row.debit},
+        { name: 'Home Cost', selector: 'homecost', sortable: true , cell: row => row.homecost === "NaN" ? "0.00" : row.homecost},
       ];
     
     useEffect(()=>{
@@ -54,6 +54,7 @@ const Homecost = (props) => {
                 
                 paymentdate = month+"-"+day+"-"+year;
                 let category =  props.transactions[i]['groupname'].split("&");
+                console.log("category::", props.transactions[i]['groupname'])
                 let data = {
                     transactiondate : props.transactions[i]['date'],
                     category : category[category.length-1],
@@ -80,6 +81,7 @@ const Homecost = (props) => {
                     homecost = parseFloat(homecost) + parseFloat(amount);
                     let loanTD = props.loanTransactions[i]['paymentdate']
                     let category = props.loanTransactions[i]['groupname'].split("&");
+                    console.log("category::", props.loanTransactions[i]['groupname'])
                     let data = {
                         transactiondate :loanTD[0],
                         category :category[category.length-1],
@@ -107,7 +109,7 @@ const Homecost = (props) => {
             <div className="loan-inner mt-10">
                 <div className="purchagePrice">
                     <h2>Purchase Price : {purchaseprice}</h2>
-                    <h2>Home Cost: {homecost}</h2>
+                    <h2>Home Cost: {homecost === "NaN" ? "0.00" : homecost}</h2>
                 </div>
             <Table header={header} url={"/loan-lender"} columns={columns} getSingleData={props.getSingleLoan} tableId="amortization" data={tableData}  house_id={house_id}/>
                 <div className="row footer"></div>

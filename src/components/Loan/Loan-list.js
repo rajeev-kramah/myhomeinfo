@@ -12,7 +12,7 @@ const LoanList = (props) => {
     const header = ["Type", "Lender Name", "Loan Number", "Loan Amount", "Interest Rate(%)", "Term", "Escrow", "Property Tax","Start Date", "End Date","Status"];
 
     var columns = [
-        { name: 'Lender Name', selector: 'companyname', sortable: true,  cell: row => <Link data-tag="allowRowEvents" role="link" to={{pathname : "loan-lender", state:{house_id : house_id}}}>{row.companyname}</Link>},
+        { name: 'Lender Name', selector: 'lcontactperson', sortable: true,  cell: row => <Link data-tag="allowRowEvents" role="link" to={{pathname : "loan-lender", state:{house_id : house_id}}}>{row.lcontactperson}</Link>},
         { 
             name: 'Type', 
             selector: 'loantype', 

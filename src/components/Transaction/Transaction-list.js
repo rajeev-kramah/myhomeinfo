@@ -34,6 +34,7 @@ const TransactionList = (props) => {
             setLoanHouse_id(props.loanDetails[0].house_id);
 
             let enddate = new Date(props.loanDetails[0].loanclosuredate);
+            console.log("date,:",props.loanDetails[0].loanclosuredate)
             enddate = Math.floor(enddate.getTime() / 86400000);
             current = Math.floor(current.getTime() / 86400000);
             console.log(current + ">" + enddate)
@@ -113,7 +114,7 @@ const TransactionList = (props) => {
         { name: 'Type', selector: 'type', sortable: true, },
         { name: 'Amount', selector: 'amount', sortable: true },
         { name: 'Comments', selector: 'comments', sortable: true, },
-        { name: 'Receipt', selector: 'receipt', sortable: true, },
+        { name: 'Receipt', selector: 'receipt', sortable: true, cell: row=> row.receipt && row.receipt.includes("/") && row.receipt.split("/")[4].substring(4)},
         { name: 'Entry Date & Time', selector: 'created_at', sortable: true, cell: row => Util.dateFormatWithTime(row.created_at) },
         { name: 'Entered By', selector: 'entered_by', sortable: true, },
     ];
@@ -166,6 +167,7 @@ const TransactionList = (props) => {
                         <div className="row footer">
 
                             {
+                           
                                 loanHouse_id === house_id && endDate < date
                                     ? <Link to={{
                                         pathname: "/transaction",

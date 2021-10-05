@@ -61,10 +61,10 @@ const Tenant = (props) => {
       setRental_insurance(props.leaseDetails[0].rental_insurance);
       setTenant_name1(props.leaseDetails[0].tenant_name1);
       // setTenant_email1(myObj && myObj.email);
-      setTenant_phone1(props.leaseDetails[0].tenant_phone1);
+     // setTenant_phone1(props.leaseDetails[0].tenant_phone1);
       setTenant_name2(props.leaseDetails[0].tenant_name2);
       //setTenant_email2(props.leaseDetails[0].tenant_email2);
-      setTenant_phone2(props.leaseDetails[0].tenant_phone2);
+     // setTenant_phone2(props.leaseDetails[0].tenant_phone2);
       setPeople(props.leaseDetails[0].people);
       setPets(props.leaseDetails[0].pets);
       setDeposit(props.leaseDetails[0].deposit);
@@ -93,12 +93,14 @@ const Tenant = (props) => {
     const myObj = props.contactList.find(obj => obj.id === parseInt(dataId.split("-")[0]));
     console.log("props.leaseDetails", myObj);
     setTenant_email1(myObj && myObj.email);
+    setTenant_phone1(myObj && myObj.phone1);
     setContactData(myObj);
   }
   const handleContatData2 = (dataId) => {
     const myObj = props.contactList.find(obj => obj.id === parseInt(dataId.split("-")[0]));
     console.log("props.leaseDetails", myObj);
     setTenant_email2(myObj && myObj.email);
+    setTenant_phone2(myObj && myObj.phone1);
     setContactData2(myObj);
   }
   const handleContatData3 = (dataId) => {
@@ -122,7 +124,7 @@ const Tenant = (props) => {
       "tenant_email1": tenant_email1,
       "tenant_phone1": tenant_phone1,
       "tenant_name2": tenant_name2,
-      "tenant_email2": tenant_email1,
+      "tenant_email2": tenant_email2,
       "tenant_phone2": tenant_phone2,
       "people": people,
       "pets": pets,
@@ -156,6 +158,7 @@ const Tenant = (props) => {
           house_id: house_id
         }
       });
+      console.log("leasedata::",data)
     }
   }
 
@@ -337,7 +340,7 @@ const Tenant = (props) => {
               <div className="col-md-4">
                 <div className="form-group">
                   <label htmlFor="Tenant 1 Phono">Tenant 1 Phone</label>
-                  <input type="text" id="phoneNumberFormat" maxLength="12" value={contactData && contactData.phone1} onChange={e => setTenant_phone1(e.target.value)} onKeyDown={e => enforceFormat} onKeyUp={e => formatToPhone} className="form-control" readOnly/>
+                  <input type="text" id="phoneNumberFormat" maxLength="12" value={tenant_phone1} onChange={e => setTenant_phone1(e.target.value)} onKeyDown={e => enforceFormat} onKeyUp={e => formatToPhone} className="form-control" readOnly/>
                 </div>
               </div>
             </div>
@@ -378,7 +381,7 @@ const Tenant = (props) => {
               <div className="col-md-4">
                 <div className="form-group">
                   <label htmlFor="Tenant 2 Phono">Tenant 2 Phone</label>
-                  <input type="text" value={contactData2 && contactData2.phone1} id="phoneNumberFormat1" maxLength="12" onChange={e => setTenant_phone2(e.target.value)} className="form-control" readOnly/>
+                  <input type="text" value={tenant_phone2} id="phoneNumberFormat1" maxLength="12" onChange={e => setTenant_phone2(e.target.value)} className="form-control" readOnly/>
                 </div>
               </div>
 
@@ -408,7 +411,7 @@ const Tenant = (props) => {
                   <label htmlFor="Security Deposit">Security Deposit</label>
                   <NumberFormat
                     thousandsGroupStyle="thousand"
-                    className="form-control"
+                    className="form-control alignRight"
                     value={deposit}
                     decimalSeparator="."
                     type="text"

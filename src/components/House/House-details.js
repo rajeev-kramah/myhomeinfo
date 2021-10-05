@@ -409,7 +409,7 @@ const HouseDetails = (props) => {
                   <NumberFormat
                     placeholder="Amount"
                     thousandsGroupStyle="thousand"
-                    className="form-control"
+                    className="form-control alignRight"
                     value={purchaseAmount}
                     decimalSeparator="."
                     type="text"

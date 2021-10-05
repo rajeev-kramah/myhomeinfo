@@ -312,7 +312,7 @@ const Provider = (props) => {
                                             props.contactList ? (
                                                 props.contactList.map((data) => {
                                                     return (
-                                                        <option value={data.id}>{data.companyname}</option>
+                                                        <option value={`${data.id}-${data.companyname}`}>{data.companyname}</option>
                                                     )
                                                 })
                                             ) : ""

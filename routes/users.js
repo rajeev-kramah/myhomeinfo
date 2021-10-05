@@ -303,12 +303,8 @@ router.post("/userdeatils", async (req, res) => {
 // * Get All user Details list
 //  */
 router.post("/getuserAllData", async (req, res) => {
-  // if (!req.body.house_id) {
-  // 	res.send(result.response(422, "", "house_id is empty"));
-  // }else
   {
     con.connect(function (err) {
-      // var sql = "SELECT transactions.id, account_name, is_deleted,date, contact_person, type, amount, comments,receipt, created_at, entered_by, contacts.groupname,contacts.companyname From transactions INNER JOIN contacts ON transactions.account_name = contacts.id where is_deleted = 0 and transactions.house_id='"+req.body.house_id+"'";
       let userList = [];
       var sql = "SELECT * From owner order by id desc"
       con.query(sql, function (err, user) {
@@ -322,18 +318,18 @@ router.post("/getuserAllData", async (req, res) => {
           );
         }
         else {
-          console.log("mail", req.body.sentmailId)
           if (req.body.sentmailId) {
             let currentDate = new Date()
             let expiryAlertDate = (currentDate.getFullYear()) + '-' + ('0' + (currentDate.getMonth() + 1)).slice(-2) + '-' + ('0' + (currentDate.getDate() - 1)).slice(-2);
+            let d = new Date();
 
-            let userData = user.map((item) => {
-              let subEndDate = new Date(item.subenddate)
-              let subendDate = (subEndDate.getFullYear()) + '-' + ('0' + (subEndDate.getMonth() + 1)).slice(-2) + '-' + ('0' + (subEndDate.getDate() - 1)).slice(-2);
+            let expiredday = d.setDate(d.getDate()+1);
+            expiredday = (new Date(expiredday).getFullYear()) + '-' + ('0' + (new Date(expiredday).getMonth() + 1)).slice(-2) + '-' + ('0' + (new Date(expiredday).getDate())).slice(-2);
+             user.map((item) => {
+              let subendDate = (new Date(item.subenddate).getFullYear()) + '-' + ('0' + (new Date(item.subenddate).getMonth() + 1)).slice(-2) + '-' + ('0' + (new Date(item.subenddate).getDate())).slice(-2)
 
-              if (subendDate === expiryAlertDate) {
+              if (subendDate === expiredday) {
                 expiredMail.on('data', function (chunk) {
-
                   let msg = chunk.replace("%CUSTOMER NAME%", item.username);
                   msg = msg.replace("%PLAN%", item.substartdate);
                   expiredMail = msg;

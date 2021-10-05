@@ -29,6 +29,7 @@ export default (state=initialState, action) => {
                 links: action.payload
             };
         case GET_SINGLE_LINK:
+            console.log("getSingleLink",action.payload)
             return {
                 ...state,
                 linkDetails: action.payload

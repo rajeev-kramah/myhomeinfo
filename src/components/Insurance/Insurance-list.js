@@ -40,7 +40,7 @@ const InsuranceList = (props) => {
         { name: 'Premium(Yearly)', selector: 'premium', sortable: true },
         {
             name: 'Provider URL', selector: 'provider_url', sortable: true,
-            // cell: row => <a href={row.provider_url} target="_blank" to={{ pathname: "insurance", state: { house_id: house_id } }}>{row.provider_url}</a>
+            cell: row => <a href={row.provider_url} target="_blank" to={{ pathname: "insurance", state: { house_id: house_id } }}>{row.provider_url}</a>
         },
         { name: 'Renewed', selector: 'renewed', sortable: true, },
         {  

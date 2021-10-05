@@ -53,3 +53,6 @@
     border-radius: 10px;
     padding: 2px 8px;
 }
+.alignRight {
+    text-align: right;
+}

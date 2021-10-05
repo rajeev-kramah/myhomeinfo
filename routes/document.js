@@ -263,7 +263,7 @@ router.post("/", upload.single("attachment"), async (req, res) => {
 						)
 					);
 				} else {
-					var sql = "SELECT id, docname, date, description From document where house_id='"+req.body.house_id+"'";
+					var sql = "SELECT * From document where house_id='"+req.body.house_id+"'";
 					con.query(sql, function (err, document) {
 						if (err) {
 							res.send(

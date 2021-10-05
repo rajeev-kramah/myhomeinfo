@@ -368,7 +368,10 @@ const LenderDetails = (props) => {
 }
 
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state) => 
+(
+  console.log("satawestate",state),
+  {
   loanDetails: state.Loan.loanDetails.data,
   contactList: state.Contact.contacts.data
 });

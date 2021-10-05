@@ -102,7 +102,7 @@ const Insurance = (props) => {
       setComments(props.insuranceDetails[0].comments);
       setHouse_id(props.insuranceDetails[0].house_id);
       setStatus(props.insuranceDetails[0].status);
-      setAttachment_name(props.insuranceDetails[0].attachments.split('/')[4]);
+      setAttachment_name( props.insuranceDetails[0].attachments.includes("/") && props.insuranceDetails[0].attachments.split('/')[4].slice(4));
       setAttachment(props.insuranceDetails[0].attachments);
       setDownload(props.insuranceDetails[0].attachments);
 
@@ -575,7 +575,7 @@ const Insurance = (props) => {
               <NumberFormat
                 placeholder="Premium"
                 thousandsGroupStyle="thousand"
-                className="form-control"
+                className="form-control alignRight"
                 value={premium}
                 decimalSeparator="."
                 type="text"

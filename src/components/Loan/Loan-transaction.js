@@ -260,7 +260,7 @@ const LoanTransaction = (props) => {
                                     <NumberFormat
                                         placeholder="Loan Amount"
                                         thousandsGroupStyle="thousand"
-                                        className="form-control"
+                                        className="form-control alignRight"
                                         value={loanamount}
                                         decimalSeparator="."
                                         type="text"
