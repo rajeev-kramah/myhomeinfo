@@ -11,32 +11,33 @@ import S3 from "aws-s3";
 import JsFileDownloader from "js-file-downloader";
 
 const Transaction = (props) => {
+  const userBucket = JSON.parse(localStorage.getItem('user')).bucket_folder_name;
+  // aws-s3 uploader//
+  const config = {
+    bucketName: "myhomeinfo-s3",
+    dirName: userBucket,
+    region: "us-west-2",
+    accessKeyId: "AKIAW4MIDXMBT4OOUQMJ",
+    secretAccessKey: "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",
+  };
+  const S3Client = new S3(config);
+  const generate_random_string = (string_length) => {
+    let random_string = "";
+    let random_ascii;
+    let ascii_low = 65;
+    let ascii_high = 90;
+    for (let i = 0; i < string_length; i++) {
+      random_ascii = Math.floor(
+        Math.random() * (ascii_high - ascii_low) + ascii_low,
+      );
+      random_string += String.fromCharCode(random_ascii);
+    }
+    return random_string;
+  };
 
- // aws-s3 uploader//
- const config = {
-  bucketName: "myhomeinfouseruploads",
-  // dirName: 'photos', /* optional */
-  region: "us-west-2",
-  accessKeyId: "AKIARSK5NHWUX4TJHVXB",
-  secretAccessKey: "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",
-};
-const S3Client = new S3(config);
-const generate_random_string = (string_length) => {
-  let random_string = "";
-  let random_ascii;
-  let ascii_low = 65;
-  let ascii_high = 90;
-  for (let i = 0; i < string_length; i++) {
-    random_ascii = Math.floor(
-      Math.random() * (ascii_high - ascii_low) + ascii_low,
-    );
-    random_string += String.fromCharCode(random_ascii);
-  }
-  return random_string;
-};
-  
   let houseId = props.location.state.house_id ? props.location.state.house_id : "";
   let loggedinUser = Util.getLoggedinUser();
+  console.log("loggedinUser", loggedinUser)
 
   const [accountName, setAccountName] = useState('');
   const [contactPerson, setContactPerson] = useState("");
@@ -65,6 +66,7 @@ const generate_random_string = (string_length) => {
   const [loanbalance, setLoanbalance] = useState('');
   const [escrowbalance, setEscrowbalance] = useState('');
   const [escrowStatus, setEscrowStatus] = useState('No');
+  const [contactData, setContactData] = useState();
 
   const togglePopup = () => {
     setShowGroup(!showGroup);
@@ -75,16 +77,17 @@ const generate_random_string = (string_length) => {
   };
 
 
-  
-  
+
+
 
   useEffect(() => {
     if (props.transactionDetails && props.transactionDetails.length > 0) {
+      handleContatData(props.transactionDetails[0].account_name);
       setAccountName(props.transactionDetails[0].account_name);
-      setContactPerson(props.transactionDetails[0].contact_person);
-      setTransactionType(props.transactionDetails[0].type);
+      //setContactPerson(props.transactionDetails[0].contact_person);
+      //setTransactionType(props.transactionDetails[0].type);
       setDate(props.transactionDetails[0].date);
-      setTransactionAmount(props.transactionDetails[0].amount);
+      //setTransactionAmount(props.transactionDetails[0].amount);
       setEnteredBy(props.transactionDetails[0].entered_by);
       setComments(props.transactionDetails[0].comments);
       setAddToHomeCost(props.transactionDetails[0].add_to_home_cost);
@@ -93,7 +96,7 @@ const generate_random_string = (string_length) => {
       setProduct_name(props.transactionDetails[0].product_name ? props.transactionDetails[0].product_name : "");
       setWarranty_id(props.transactionDetails[0].warranty_id ? props.transactionDetails[0].warranty_id : "");
       setAddToWarrantyCost(props.transactionDetails[0].add_to_warranty);
-      setDocName(props.transactionDetails[0].receipt.split('/')[3]);
+      setDocName(props.transactionDetails[0].receipt.includes("/") &&props.transactionDetails[0].receipt.split('/')[4].slice(4));
       setDownload(props.transactionDetails[0].receipt);
       setDocument(props.transactionDetails[0].receipt);
       /**Escrow */
@@ -126,6 +129,21 @@ const generate_random_string = (string_length) => {
 
   }, [props.transactionDetails])
 
+  useEffect(()=>{
+    if (props.transactionDetails && props.transactionDetails.length > 0) {
+      handleContatData(props.transactionDetails[0].account_name);
+    }
+  },[props.transactionDetails, props.contactList])
+
+  const handleContatData = (dataId) => {
+    const myObj = props.contactList.find(obj => obj.id === parseInt(dataId.split("-")[0]));
+    console.log("props.leaseDetails", myObj);
+    setContactPerson(myObj && myObj.contactperson);
+    setTransactionType(myObj && myObj.transaction_type);
+    setTransactionAmount(myObj && myObj.transaction_amount);
+    setContactData(myObj);
+  }
+
   const handleSubmit = () => {
     let formdata = {
       "account_name": accountName,
@@ -149,7 +167,7 @@ const generate_random_string = (string_length) => {
       "escrowbalance": escrowbalance,
       "escrowStatus": escrowStatus
     }
-    
+
 
     let closeStatus = true;
     let current = new Date(date);
@@ -177,39 +195,39 @@ const generate_random_string = (string_length) => {
 
       let valid = validate();
       if (valid) {
-      if(document.name)
-      { const newFileName =
-        generate_random_string(4) +
-        document.name.split(".").slice(0, -1).join(".");
-         S3Client.uploadFile(document,newFileName)
-        .then((data) => {  
-            var form = new FormData();
-            for (const key in formdata) {
-              form.append(key, formdata[key]);
-            }
-            form.append("receipt", data.location);
-            props.addTransaction(form)
-            props.history.push({
-              pathname: 'transaction-list',
-              state: {
-                  house_id : house_id
+        if (document && document.name) {
+          const newFileName =
+            generate_random_string(4) +
+            document.name.split(".").slice(0, -1).join(".");
+          S3Client.uploadFile(document, newFileName)
+            .then((data) => {
+              var form = new FormData();
+              for (const key in formdata) {
+                form.append(key, formdata[key]);
               }
-          });
+              form.append("receipt", data.location);
+              props.addTransaction(form)
+              props.history.push({
+                pathname: 'transaction-list',
+                state: {
+                  house_id: house_id
+                }
+              });
             })
-    }
-    else {
-      var form = new FormData();
-      for (const key in formdata) {
-        form.append(key, formdata[key]);
-      }
-      props.addTransaction(form)
-      props.history.push({
-        pathname: 'transaction-list',
-        state: {
-            house_id : house_id
         }
-    });
-    }
+        else {
+          var form = new FormData();
+          for (const key in formdata) {
+            form.append(key, formdata[key]);
+          }
+          props.addTransaction(form)
+          props.history.push({
+            pathname: 'transaction-list',
+            state: {
+              house_id: house_id
+            }
+          });
+        }
       }
     } else {
       NotificationManager.error("Error Message", "Loan already expired.");
@@ -232,9 +250,11 @@ const generate_random_string = (string_length) => {
 
   const handleOnChange = (e) => {
     setAccountName(e.target.value);
+    handleContatData(e.target.value);
     if (props.contactList) {
       for (var i = 0; i < props.contactList.length; i++) {
-        if (e.target.value == props.contactList[i]['companyname']) {
+        console.log("compasnyname::", props.contactList[i], e.target.value)
+        if (e.target.value == props.contactList[i]['id']) {
           setContactPerson(props.contactList[i].contactperson);
           setAddToHomeCost(props.contactList[i].add_to_home_cost);
           setTransactionAmount(props.contactList[i].transaction_amount)
@@ -267,48 +287,46 @@ const generate_random_string = (string_length) => {
     }
     return true;
   }
-// upload document //
-const handleDocumentUpload = (event) => {
-  if(document !== "undefined" && document !== "") {
-    NotificationManager.error("Error Message", "Firstly, you have to delete old Attachment to Add New Attachment");
+  // upload document //
+  const handleDocumentUpload = (event) => {
+    if (document !== "undefined" && document !== "") {
+      NotificationManager.error("Error Message", "Firstly, you have to delete old Attachment to Add New Attachment");
+    }
+    else {
+      setDocument(event.target.files[0])
+      setDocName(event.target.files[0]['name']);
+    }
   }
-  else 
-  { setDocument(event.target.files[0])
-    setDocName(event.target.files[0]['name']);
-}  }
-// delete Document //
-const handleDelete = (id,docFile) => {
-  if(docFile.name !== undefined) {
+  // delete Document //
+  const handleDelete = (id, docFile) => {
+    if (docFile.name !== undefined) {
       setDocName("");
       setDocument("")
       NotificationManager.error("Success Message", "Attachment deleted");
     }
-  else if(docFile){
-    const newFileName = docFile.split('/')[3]
-    S3Client.deleteFile(newFileName).then((data) =>
-    {
-      if(data.message === "File Deleted")
-  {
-    props.getSingleTransaction({ id: id, delete: "doc" })
-    setDocName("");
-    setDocument("")
-    NotificationManager.error("Success Message", "Attachment deleted");
-  }
-      else {
+    else if (docFile) {
+      const newFileName = docFile.split('/')[4]
+      S3Client.deleteFile(newFileName).then((data) => {
+        if (data.message === "File Deleted") {
+          props.getSingleTransaction({ id: id, delete: "doc" })
+          setDocName("");
+          setDocument("")
+          NotificationManager.error("Success Message", "Attachment deleted");
+        }
+        else {
           NotificationManager.error("Error Message", "Oops!! Somwthing went wrong");
+        }
       }
+      )
     }
-  )
-     }
-      else {
-          NotificationManager.error("Error Message", "There is no Attachment to delete");
-        }     
+    else {
+      NotificationManager.error("Error Message", "There is no Attachment to delete");
+    }
   }
-// download Document //
+  // download Document //
   const downloadFile = (items) => {
-    console.log("download::",items)
-    if(items.name !== undefined)
-    {
+    console.log("download::", items)
+    if (items.name !== undefined) {
 
     }
     const fileUrl = items;
@@ -367,7 +385,8 @@ const handleDelete = (id,docFile) => {
                       props.contactList ? (
                         props.contactList.map((data) => {
                           return (
-                            <option value={data.companyname}>{data.companyname} - ( {data.contactperson} )</option>
+                            <option value={`${data.id}-${data.companyname
+                              }`}>{data.companyname} - ( {data.contactperson} )</option>
                           )
                         })
                       ) : ""
@@ -387,7 +406,7 @@ const handleDelete = (id,docFile) => {
               <div className="col-md-6">
                 <div className="form-group">
                   <label htmlFor="Transaction Type">Transaction Type</label>
-                  <select className="form-control" value={transactionType} onChange={e => setTransactionType(e.target.value)} >
+                  <select className="form-control" value={transactionType} onChange={e => setTransactionType(e.target.value)} disabled>
                     <option value="" disabled>Select</option>
                     <option value="Receipt">Receipt</option>
                     <option value="Payment">Payment</option>
@@ -409,7 +428,7 @@ const handleDelete = (id,docFile) => {
                   <NumberFormat
                     placeholder="Transaction Amount"
                     thousandsGroupStyle="thousand"
-                    className="form-control"
+                    className="form-control alignRight"
                     value={transactionAmount}
                     decimalSeparator="."
                     type="text"
@@ -420,7 +439,8 @@ const handleDelete = (id,docFile) => {
                     allowEmptyFormatting={true}
                     allowLeadingZeros={false}
                     onChange={e => setTransactionAmount(e.target.value)}
-                    isNumericString={true} />
+                    isNumericString={true}
+                    readOnly />
                   {/* <input type="text" placeholder="Transaction Amount" value={Util.addCommas(transactionAmount)} onChange={e=> setTransactionAmount(e.target.value)} className="form-control" /> */}
                 </div>
               </div>
@@ -504,7 +524,7 @@ const handleDelete = (id,docFile) => {
                   </div>
                   <i className="glyphicon glyphicon-trash primary  btn-lg  blueIcon" value={document}
                     onClick={() => handleDelete(id, document)}></i>
-                  </div>
+                </div>
               </div>
             </div>
 

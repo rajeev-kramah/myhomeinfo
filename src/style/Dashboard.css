@@ -176,3 +176,7 @@
 .slick-prev:before, .slick-next:before{
     color:#4559fa !important;
 }
+.justify-between{
+    display: flex;
+    justify-content: space-between;
+}

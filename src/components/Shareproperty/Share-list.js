@@ -14,14 +14,14 @@ const ShareList = (props) => {
 
     var columns = [
         {
-            name: 'First Name',
+            name: 'Shared Name',
             selector: 'fname',
             sortable: true,
-            cell: row => <Link data-tag="allowRowEvents" role="link" to={{ pathname: "share", state: { house_id: house_id } }}>{row.fname}</Link>
+            cell: row => <Link data-tag="allowRowEvents" role="link" to={{ pathname: "share", state: { house_id: house_id } }}>{row.fname} {row.lname}</Link>
         },
-        { name: 'Last Name', selector: 'lname', sortable: true, },
+        // { name: 'Last Name', selector: 'lname', sortable: true, },
         { name: 'Phone Number', selector: 'phono', sortable: true, },
-        { name: 'email', selector: 'email', sortable: true, },
+        { name: 'Email Id', selector: 'email', sortable: true, },
         { name: 'Access Level', selector: 'accesslevel', sortable: true },
         { name: 'Action', selector: 'action', sortable: true },
 

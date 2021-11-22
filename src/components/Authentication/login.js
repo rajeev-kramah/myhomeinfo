@@ -21,7 +21,7 @@ const Login =  (props) => {
 		
 		if(valid){
 			props.login(data);
-		}
+				}
 	}
 
 	const validate = (data) => {

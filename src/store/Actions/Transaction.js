@@ -54,8 +54,7 @@ export const getTransactionAllData = (data) => {
     return async (dispatch) => {
         await Transaction.getTransactionAllData(data)
         .then(res => {
-            
-            if(res.status === 200  || res.status === 404 || res.status === 422) {
+           if(res.status === 200  || res.status === 404 || res.status === 422) {
                 var data = {
                     type: GET_TRANSACTION_All,
                     payload: res

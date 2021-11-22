@@ -11,7 +11,7 @@ import {
 const initialState = {
     transactions : {},
     transactionDetails : {},
-    transactionAllData:{}
+    transactionDeletedData:{}
 }
 
 export default (state=initialState, action) => {
@@ -34,7 +34,7 @@ export default (state=initialState, action) => {
         case GET_TRANSACTION_All:
             return {
                 ...state,
-                transactionAllData: action.payload
+                transactionDeletedData: action.payload
             };
         case DELETE_TRANSACTION:
             return {
@@ -44,8 +44,8 @@ export default (state=initialState, action) => {
         case UNDELETE_TRANSACTION:
             return {
                 ...state,
-                transactionAllData: action.payload
-            }
+                transactionDeletedData: action.payload,
+                }
         default:
             return state;
     }

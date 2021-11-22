@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { NotificationManager } from "react-notifications";
 import { addTitleHolder } from "../../store/Actions/house";
 import Tab from "../../Reusable/Tab";
-
+import { useHistory } from 'react-router-dom';
 
 const TitleHolders = (props) => {
     const [title1, setTitle1] = useState(JSON.parse(localStorage.getItem('user')).name);
@@ -14,7 +14,7 @@ const TitleHolders = (props) => {
     const [title4, setTitle4] = useState('');
     const [houseId, setHouseId] = useState('');
     const [id, setId] = useState('');
-
+    const history = useHistory();
     useEffect(()=> {
         if( props.houseDetails && props.houseDetails.house.length > 0 && props.houseDetails.titleholders.length > 0){
             setTitle1(props.houseDetails.titleholders[0].titleholder1);
@@ -43,7 +43,7 @@ const TitleHolders = (props) => {
         }
         if(title1 != '' || title2 != '' || title3!= '' || title4 != ''){
             props.addTitleHolder(data);
-            props.history.push('/hoa-detail');
+            history.push('/hoa-detail');
         } else {
             NotificationManager.info("Error Message", "Title Holder should not be empty.");
         }

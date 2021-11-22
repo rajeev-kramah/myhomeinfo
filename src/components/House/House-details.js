@@ -11,14 +11,14 @@ import S3 from "aws-s3";
 import JsFileDownloader from "js-file-downloader";
 
 const HouseDetails = (props) => {
-
+    const userBucket = JSON.parse(localStorage.getItem('user')).bucket_folder_name;
   // aws-s3 uploader//
   const config = {
-    bucketName: "myhomeinfouseruploads",
-    // dirName: 'photos', /* optional */
+    bucketName: "myhomeinfo-s3",
+    dirName: userBucket, 
     region: "us-west-2",
-    accessKeyId: "AKIARSK5NHWUX4TJHVXB",
-    secretAccessKey: "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",
+    accessKeyId: "AKIAW4MIDXMBT4OOUQMJ",
+    secretAccessKey: "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",
   };
   const S3Client = new S3(config);
   const generate_random_string = (string_length) => {
@@ -57,10 +57,11 @@ const HouseDetails = (props) => {
   const [previewImage, setPreviewImage] = useState("../assets/image/dummy.png");
   const [currency, setCurrency] = useState('');
   const [download, setDownload] = useState('');
-  const [img_path, setImg_path] = useState('');
+  const [img_path, setImg_path] = useState("../assets/image/dummy.png");
 
   useEffect(() => {
     if (props.houseDetails && props.houseDetails.house.length > 0) {
+        console.log("props.houseDetails12",props.houseDetails)
       setHouse(props.houseDetails.house[0].houseno);
       setStreet(props.houseDetails.house[0].streetname);
       setCity(props.houseDetails.house[0].city);
@@ -77,7 +78,7 @@ const HouseDetails = (props) => {
       setSubdivision(props.houseDetails.house[0].subdivision);
       setOwner_id(props.houseDetails.house[0].owner_id);
       setHouseId(props.houseDetails.house[0].id);
-      setImg_path(props.houseDetails.house[0].img_path);
+      setImg_path(props.houseDetails.house[0].img_path.split('/')[4]);
       setPreviewImage(props.houseDetails.house[0].img_path ? props.houseDetails.house[0].img_path : "../assets/image/dummy.png");
       //setBlobImage(props.houseDetails.house[0].img_path);
       setCurrency(props.houseDetails.house[0].currency);
@@ -88,8 +89,8 @@ const HouseDetails = (props) => {
   const handleChangeImage = (event) => {
     // setPreviewImage(URL.createObjectURL(event.target.files[0]));
     // setHouseImage(event.target.files[0])
-
-    if (img_path !== "undefined" && img_path !== "") {
+    console.log("img::",img_path)
+    if (img_path !== undefined && img_path !== "undefined" && img_path !== "") {
       NotificationManager.error("Error Message", "Firstly, you have to delete old Attachment to Add New Attachment");
     }
     else {
@@ -119,18 +120,19 @@ const HouseDetails = (props) => {
   };
 
   const handleDeleteImg = (id, docFile) => {
-    if (docFile.name !== undefined) {
+    if (docFile && docFile.name !== undefined) {
       setPreviewImage("../assets/image/dummy.png");
       setImg_path("")
       NotificationManager.error("Success Message", "Attachment deleted");
     }
     else if (docFile) {
-      const newFileName = docFile.split('/')[3]
+      const newFileName = docFile.split('/')[4]
       S3Client.deleteFile(newFileName).then((data) => {
         if (data.message === "File Deleted") {
           props.deleteHouseAttachment({ id: id, delete: "doc" })
           setPreviewImage("../assets/image/dummy.png");
           setImg_path("")
+          NotificationManager.error("Success Message", "Attachment deleted");
         }
         else {
           NotificationManager.error("Error Message", "Oops!! Somwthing went wrong");
@@ -179,7 +181,7 @@ const HouseDetails = (props) => {
     if (valid) {
 
       console.log("vbalid::", img_path)
-      if (img_path.name) {
+      if (img_path && img_path.name) {
         const newFileName =
           generate_random_string(4) +
           img_path.name.split(".").slice(0, -1).join(".");
@@ -258,7 +260,7 @@ const HouseDetails = (props) => {
   return (
     <div className="container-fluid house">
       <h4>Property Details</h4>
-      <div className="house-form homeDetails">
+        <div className="house-form homeDetails">
         <Tab loanPage="Home Details" tabs={tabs} id={houseId} house_id={houseId} />
         <div className="row">
           <div className="col-md-4">
@@ -407,7 +409,7 @@ const HouseDetails = (props) => {
                   <NumberFormat
                     placeholder="Amount"
                     thousandsGroupStyle="thousand"
-                    className="form-control"
+                    className="form-control alignRight"
                     value={purchaseAmount}
                     decimalSeparator="."
                     type="text"

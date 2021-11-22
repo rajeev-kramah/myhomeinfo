@@ -4,9 +4,12 @@ import { addLink, deleteLink } from "../../store/Actions/Link";
 import { connect } from "react-redux";
 import { NotificationManager } from "react-notifications";
 import {Util} from "../../Datamanipulation/Util";
+import { useLocation } from "react-router-dom";
 
 const Link = (props) => {
-    let houseId = props.location.state.house_id ? props.location.state.house_id : "";
+    const location = useLocation();
+    console.log("linkDetails",location.state, props.linkDetails)
+    let houseId = location.state.house_id ? location.state.house_id : "";
 
     const [date, setDate] = useState(Util.getCurrentDate("-"));
     const [groupname, setGroupname] = useState("");
@@ -22,7 +25,7 @@ const Link = (props) => {
             setGroupname(props.linkDetails[0].groupname);
             setUrlname(props.linkDetails[0].urlname);
             setDescription(props.linkDetails[0].description);
-            setHouse_id(props.linkDetails[0].house_id);
+            setHouse_id(location.state.house_id);
         }
     }, [props.linkDetails])
   

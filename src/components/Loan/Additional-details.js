@@ -13,13 +13,14 @@ import S3 from "aws-s3";
 import JsFileDownloader from "js-file-downloader";
 
 const AdditionalDetails = (props) => {
+  const userBucket = JSON.parse(localStorage.getItem('user')).bucket_folder_name;
   // aws-s3 uploader//
   const config = {
-    bucketName: "myhomeinfouseruploads",
-    // dirName: 'photos', /* optional */
+    bucketName: "myhomeinfo-s3",
+    dirName: userBucket,
     region: "us-west-2",
-    accessKeyId: "AKIARSK5NHWUX4TJHVXB",
-    secretAccessKey: "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",
+    accessKeyId: "AKIAW4MIDXMBT4OOUQMJ",
+    secretAccessKey: "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",
   };
   const S3Client = new S3(config);
   const generate_random_string = (string_length) => {
@@ -110,7 +111,7 @@ const AdditionalDetails = (props) => {
       setRenewal_maturity_date(props.loanDetails[0].renewal_maturity_date);
       setRenewal_intrest_rate(props.loanDetails[0].renewal_intrest_rate);
       setDocument(props.loanDetails[0].document);
-      setDocName(props.loanDetails[0].document.split('/')[3]);
+      setDocName(props.loanDetails[0].document.includes("/") && props.loanDetails[0].document.split('/')[4].slice(4));
       setDownload(props.loanDetails[0].document);
     }
 
@@ -155,41 +156,41 @@ const AdditionalDetails = (props) => {
 
     let valid = validate();
     if (valid) {
-      if(document.name)
-      { const newFileName =
-            generate_random_string(4) +
-            document.name.split(".").slice(0, -1).join(".");
-             S3Client.uploadFile(document,newFileName)
-            .then((data) => {  
-                var form = new FormData();
-                for (const key in formdata) {
-                  form.append(key, formdata[key]);
-                }
-                form.append("lastTab", true)  
-                form.append("document", data.location);
-                props.addLoan(form)
-                props.history.push({
-                  pathname: 'loan-transaction',
-                  state: {
-                      house_id : house_id
-                  }
-              });
-            })
-        }
-        else {
-          var form = new FormData();
-          for (const key in formdata) {
-            form.append(key, formdata[key]);
-          }
-          form.append("lastTab", true) 
-          props.addLoan(form);
-          props.history.push({
-            pathname: 'loan-transaction',
-            state: {
-                house_id : house_id
+      if (document.name) {
+        const newFileName =
+          generate_random_string(4) +
+          document.name.split(".").slice(0, -1).join(".");
+        S3Client.uploadFile(document, newFileName)
+          .then((data) => {
+            var form = new FormData();
+            for (const key in formdata) {
+              form.append(key, formdata[key]);
             }
-        });
+            form.append("lastTab", true)
+            form.append("document", data.location);
+            props.addLoan(form)
+            props.history.push({
+              pathname: 'loan-transaction',
+              state: {
+                house_id: house_id
+              }
+            });
+          })
+      }
+      else {
+        var form = new FormData();
+        for (const key in formdata) {
+          form.append(key, formdata[key]);
         }
+        form.append("lastTab", true)
+        props.addLoan(form);
+        props.history.push({
+          pathname: 'loan-transaction',
+          state: {
+            house_id: house_id
+          }
+        });
+      }
     }
   }
 
@@ -200,54 +201,65 @@ const AdditionalDetails = (props) => {
     }
     return true;
   }
- // upload Document //
- const handleDocumentUpload = (event) => {
-    
-  if(document !== "undefined" && document !== "") {
-    NotificationManager.error("Error Message", "Firstly, you have to delete old Attachment to Add New Attachment");
+
+  const handlePropertyTax = (e) => {
+
+    setPropertytaxPayee(e.target.value)
+    for (var i = 0; i < props.contactList.length; i++) {
+      console.log("amount::", props.contactList[i], e.target.value)
+      if (e.target.value == props.contactList[i]['id']) {
+        console.log("amount::", props.contactList[i])
+        setPropertytax(props.contactList[i].transaction_amount);
+        break;
+      }
+    }
   }
-  else 
-  {setDocument(event.target.files[0]);
-  setDocName(event.target.files[0]['name']);
-}  }
-  
-// delete Document //
-const handleDelete = (id,docFile) => {
-  if(docFile.name !== undefined && docFile.name !== "") {
-   
+  // upload Document //
+  const handleDocumentUpload = (event) => {
+
+    if (document !== "undefined" && document !== "") {
+      NotificationManager.error("Error Message", "Firstly, you have to delete old Attachment to Add New Attachment");
+    }
+    else {
+      setDocument(event.target.files[0]);
+      setDocName(event.target.files[0]['name']);
+    }
+  }
+
+  // delete Document //
+  const handleDelete = (id, docFile) => {
+    if (docFile.name !== undefined && docFile.name !== "") {
+
       setDocName("");
       setDocument("");
       NotificationManager.error("Success Message", "Attachment deleted");
     }
-  else if(docFile){
-    console.log("docFile",docFile)
-    const newFileName = docFile.split('/')[3]
-    S3Client.deleteFile(newFileName).then((data) =>
-    {
-      if(data.message === "File Deleted")
-    {
-      console.log("docFile",data.message);
-      setDocName(" ");
-      setDocument(" ");
-      props.getSingleLoan({ id: id, delete: "doc" })
-  
-    NotificationManager.error("Success Message", "Attachment deleted");
-  }
-      else {
+    else if (docFile) {
+
+      const newFileName = docFile.split('/')[4]
+      S3Client.deleteFile(newFileName).then((data) => {
+        if (data.message === "File Deleted") {
+          console.log("docFile", data.message);
+          setDocName(" ");
+          setDocument(" ");
+          props.getSingleLoan({ id: id, delete: "doc" })
+
+          NotificationManager.error("Success Message", "Attachment deleted");
+        }
+        else {
           NotificationManager.error("Error Message", "Oops!! Somwthing went wrong");
+        }
       }
+      )
     }
-  )
-     }
-      else {
-          NotificationManager.error("Error Message", "There is no Attachment to delete");
-        }     
+    else {
+      NotificationManager.error("Error Message", "There is no Attachment to delete");
+    }
   }
-// download Document //
+  // download Document //
   const downloadFile = (items) => {
-    console.log("download::",items)
-    if(items.name !== undefined)
-    {
+    console.log("download::", items)
+    if (items.name !== undefined) {
 
     }
     const fileUrl = items;
@@ -282,11 +294,13 @@ const handleDelete = (id,docFile) => {
       <div className="house-form">
         <Tab loanPage="Escrow & Property Tax" tabs={tabs} id={id} house_id={house_id} />
         <div className="row">
-          <div className="col-md-3"></div>
-          <div className="col-md-6  house-form pt-25">
+          <div className="col-md-2"></div>
+          <div className="col-md-8 house-form pt-25">
             <div className="row pt-25">
               <span className="section">Escrow Details</span><br></br><br></br>
-              <div className="col-md-6">
+
+              <div className="col-md-1"></div>
+              <div className="col-md-5">
                 <div className="form-group">
                   <label htmlFor="escrow">Escrow</label>
                   <div className="form-check">
@@ -301,13 +315,13 @@ const handleDelete = (id,docFile) => {
                   </div>
                 </div>
               </div>
-              <div className="col-md-6">
+              <div className="col-md-5">
                 <div className="form-group">
                   <label htmlFor="">Escrow Amount</label>
                   <NumberFormat
                     placeholder="Escrow Amount"
                     thousandsGroupStyle="thousand"
-                    className="form-control"
+                    className="form-control alignRight"
                     value={escrowamount ? escrowamount : 0}
                     decimalSeparator="."
                     type="text"
@@ -323,22 +337,24 @@ const handleDelete = (id,docFile) => {
                   {/* <input type="text" placeholder="Escrow Amount" value={Util.addCommas(escrowamount ? escrowamount : 0)} onChange={e => setEscrowAmount(e.target.value)} className="form-control" disabled={escrow == 'No' ? true : false} /> */}
                 </div>
               </div>
+              <div className="col-md-1"></div>
             </div>
 
             <div className="row ">
-              <div className="col-md-6">
+              <div className="col-md-1"></div>
+              <div className="col-md-5">
                 <div className="form-group">
                   <label htmlFor="">Escrow Payee</label>
                   <input type="text" placeholder="Escrow" value={escrowpayee} onChange={e => setEscrowPayee(e.target.value)} className="form-control" disabled={escrow == 'No' ? true : false} />
                 </div>
               </div>
-              <div className="col-md-6">
+              <div className="col-md-5">
                 <div className="form-group">
                   <label htmlFor="">Escrow Deposit</label>
                   <NumberFormat
                     placeholder="Escrow"
                     thousandsGroupStyle="thousand"
-                    className="form-control"
+                    className="form-control alignRight"
                     value={mortgage}
                     decimalSeparator="."
                     type="text"
@@ -354,6 +370,7 @@ const handleDelete = (id,docFile) => {
                   {/* <input type="text" placeholder="Escrow" value={Util.addCommas(mortgage)} onChange={e => setMortgage(e.target.value)} className="form-control" disabled={escrow == 'No' ? true : false} /> */}
                 </div>
               </div>
+              <div className="col-md-1"></div>
             </div>
 
             <div className="row ">
@@ -364,9 +381,10 @@ const handleDelete = (id,docFile) => {
 
             {/* <div className="divWithContact "> */}
             <div className="row">
-              <div className="form-group col-md-6">
+              <div className="col-md-1"></div>
+              <div className="form-group col-md-5">
                 <label htmlFor="tax" className="req">Porperty Tax Payee</label>
-                <select className="form-control" value={ptaxpayee} onChange={e => setPropertytaxPayee(e.target.value)}>
+                <select className="form-control" value={ptaxpayee} onChange={e => handlePropertyTax(e)}>
                   <option value="" disabled>Select</option>
 
                   {
@@ -384,12 +402,12 @@ const handleDelete = (id,docFile) => {
                 {/* <input type="text" placeholder="Porperty Tax" value={ptaxpayee} onChange={e=> setPropertytaxPayee(e.target.value)} className="form-control" /> */}
               </div>
 
-              <div className="form-group col-md-6">
+              <div className="form-group col-md-5">
                 <label htmlFor="tax" className="req">Porperty Tax Amount</label>
                 <NumberFormat
                   placeholder="Porperty Tax Amount"
                   thousandsGroupStyle="thousand"
-                  className="form-control"
+                  className="form-control alignRight"
                   value={propertytax}
                   decimalSeparator="."
                   type="text"
@@ -403,11 +421,12 @@ const handleDelete = (id,docFile) => {
                   isNumericString={true} />
                 {/* <input type="text" placeholder="Porperty Tax Amount" value={Util.addCommas(propertytax)} onChange={e => setPropertytax(e.target.value)} className="form-control" /> */}
               </div>
-              {/* <div onClick={()=>togglePopup()} ><img className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/>  </div> */}
+              <div onClick={() => togglePopup()} className="col-md-1" ><img className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo" />  </div>
             </div>
             {/* </div> */}
 
             <div className="row buttondisplay ">
+              <div className="col-md-1"></div>
               <div className="col-md-8">
                 <div className="form-group">
                   <label htmlFor="attachment">Attachments</label>
@@ -427,28 +446,31 @@ const handleDelete = (id,docFile) => {
                                 <button type="button"  className="btn btn-primary btn-sm addNewItem " onClick={()=>handleDelete(id)}><span className="glyphicon glyphicon-trash"> </span> Delete Attachment </button>
                                 </div> */}
               <div className="dflex">
-              <div onClick={() => handleViewEvent(document)}>
+                <div onClick={() => handleViewEvent(document)}>
                   <i className="glyphicon glyphicon-eye-open primary  btn-lg blueIcon" value={document}></i>
-                  </div>
-                  <div onClick={() => downloadFile(document)}>
+                </div>
+                <div onClick={() => downloadFile(document)}>
                   <i className="glyphicon glyphicon-download-alt primary  btn-lg blueIcon" value={document}></i>
-                  </div>
-                  <i className="glyphicon glyphicon-trash primary  btn-lg  blueIcon" value={document} 
-                  onClick={() => handleDelete(id,document)}></i>
-                
+                </div>
+                <i className="glyphicon glyphicon-trash primary  btn-lg  blueIcon" value={document}
+                  onClick={() => handleDelete(id, document)}></i>
+
               </div>
+              <div className="col-md-1"></div>
             </div>
 
             <div className="row ">
-              <div className="col-md-12">
+              <div className="col-md-1"></div>
+              <div className="col-md-10">
                 <div className="form-group">
                   <label htmlFor="comments">Comments</label>
                   <textarea rows="4" placeholder="Comments" value={additionaldetails} onChange={e => setAdditionaldetails(e.target.value)} className="form-control"></textarea>
                 </div>
               </div>
+              <div className="col-md-1"></div>
             </div>
           </div>
-          <div className="col-md-3"></div>
+          <div className="col-md-2"></div>
         </div>
         <div className="row footer ">
           <div className="col-md-4"></div>

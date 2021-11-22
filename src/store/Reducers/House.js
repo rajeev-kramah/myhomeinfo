@@ -55,7 +55,6 @@ export default function(state = initialState, action) {
 			};
 
 		case GET_HOME_DETAIL:
-			console.log(action.payload)
 			return {
 				...state,
 				houseDetail: action.payload

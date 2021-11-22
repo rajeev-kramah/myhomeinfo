@@ -279,7 +279,7 @@ console.log("attachment22::",req.body.attachment)
 					);
 				} else if (insurnce.length > 0) {
 					let path = insurnce[0]['attachments'].substr(11);
-					path = "public\\files\\" + path;
+					// path = "public\\files\\" + path;
 					removeFile(path);
 				}
 			});

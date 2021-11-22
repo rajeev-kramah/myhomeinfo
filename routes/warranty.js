@@ -232,7 +232,7 @@ router.post("/", upload.single("InstalltionImage"), async (req, res) => {
 		res.send(result.response(422, "", "house_id is empty"));
 	} else {
 		con.connect(function(err) {
-			var sql = "SELECT id, product_name, installation_date, installation_company_name, contact_number, comments, product_price, installation_charges, extended_warranty_end_date From warranty where house_id='"+req.body.house_id+"'";
+			var sql = "SELECT id, product_name, installation_date, installation_company_name,contact_person, contact_number, comments, product_price, installation_charges, extended_warranty_end_date From warranty where house_id='"+req.body.house_id+"'";
 			con.query(sql, function (err, warranty) {
 				if (err) {
 					res.send(

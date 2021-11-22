@@ -24,7 +24,6 @@ var commaNumber = require('comma-number')
 
 
 const Dashboard = (props) => {
-  console.log("account 45", props)
   const [owner_id, setOwner_id] = useState(JSON.parse(localStorage.getItem('user')).id);
   const [active_house, setActive_house] = useState("");
   const [active_house_name, setActive_house_name] = useState("");
@@ -45,7 +44,6 @@ const Dashboard = (props) => {
 
     if (props.accountDetails && props.accountDetails.length > 0 && props.house && props.house.length > 0) {
 
-      console.log("account 56 2", props.accountDetails[0].maxproperty, props.house.length)
       if (props.house.length < props.accountDetails[0].maxproperty) {
         setPropertyRestrict(true)
       }
@@ -472,8 +470,7 @@ const Dashboard = (props) => {
       {
         props.house && props.house.length <= 3 &&
 
-        <div className="row card-deck">
-          {console.log("props.house", props.house)}
+        <div className="row card-deck justify-between">
           {
             props.house ?
               (props.house.map((data) => {
@@ -482,7 +479,7 @@ const Dashboard = (props) => {
                 let totalInstallment = mortgageData ? mortgageData.totalInstallment : "NA";
                 let paidInstallment = mortgageData ? mortgageData.paidInstallment : "NA";
                 return (
-                  <div className="col-md-3 card" key={data.house.id}>
+                  <div className={`col-md-3 card ${data.house.id === active_house && "selectedCard"}`}  key={data.house.id}>
                     <div className="imageArea" onClick={(e) => updateHouse(data.house.id, data.house.streetname)}>
                       <img
                         src={data.house.img_path ? data.house.img_path : "../assets/image/dummy.png"}
@@ -691,7 +688,6 @@ const Dashboard = (props) => {
                       <React.Fragment>
                         {loanData.status === "Active" ?
                           <React.Fragment>
-                            {console.log("loandata", loanData)}
                             <small className="text-muted card-text w30">{loanData.loantype}</small>
                             <small className="text-muted card-text w30">Loan balance</small>
                             <small className="text-muted card-text w30">Installments</small>
@@ -807,7 +803,6 @@ const Dashboard = (props) => {
 
 
 const mapStateToProps = (state) => (
-  console.log("mapstateToProps::", state.Account),
   {
     house: state.House.houses.data,
     houseDetails: state.House.houseDetail.data,

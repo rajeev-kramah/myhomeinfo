@@ -33,7 +33,6 @@ export const ownerHouseDetails = (data) => {
 
 
 export const getHouseDetail = (res) => {
-    console.log(houseRes);
     if(Object.keys(res).length == 0){
         return async (dispatch) => {
             var data = {

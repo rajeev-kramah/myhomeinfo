@@ -11,13 +11,13 @@ const LoanList = (props) => {
     const header = ["Type", "Lender Name", "Loan Number", "Loan Amount", "Interest Rate(%)", "Term", "Escrow", "Property Tax","Start Date", "End Date","Status"];
 
     var columns = [
+        { name: 'Lender Name', selector: 'lcontactperson', sortable: true,  cell: row => <Link data-tag="allowRowEvents" role="link" to={{pathname : "loan-lender", state:{house_id : house_id}}}>{row.lcontactperson}</Link>},
         { 
             name: 'Type', 
             selector: 'loantype', 
             sortable: true, 
-            cell: row => <Link data-tag="allowRowEvents" role="link" to={{pathname : "loan-lender", state:{house_id : house_id}}}>{row.loantype}</Link>
+           
         },
-        { name: 'Lender Name', selector: 'companyname', sortable: true, },
         { name: 'Loan Number', selector: 'loannumber', sortable: true, },
         { name: 'Loan Amount', selector: 'loanamount', sortable: true, cell: row => Util.addCommasList(row.loanamount)},
         { name: 'Interest Rate(%)', selector: 'rateofinterest', sortable: true },
@@ -36,9 +36,15 @@ const LoanList = (props) => {
             sortable: true, 
             cell : row => Util.dateFormat(row.loanclosuredate)
         },
-        { name: 'Status', selector: 'status', sortable: true, },
+        {  
+            name: 'Status', 
+            selector: 'status', 
+            sortable: true, 
+            cell: (row) => row.status === "Active"? <span className="active_status">{row.status}</span> : row.status === "Renewal" ? <span className="renewed_status">{row.status}</span> :row.status === "Closed" ? <span className="expired_status">{row.status}</span>:row.status === "Foreclosed" ? <span className="foreclosed_status">{row.status}</span> :""
+            
+        },
          { 
-            name: 'Amortization', 
+            name: 'Amortization Table', 
             selector: 'amortization', 
             cell: row => <Link data-tag="allowRowEvents" className="glyphicon glyphicon-tasks" role="link" to={{pathname : "amortization", state:{id : row.id}}}></Link>
         },
@@ -85,7 +91,6 @@ const LoanList = (props) => {
 
 
 const mapStateToProps = (state) => (
-console.log("ststedata",state),
     {
     loans : state.Loan.loans.data
 });

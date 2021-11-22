@@ -7,14 +7,14 @@ import S3 from "aws-s3";
 
 
 const Galleries = (props) => {
-
+    const userBucket = JSON.parse(localStorage.getItem('user')).bucket_folder_name;
 // aws-s3 uploader//
 const config = {
-    bucketName: "myhomeinfouseruploads",
-    // dirName: 'photos', /* optional */
+    bucketName: "myhomeinfo-s3",
+    dirName: userBucket,
     region: "us-west-2",
-    accessKeyId: "AKIARSK5NHWUX4TJHVXB",
-    secretAccessKey: "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",
+    accessKeyId: "AKIAW4MIDXMBT4OOUQMJ",
+    secretAccessKey: "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",
   };
   const S3Client = new S3(config);
   const generate_random_string = (string_length) => {
@@ -74,7 +74,6 @@ const config = {
     // }, [album_name]);
 
     useEffect(() => {
-        console.log("console_groupTypeOption",groupTypeOption)
     //   if(props.galleries && props.galleries > 0)
     //   {
     //     setGroupTypeOption(props.galleries[0].album_name) 
@@ -96,7 +95,7 @@ const config = {
     }
 
     const handleDelete = (id,docFile) => {
-        const newFileName = docFile.split('/')[3]
+        const newFileName = docFile.split('/')[4]
         S3Client.deleteFile(newFileName).then((data) => {
             if(data.fileName !== undefined)
             {
@@ -193,7 +192,6 @@ const config = {
             {/* *Galary Code */}
             <div className="contact-form galary">
                 <h4>{groupTypeOption === "group_1" ? "Group 1" : "Group 2"} </h4>
-                {console.log("console_1",props.galleries)}
                 <div className="row">
                     <Slider {...settings}>
                         {

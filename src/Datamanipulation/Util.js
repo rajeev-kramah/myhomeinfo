@@ -176,5 +176,15 @@ export const Util = {
         let d2 = d1.split(" ");
         let result = d2[1].split(",")[0] + " "+ d2[0] +" "+ d2[2]
         return result;
+    },
+    dateFormatWithTime(date){
+        if(date == ""){
+            return "";
+        }
+        const options = { day: 'numeric',  year: 'numeric', month: 'short', hour: 'numeric', minute:'numeric' };
+        let d1 = new Date(date).toLocaleDateString(undefined,options);
+        let d2 = d1.split(" ");
+        let result = d2[1].split(",")[0] + " "+ d2[0] +" "+ d2[2]+" "+ d2[3]+" "+ d2[4]
+        return result;
     }
 }

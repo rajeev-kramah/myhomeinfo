@@ -12,13 +12,14 @@ import JsFileDownloader from "js-file-downloader";
 // import addContactLogo from '../addContact.png';
 
 const Realtordetails = (props) => {
+  const userBucket = JSON.parse(localStorage.getItem('user')).bucket_folder_name;
   // aws-s3 uploader//
   const config = {
-    bucketName: "myhomeinfouseruploads",
-    // dirName: 'photos', /* optional */
+    bucketName: "myhomeinfo-s3",
+    dirName: userBucket,
     region: "us-west-2",
-    accessKeyId: "AKIARSK5NHWUX4TJHVXB",
-    secretAccessKey: "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",
+    accessKeyId: "AKIAW4MIDXMBT4OOUQMJ",
+    secretAccessKey: "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",
   };
   const S3Client = new S3(config);
   const generate_random_string = (string_length) => {
@@ -43,14 +44,15 @@ const Realtordetails = (props) => {
   const [showGroup, setShowGroup] = useState(false);
   const [img_path, setImg_path] = useState('');
   const [previewImage, setPreviewImage] = useState("../assets/image/dummy.png");
+  const [contactData, setContactData] = useState();
   const [download, setDownload] = useState('');
 
   useEffect(() => {
     if (props.houseDetails && props.houseDetails.house.length > 0 && props.houseDetails.realtor.length > 0) {
       setId(props.houseDetails.realtor[0].id);
       setName(props.houseDetails.realtor[0].name);
-      setPhone(props.houseDetails.realtor[0].phono);
-      setEmail(props.houseDetails.realtor[0].email);
+      // setPhone(props.houseDetails.realtor[0].phono);
+      // setEmail(props.houseDetails.realtor[0].email);
       setPreviewImage(props.houseDetails.realtor[0].img_path ? props.houseDetails.realtor[0].img_path : "../assets/image/dummy.png");
       setDownload(props.houseDetails.realtor[0].img_path);
       setImg_path(props.houseDetails.realtor[0].img_path);
@@ -64,6 +66,19 @@ const Realtordetails = (props) => {
     }
 
   }, [props.houseDetails])
+  useEffect(() => {
+    if (props.houseDetails && props.houseDetails.house.length > 0 && props.houseDetails.realtor.length > 0) {
+      handleContatData(props.houseDetails.realtor[0].name);
+    }
+  }, [props.houseDetails, props.contactList]);
+
+  const handleContatData = (dataId) => {
+    const myObj = props.contactList.find(obj => obj.id === parseInt(dataId.split("-")[0]));
+    console.log("props.leaseDetails", myObj);
+    setEmail(myObj && myObj.email);
+    setPhone(myObj && myObj.phone1);
+    setContactData(myObj);
+  }
 
   const handleChangeImage = (event) => {
     if (img_path !== "undefined" && img_path !== "") {
@@ -94,34 +109,34 @@ const Realtordetails = (props) => {
 
     // let valid = validate();
     // if (valid) {
-      console.log("vbalid::", img_path)
-      if (img_path.name) {
-        const newFileName =
-          generate_random_string(4) +
-          img_path.name.split(".").slice(0, -1).join(".");
-        S3Client.uploadFile(img_path, newFileName)
-          .then((data) => {
-            var form = new FormData();
-            for (const key in formdata) {
-              form.append(key, formdata[key]);
-            }
-            form.append("img_path", data.location);
-            props.addRealtorDetails(form);
-            props.history.push('/hmo-space');
-          })
-      }
-      else {
-        var form = new FormData();
-        for (const key in formdata) {
-          form.append(key, formdata[key]);
-        }
-        form.append("lastTab", true)
-        props.addRealtorDetails(form);
-        props.history.push('/hmo-space');
-      }
+    console.log("vbalid::", img_path)
+    if (img_path && img_path.name) {
+      const newFileName =
+        generate_random_string(4) +
+        img_path.name.split(".").slice(0, -1).join(".");
+      S3Client.uploadFile(img_path, newFileName)
+        .then((data) => {
+          var form = new FormData();
+          for (const key in formdata) {
+            form.append(key, formdata[key]);
+          }
+          form.append("img_path", data.location);
+          props.addRealtorDetails(form);
+          props.history.push('/hmo-space');
+        })
     }
-    // props.addRealtorDetails(form);
-    // props.history.push('/hmo-space')
+    else {
+      var form = new FormData();
+      for (const key in formdata) {
+        form.append(key, formdata[key]);
+      }
+      form.append("lastTab", true)
+      props.addRealtorDetails(form);
+      props.history.push('/hmo-space');
+    }
+  }
+  // props.addRealtorDetails(form);
+  // props.history.push('/hmo-space')
   // }
 
 
@@ -135,6 +150,7 @@ const Realtordetails = (props) => {
 
   const handleOnChange = (e) => {
     setName(e.target.value);
+    handleContatData(e.target.value);
     for (var i = 0; i < props.contactList.length; i++) {
       if (props.contactList[i]['groupname'] == "Expenses&Realtor" && e.target.value == props.contactList[i]['companyname']) {
         setPhone(props.contactList[i].mono);
@@ -160,7 +176,7 @@ const Realtordetails = (props) => {
       NotificationManager.error("Success Message", "Attachment deleted");
     }
     else if (docFile) {
-      const newFileName = docFile.split('/')[3]
+      const newFileName = docFile.split('/')[4]
       S3Client.deleteFile(newFileName).then((data) => {
         if (data.message === "File Deleted") {
           props.deleteRealtorImage({ id: id, delete: "doc" })
@@ -198,6 +214,14 @@ const Realtordetails = (props) => {
     { pathname: "/realtor-detail", label: "Realtor Details" },
     { pathname: "/hmo-space", label: "HMO Spaces" },
   ]
+
+  const togglePopup = () => {
+    setShowGroup(!showGroup);
+    let data = {
+      house_id: houseId
+    }
+    props.getContact(data);
+  };
 
   const isNumericInput = (event) => {
     const key = event.keyCode;
@@ -302,7 +326,8 @@ const Realtordetails = (props) => {
                           props.contactList.map((data) => {
                             if (data.groupname == "Expenses&Realtors") {
                               return (
-                                <option value={data.companyname}>{data.companyname}</option>
+                                <option value={`${data.id}-${data.companyname
+                                  }`}>{data.companyname}</option>
                               )
                             }
                           })
@@ -310,14 +335,14 @@ const Realtordetails = (props) => {
                       }
                     </select>
                   </div>
-                  {/* <div onClick={() => togglePopup()} > <img className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo" /> </div> */}
                 </div>
+                <div onClick={() => togglePopup()} className="col-md-1"> <img className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo" /> </div>
               </div>
               <div className="row ">
                 <div className="col-md-8">
                   <div className="form-group ">
                     <label htmlFor="phone">Realtor Phone No.</label>
-                    <input id="phoneNumberFormat11" maxLength="12" type="text" placeholder="Phone Number" value={phone} onChange={e => setPhone(e.target.value)} className="form-control" />
+                    <input id="phoneNumberFormat11" maxLength="12" type="text" placeholder="Phone Number" value={phone} onChange={e => setPhone(e.target.value)} className="form-control" readOnly/>
                   </div>
                 </div>
               </div>
@@ -325,7 +350,7 @@ const Realtordetails = (props) => {
                 <div className="col-md-8">
                   <div className="form-group ">
                     <label htmlFor="email">Realtor Email</label>
-                    <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} className="form-control" />
+                    <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} className="form-control" readOnly/>
                   </div>
                 </div>
               </div>
@@ -347,7 +372,7 @@ const Realtordetails = (props) => {
           </div>
         </div>
       </div>
-      {/* {showGroup ? <ContactModal house_id={houseId} toggle={togglePopup} /> : null} */}
+      {showGroup ? <ContactModal house_id={houseId} toggle={togglePopup} /> : null}
     </div>
   )
 }

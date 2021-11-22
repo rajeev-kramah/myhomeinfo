@@ -46,7 +46,6 @@ const storage = multer.diskStorage({
  * Create Lease
 */
 router.post("/", upload.single("document"), async (req, res) => {
-console.log("document:::",req.body.document)
 	let id = req.body.id; 
 	let lease_begin = req.body.lease_begin;
 	let lease_end = req.body.lease_end;
@@ -128,7 +127,7 @@ console.log("document:::",req.body.document)
                             }
 							res.send(
 								result.response(
-									200,
+									200,	
 									lease,
 									"Updated successfully!",
                                     lastTab
@@ -304,7 +303,7 @@ console.log("document:::",req.body.document)
 						)
 					);
 				} else {
-					var sql = "SELECT id, lease_begin, lease_end, rent, rent_due_by, rental_insurance From lease where  house_id='"+req.body.house_id+"'";
+					var sql = "SELECT * From lease where  house_id='"+req.body.house_id+"'";
 					con.query(sql, function (err, lease) {
 						if (err) {
 							res.send(
@@ -316,10 +315,10 @@ console.log("document:::",req.body.document)
 							);
 						} else if (lease.length === 0) {
 							res.send(
-								result.response(
-									404,
+								result.response(  
+									200,
 									{},
-									"Lease does not found !"
+									"Lease does not found!"
 								)
 							);
 						} else {

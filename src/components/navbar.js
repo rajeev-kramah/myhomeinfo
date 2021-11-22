@@ -16,10 +16,11 @@ import { getLease } from "../store/Actions/Lease";
 import logo from "../Logo.png";
 import { getHouseDetail } from "../store/Actions/house";
 import { getEvent } from "../store/Actions/Reminder";
+import { useHistory } from "react-router-dom";
 
 
 const Navbar = (props) => {
-   console.log('userDatauserData', props.accountDetails);
+  let history = useHistory();
  
   const user = JSON.parse(localStorage.getItem('user'));
   let userRole = user.role
@@ -31,10 +32,8 @@ const Navbar = (props) => {
     var Uname = user ? user["name"] : "";
   }
 
-
   useEffect(() => {
     if (props.house && props.house.length > 0) {
-      console.log(props.house[0]['house']["id"]);
       let data = {
         "house_id": props.house[0]['house']["id"],
         "email": JSON.parse(localStorage.getItem('user')).email
@@ -54,7 +53,9 @@ const Navbar = (props) => {
 
   const handleLogout = () => {
     localStorage.clear();
-    this.props.history.push("/");
+    
+    history.push("/");
+    window.location.reload();
   }
 
   useEffect(() => {
@@ -160,7 +161,7 @@ const Navbar = (props) => {
             <li className="dropdown">
               <NavLink
                 to="/"
-                className="dropdown-toggle"
+                className="dropdown-toggle mt-3"
                 data-toggle="dropdown"
                 role="button"
                 aria-haspopup="true"
@@ -174,14 +175,17 @@ const Navbar = (props) => {
               </NavLink>
               <ul className="dropdown-menu">
                 <li>
-                  <NavLink className="" to={{
+                  <NavLink className=""
+                   to={{
                     pathname: "/personal",
-                    state: {}
-                  }}><span className="glyphicon glyphicon-user header-color" /> Account Details</NavLink>
+                    state: {}}}
+                  ><span className="glyphicon glyphicon-user header-color" /> Account Details</NavLink>
                 </li>
                 <li>
-                  <NavLink to={"/"} onClick={handleLogout}>
-                    <span className="glyphicon glyphicon-log-in header-color" /> Logout
+                  <NavLink to={{
+                    pathname: "/",
+                    state: {}}} onClick={handleLogout}>
+                    <span  className="glyphicon glyphicon-log-in header-color" /> Logout
                   </NavLink>
                 </li>
                 {userRole === "1" && 
@@ -216,7 +220,7 @@ const Navbar = (props) => {
             </li>
           </ul>
         </div>
-        <div className="container-fluid inner-bg">
+        <div className="container-fluid inner-bg pt-10">
           <ul className="nav navbar-nav">
             {
               props.house ? (props.house.map((house) => {

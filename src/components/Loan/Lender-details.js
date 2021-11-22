@@ -9,7 +9,6 @@ import { getContact } from "../../store/Actions/contact";
 import Tab from "../../Reusable/Tab";
 
 const LenderDetails = (props) => {
-
   let houseid = props.location.state.house_id ? props.location.state.house_id : "";
 
   const [loantype, setLoantype] = useState('');
@@ -42,21 +41,23 @@ const LenderDetails = (props) => {
   const [escrowamount, setEscrowAmount] = useState('');
   const [renewal_maturity_date, setRenewal_maturity_date] = useState('');
   const [renewal_intrest_rate, setRenewal_intrest_rate] = useState('');
+  const [contactData, setContactData] = useState();
+
   if (props.loanDetails && props.loanDetails.length > 0) {
     props.getLoanTransaction({ loan_id: props.loanDetails[0].id });
   }
   useEffect(() => {
-    console.log("loanDetails", props.loanDetails)
     if (props.loanDetails && props.loanDetails.length > 0) {
-
+      console.log("loanDetails", props.loanDetails && props.loanDetails[0].lname)
+      handleContatData(props.loanDetails[0].lname);
       setLoantype(props.loanDetails[0].loantype);
       setEscrowAmount(props.loanDetails[0].escrowamount);
       setLname(props.loanDetails[0].lname);
-      setLcontactperson(props.loanDetails[0].lcontactperson);
-      setLaddress(props.loanDetails[0].laddress);
-      setLphno(props.loanDetails[0].lphno);
-      setLemail(props.loanDetails[0].lemail);
-      setLurl(props.loanDetails[0].lurl);
+      // setLcontactperson(props.loanDetails[0].lcontactperson);
+      // setLaddress(props.loanDetails[0].laddress);
+      // setLphno(props.loanDetails[0].lphno);
+      // setLemail(props.loanDetails[0].lemail);
+      // setLurl(props.loanDetails[0].lurl);
       setPurchaseprice(props.loanDetails[0].purchaseprice);
       setDownpayment(props.loanDetails[0].downpayment);
       setLoanamount(props.loanDetails[0].loanamount);
@@ -79,12 +80,29 @@ const LenderDetails = (props) => {
       setRenewal_maturity_date(props.loanDetails[0].renewal_maturity_date);
       setRenewal_intrest_rate(props.loanDetails[0].renewal_intrest_rate);
     }
-
     let data = {
       "house_id": houseid
     }
     props.getContact(data);
   }, [props.loanDetails])
+  useEffect(()=>{
+    if (props.loanDetails && props.loanDetails.length > 0) {
+      console.log("loanDetails", props.loanDetails && props.loanDetails[0].lname)
+      handleContatData(props.loanDetails[0].lname);
+    }
+  },[props.loanDetails, props.contactList])
+
+  const handleContatData = (dataId) => {
+    console.log("dataID:::", typeof dataId ,dataId)
+    const myObj = props.contactList.find(obj => obj.id === parseInt(dataId));
+    console.log("props.leaseDetails", myObj);
+    setLcontactperson(myObj && myObj.contactperson);
+    setLaddress(myObj && myObj.address);
+    setLphno(myObj && myObj.phone1);
+    setLemail(myObj && myObj.email);
+     setLurl(myObj && myObj.url);
+    setContactData(myObj);
+  }
 
   const handleSubmit = () => {
 
@@ -150,6 +168,7 @@ const LenderDetails = (props) => {
 
   const handleOnChange = (e) => {
     setLname(e.target.value);
+    handleContatData(e.target.value);
     for (var i = 0; i < props.contactList.length; i++) {
       if (e.target.value == props.contactList[i]['id']) {
         console.log("lvalue", props.contactList[i])
@@ -244,7 +263,9 @@ const LenderDetails = (props) => {
           <div className="col-md-3 imgTop"></div>
           <div className="col-md-6 house-form pt-25">
             <div className="row">
-              <div className="form-group col-md-6">
+              
+              <div className="col-md-1"></div>
+              <div className="form-group col-md-5">
                 <label htmlFor="type" className="req">Loan Type</label>
                 <select className="form-control" value={loantype} onChange={e => setLoantype(e.target.value)} >
                   <option value="" disabled>Select</option>
@@ -254,7 +275,7 @@ const LenderDetails = (props) => {
                 </select>
               </div>
 
-              <div className="form-group col-md-6">
+              <div className="form-group col-md-5">
                 <label htmlFor="name">Lender Name</label>
                 <select className="form-control" value={lname} onChange={e => handleOnChange(e)}>
                   <option value="" disabled>Select</option>
@@ -281,44 +302,50 @@ const LenderDetails = (props) => {
                   }
                 </select>
               </div>
-              {/* <div onClick={()=>togglePopup()} ><img className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/>  </div> */}
+              <div onClick={()=>togglePopup()} className="col-md-1"><img className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/>  </div>
 
             </div>
             <div className="row">
-              <div className="col-md-6">
+            <div className="col-md-1"></div>
+              <div className="col-md-5">
                 <div className="form-group inputGroup">
                   <label htmlFor="contactPerson">Lender Contact Person</label>
                   <input type="text" placeholder="Lender Contact Person" value={lcontactperson} onChange={e => setLcontactperson(e.target.value)} className="form-control" readOnly />
                 </div>
               </div>
-              <div className="col-md-6">
+              <div className="col-md-5">
                 <div className="form-group inputGroup">
                   <label htmlFor="address">Lender Address</label>
-                  <input type="text" placeholder="Lender Address" value={laddress} onChange={e => setLaddress(e.target.value)} className="form-control" />
+                  <input type="text" placeholder="Lender Address" value={laddress} onChange={e => setLaddress(e.target.value)} className="form-control" readOnly/>
                 </div>
               </div>
+              <div className="col-md-1"></div>
             </div>
             <div className="row">
-              <div className="col-md-6">
+            <div className="col-md-1"></div>
+              <div className="col-md-5">
                 <div className="form-group inputGroup">
                   <label htmlFor="phone">Lender Phone No.</label>
-                  <input type="text" id="phoneNumberFormat" placeholder="Lender Phone No." maxLength="12" value={lphno} onChange={e => setLphno(e.target.value)} className="form-control" />
+                  <input type="text" id="phoneNumberFormat" placeholder="Lender Phone No." maxLength="12" value={lphno} onChange={e => setLphno(e.target.value)} className="form-control" readOnly/>
                 </div>
               </div>
-              <div className="col-md-6">
+              <div className="col-md-5">
                 <div className="form-group inputGroup">
                   <label htmlFor="email">Lender Email</label>
-                  <input type="email" value={lemail} placeholder="Lender Email" onChange={e => setLemail(e.target.value)} className="form-control" />
+                  <input type="email" value={lemail} placeholder="Lender Email" onChange={e => setLemail(e.target.value)} className="form-control" readOnly/>
                 </div>
               </div>
+              <div className="col-md-1"></div>
             </div>
             <div className="row">
-              <div className="col-md-12">
+            <div className="col-md-1"></div>
+              <div className="col-md-10">
                 <div className="form-group">
                   <label htmlFor="url">Lender URL</label>
-                  <input type="text" placeholder="http://example.com" value={lurl} onChange={e => setLurl(e.target.value)} className="form-control" />
+                  <input type="text" placeholder="http://example.com" value={lurl} onChange={e => setLurl(e.target.value)} className="form-control" readOnly/>
                 </div>
               </div>
+              <div className="col-md-1"></div>
             </div>
           </div>
           <div className="col-md-3">
@@ -349,7 +376,10 @@ const LenderDetails = (props) => {
 }
 
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state) => 
+(
+  console.log("satawestate",state),
+  {
   loanDetails: state.Loan.loanDetails.data,
   contactList: state.Contact.contacts.data
 });

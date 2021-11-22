@@ -2,13 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { connect } from "react-redux";
 import "../../style/Loan.css";
 import "../../style/House.css";
-import { admin, getroleOfUser} from "../../store/Actions/Authentication";
-import S3 from "aws-s3";
+import { admin, getroleOfUser } from "../../store/Actions/Authentication";
 import { Util } from "../../Datamanipulation/Util";
 import { NotificationManager } from "react-notifications";
 
 const CreateUser = (props) => {
-  console.log("propsCC:", props)
+  const generate_random_string = (string_length) => {
+    let random_string = "";
+    let random_ascii;
+    let ascii_low = 65;
+    let ascii_high = 90;
+    for (let i = 0; i < string_length; i++) {
+      random_ascii = Math.floor(
+        Math.random() * (ascii_high - ascii_low) + ascii_low,
+      );
+      random_string += String.fromCharCode(random_ascii);
+    }
+    return random_string;
+  };
+
   let houseid = props.location.state.house_id ? props.location.state.house_id : "";
 
   const [firstName, setFirstName] = useState('');
@@ -25,30 +37,38 @@ const CreateUser = (props) => {
   const [role, setRole] = useState('');
   const [renewalPendingDate, setRenewalPendingDate] = useState(Util.getCurrentDate("-"));
   const [id, setId] = useState('');
+  const [country, setCountry] = useState('');
+  const [charLength, setCharLength] = useState("10");
   const [user, setUser] = useState(Util.getLoggedinUser());
 
-  useEffect(()=> {
-      let data = {
-          id: 'id'
-      }
-      props.getroleOfUser(data);
-    
-     
-  },[]);
+  useEffect(() => {
+    let data = {
+      id: 'id'
+    }
+    props.getroleOfUser(data);
 
-  useEffect(()=> {
-		if(props.usersuccessmsg.status === 200 && props.usersuccessmsg.statusText == "Congratulation ! You have successfully created user !") {
+
+  }, []);
+
+  useEffect(() => {
+    if (props.usersuccessmsg.status === 200 && props.usersuccessmsg.statusText == "Congratulation ! You have successfully created user !") {
       props.history.push("user-list");
-		}
-	}, [props.usersuccessmsg])
- 
- 
-  
+    }
+  }, [props.usersuccessmsg])
+
+  let countries = Object.keys(Util.countryDetails());
+  let state = [];
+  let curr = "";
+  if (Util.countryDetails()[country]) {
+    state = Util.countryDetails()[country]['data'];
+    curr = Util.countryDetails()[country]['currency'];
+  }
+
   const handleSubmit = () => {
 
     let data = {
       'id': id,
-      "firstname": firstName,
+      "name": firstName,
       "lastname": lastName,
       "username": user_name,
       "mono": mobileNo,
@@ -59,23 +79,22 @@ const CreateUser = (props) => {
       "spaceUsage": spaceUsage,
       "maxProperty": noOfHouse,
       "account_status": userStatus,
+      "country": country,
       "renewalDate": renewalPendingDate,
       "role": role,
+      "bucket_name": user_name + generate_random_string(4)
     }
-    // props.admin(data);
+
     console.log("resposedata ", data)
     var form = new FormData();
-
     for (const key in data) {
       form.append(key, data[key]);
     }
-
     form.append("lastTab", true)
-  
     let valid = validate();
     if (valid) {
-        props.admin(data);
-      }
+      props.admin(data);
+    }
 
   }
 
@@ -155,12 +174,24 @@ const CreateUser = (props) => {
     else if (input.length > 0) { target.value = `${zip}`; }
   };
 
+  const formatReset = (event) => {
+    if (isModifierKey(event)) { return; }
+    const target = event.target;
+    const input = event.target.value.replace(/\D/g, '');
+    if (input.length > 0) { target.value = `${input}`; }
+  }
+ const countryValidation = (value) => {
   const inputElement = document.getElementById('phoneNumberFormat');
-  if (inputElement != null) {
+  if ((value === "USA" || value === "Canada") && inputElement !== null) {
+    setCharLength("12");
     inputElement.addEventListener('keydown', enforceFormat);
     inputElement.addEventListener('keyup', formatToPhone);
+  } else if (value === "UK" && inputElement !== null) {
+    setCharLength("10");
+    inputElement.addEventListener('keydown', formatReset);
+    inputElement.addEventListener('keyup', formatReset);
   }
-
+ }
   const handleAccount_status = (e) => {
     setUserStatus(e.target.value)
     handleSetDate(subscriptionStartDate, e.target.value);
@@ -194,6 +225,14 @@ const CreateUser = (props) => {
   // subscriptionendDate = renewalPendingDate;
   const handleChangeRenewalPandingDate = (e) => {
     setRenewalPendingDate(e.target.value)
+  }
+
+  const handleCountryChange = (e) => {
+    setCountry(e.target.value);
+     countryValidation(e.target.value)
+    // countryValidation2(e.target.value)
+    setMobileNo("");
+    // setphone2("");
   }
 
   return (
@@ -232,7 +271,7 @@ const CreateUser = (props) => {
           <div className="col-md-2">
             <div className="form-group">
               <label htmlFor="Mobile No" className="req">Mobile No.</label>
-              <input type="text" id="phoneNumberFormat" maxLength="12" placeholder="Mobile No" value={mobileNo} onChange={e => {
+              <input type="text" id="phoneNumberFormat" maxLength={charLength} placeholder="Mobile No" value={mobileNo} onChange={e => {
                 setMobileNo(e.target.value)
               }} className="form-control" />
             </div>
@@ -327,6 +366,21 @@ const CreateUser = (props) => {
               }
             </select>
           </div>
+          <div className="col-md-2">
+            <div className="form-group">
+              <label htmlFor="country">Country</label>
+              <select className="form-control" value={country} onChange={e => handleCountryChange(e)} >
+                <option value="" disabled>Select</option>
+                {
+                  countries.map(country => {
+                    return (
+                      <option value={country}>{country}</option>
+                    )
+                  })
+                }
+              </select>
+            </div>
+          </div>
         </div>
       </div>
       <div className="row footer ">
@@ -334,23 +388,23 @@ const CreateUser = (props) => {
           <button className="btn btn-primary btn-sm" onClick={handleSubmit}>Save</button>
         </div>
       </div>
-      
+
       {/* {showGroup ? <ContactModal house_id={house_id} toggle={togglePopup} /> : null} */}
     </div>
   )
 }
-  const mapStateToProps = state => (
-    
-    {
-      usersuccessmsg : state.Authentication.userList, 
-      userRole: state.Authentication.user.data,
-      responseError: state.responseError,
-    });
+const mapStateToProps = state => (
 
-  const mapDispatchToProps = {
-    admin,
-    getroleOfUser,
-  };
+  {
+    usersuccessmsg: state.Authentication.userList,
+    userRole: state.Authentication.user.data,
+    responseError: state.responseError,
+  });
+
+const mapDispatchToProps = {
+  admin,
+  getroleOfUser,
+};
 export default connect(
   mapStateToProps,
   mapDispatchToProps

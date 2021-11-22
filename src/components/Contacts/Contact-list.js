@@ -6,7 +6,6 @@ import { connect } from "react-redux";
 import Table from "../../Reusable/Table";
 
 const ContactList = (props) => {
-    console.log("userlist11:",props)
     let house_id = props.location.state.house_id ? props.location.state.house_id : "";
     const header = ["Company", "Contact Person", "Mobile No.", "Landline", "Email", "URL", "Address", 'Group'];
 
@@ -18,17 +17,23 @@ const ContactList = (props) => {
             cell: row => <Link data-tag="allowRowEvents" role="link" to={{ pathname: "contact-form", state: { house_id: house_id } }}>{row.companyname}</Link>
         },
         { name: 'Contact Person', selector: 'contactperson', sortable: true, },
-        { name: 'Phone 1', selector: 'phone1', sortable: true, },
-        { name: 'Phone 2', selector: 'phone2', sortable: true, },
+        {
+            name: 'Mobile No.', selector: 'phone1', sortable: true,
+            cell: row => row.phonetype1 === "Mobile" ? <span>{row.phone1}</span> : "-"
+        },
+        {
+            name: 'Landline No.', selector: 'phone1', sortable: true,
+            cell: row => row.phonetype1 === "Landline" ? <span>{row.phone1}</span> : "-"
+        },
         { name: 'Email', selector: 'email', sortable: true },
         { name: 'URL', selector: 'url', sortable: true, },
         { name: 'Address', selector: 'address', sortable: true, },
-        {
-            name: 'Group',
-            selector: 'groupname',
-            sortable: true,
-            cell: row => row.groupname.split("&")[1]
-        }
+        // {
+        //     name: 'Group',
+        //     selector: 'groupname',
+        //     sortable: true,
+        //     cell: row => row.groupname.split("&")[1]
+        // }
     ];
     var data = [];
     if (props.contacts) {
@@ -38,7 +43,6 @@ const ContactList = (props) => {
 
     return (
         <div className="container-fluid contact">
-            {console.log("isOpen ::", isOpen)}
             <div className="list-flex">
                 <h4 >Contact Details</h4>
                 <i className="glyphicon glyphicon-info-sign btn-lg info-logo" data-toggle="modal" data-target="#exampleModal" onClick={() => setIsopen(true)}></i>

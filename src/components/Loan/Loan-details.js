@@ -7,9 +7,13 @@ import { addLoan, getLoanTransaction } from "../../store/Actions/Loan";
 import { Util } from "../../Datamanipulation/Util";
 import Tab from "../../Reusable/Tab";
 import NumberFormat from "react-number-format";
+import utilities from 'react-data-table-component-extensions/dist/utilities';
+import { getHouseDetail } from "../../store/Actions/house";
 
 const LoanDetails = (props) => {
-
+console.log("Props::::::",props)
+  let purchaseAmount = props.houseDetails &&  props.houseDetails.house[0].purchaseamount;
+  
   const [loantype, setLoantype] = useState('');
   const [lname, setLname] = useState('');
   const [lcontactperson, setLcontactperson] = useState('');
@@ -17,9 +21,9 @@ const LoanDetails = (props) => {
   const [lphno, setLphno] = useState('');
   const [lemail, setLemail] = useState('');
   const [lurl, setLurl] = useState('');
-  const [purchaseprice, setPurchaseprice] = useState('');
+  const [purchaseprice, setPurchaseprice] = useState(props.houseDetails  &&  props.houseDetails.house[0].purchaseamount);
   const [downpayment, setDownpayment] = useState('');
-  const [loanamount, setLoanamount] = useState('');
+  const [loanamount, setLoanamount] = useState(0);
   const [rateofinterest, setRateofinterest] = useState('');
   const [loanterm, setLoanterm] = useState('');
   const [loannumber, setLoannumber] = useState('');
@@ -40,6 +44,7 @@ const LoanDetails = (props) => {
   const [renewal_maturity_date, setRenewal_maturity_date] = useState(Util.getCurrentDate("-"));
   const [renewal_intrest_rate, setRenewal_intrest_rate] = useState('');
 
+
   useEffect(() => {
     if (props.loanDetails && props.loanDetails.length > 0) {
       setLoantype(props.loanDetails[0].loantype);
@@ -49,9 +54,9 @@ const LoanDetails = (props) => {
       setLphno(props.loanDetails[0].lphno);
       setLemail(props.loanDetails[0].lemail);
       setLurl(props.loanDetails[0].lurl);
-      setPurchaseprice(props.loanDetails[0].purchaseprice);
+      setPurchaseprice(props.loanDetails[0].purchaseprice );
       setDownpayment(props.loanDetails[0].downpayment);
-      setLoanamount(props.loanDetails[0].loanamount);
+      setLoanamount(parseFloat(purchaseAmount.replace(/,/g, '')) - parseFloat(props.loanDetails[0].downpayment.replace(/,/g, '')));
       setRateofinterest(props.loanDetails[0].rateofinterest);
       setLoanterm(props.loanDetails[0].loanterm);
       setLoannumber(props.loanDetails[0].loannumber);
@@ -74,8 +79,13 @@ const LoanDetails = (props) => {
     }
   }, [props.loanDetails])
 
-  const handleSubmit = () => {
+  useEffect(()=>{
+    setPurchaseprice(purchaseAmount);  
+  },[props])
 
+
+
+  const handleSubmit = () => {
     let data = {
       "loantype": loantype,
       "lname": lname,
@@ -87,7 +97,7 @@ const LoanDetails = (props) => {
       "purchaseprice": purchaseprice,
       "downpayment": downpayment,
       // "loanamount" : Util.loanAmount(purchaseprice,downpayment),
-      "loanamount": loantype === "Mortgage" ? Util.loanAmount(purchaseprice, downpayment) : loanamount,
+      "loanamount": loanamount,
       "rateofinterest": rateofinterest,
       "loanterm": loanterm,
       "loannumber": loannumber,
@@ -193,11 +203,6 @@ const LoanDetails = (props) => {
     });
   }
 
-
-  const generateTransaction = () => {
-    console.log(loanamount);
-  }
-
   let tabs = [
     { pathname: "/loan-lender", label: "Lender Details" },
     { pathname: "/loan-details", label: "Loan Details" }
@@ -209,8 +214,19 @@ const LoanDetails = (props) => {
 
   tabs.push({ pathname: "/loan-transaction", label: "Loan Transactions" });
 
+  const handleDownPaymentChange= (e)=>{
+    setDownpayment(e.target.value)
+    handleLoanAmount(e.target.value)
+  }
+  var diffrance 
+  const handleLoanAmount = (down) =>{
+    diffrance = parseFloat(purchaseAmount.replace(/,/g, '')) - parseFloat(down.replace(/,/g, ''));
+    setLoanamount(diffrance)
+  }
+  
   return (
     <div className="container-fluid house">
+      {/* {console.log("purchaseprice",purchaseprice)} */}
       <h4>Add Loan Details</h4>
       <div className="house-form">
         <Tab loanPage="Loan Details" tabs={tabs} id={id} house_id={house_id} />
@@ -225,7 +241,7 @@ const LoanDetails = (props) => {
                       <label htmlFor="price" className="req">Purchase Price</label>
                       <NumberFormat
                         thousandsGroupStyle="thousand"
-                        className="form-control"
+                        className="form-control alignRight"
                         value={purchaseprice}
                         decimalSeparator="."
                         type="text"
@@ -237,9 +253,6 @@ const LoanDetails = (props) => {
                         allowLeadingZeros={false}
                         onChange={e => setPurchaseprice(e.target.value)}
                         isNumericString={true} />
-                      {/* <input type="text" placeholder="Purchase Price" value={Util.addCommas(purchaseprice)} onChange={e=> {
-                                         setPurchaseprice(e.target.value)
-                                    }} className="form-control" /> */}
                     </div>
                   </div>
                 ) : ''
@@ -252,7 +265,7 @@ const LoanDetails = (props) => {
                       <NumberFormat
                         placeholder="Down Payment"
                         thousandsGroupStyle="thousand"
-                        className="form-control"
+                        className="form-control alignRight"
                         value={downpayment}
                         decimalSeparator="."
                         type="text"
@@ -262,7 +275,7 @@ const LoanDetails = (props) => {
                         fixedDecimalScale={true}
                         allowEmptyFormatting={true}
                         allowLeadingZeros={false}
-                        onChange={e => setDownpayment(e.target.value)}
+                        onChange={e => handleDownPaymentChange(e)}
                         isNumericString={true} />
                       {/* <input type="text" placeholder="Down Payment" value={ Util.addCommas(downpayment)} onChange={e=>{setDownpayment(e.target.value)}} className="form-control" /> */}
                     </div>
@@ -271,7 +284,7 @@ const LoanDetails = (props) => {
               }
               <div className="col-md-4">
                 <div className="form-group">
-
+                {console.log("purchaseAmount11", loanamount)}
                   {loantype === 'Mortgage' ?
                     (
                       <React.Fragment>
@@ -279,8 +292,8 @@ const LoanDetails = (props) => {
                         <NumberFormat
                           placeholder="Loan Amount"
                           thousandsGroupStyle="thousand"
-                          className="form-control"
-                          value={purchaseprice, downpayment}
+                          className="form-control alignRight"
+                          value={loanamount}
                           decimalSeparator="."
                           type="text"
                           thousandSeparator={true}
@@ -299,7 +312,7 @@ const LoanDetails = (props) => {
                         <NumberFormat
                           placeholder="Loan Amount"
                           thousandsGroupStyle="thousand"
-                          className="form-control"
+                          className="form-control alignRight"
                           value={loanamount}
                           decimalSeparator="."
                           type="text"
@@ -334,7 +347,7 @@ const LoanDetails = (props) => {
                     let laonC = loanbegindate.split("-");
                     console.log(parseInt(laonC[0]))
                     laonC[0] = parseInt(laonC[0]) + parseInt(e.target.value);
-                    setLoanclosuredate(laonC.join("-"))
+                    setLoanclosuredate(laonC.join("-") ? laonC.join("-") : Util.getCurrentDate('-'))
                   }} className="form-control" />
                 </div>
               </div>
@@ -363,7 +376,7 @@ const LoanDetails = (props) => {
                     let laonC = e.target.value.split("-");
                     console.log(parseInt(laonC[0]))
                     laonC[0] = parseInt(laonC[0]) + parseInt(loanterm);
-                    setLoanclosuredate(laonC.join("-"))
+                    setLoanclosuredate(laonC.join("-") ? laonC.join("-") : Util.getCurrentDate("-"))
 
                   }} className="form-control" />
                 </div>
@@ -480,12 +493,14 @@ const LoanDetails = (props) => {
 
 
 const mapStateToProps = (state) => ({
-  loanDetails: state.Loan.loanDetails.data
+  loanDetails: state.Loan.loanDetails.data,
+	houseDetails : state.House.houseDetail.data,
 });
 
 const mapDispatchToProps = {
   addLoan,
-  getLoanTransaction
+  getLoanTransaction,
+  getHouseDetail,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoanDetails);

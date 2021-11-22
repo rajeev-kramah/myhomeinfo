@@ -25,7 +25,7 @@ const ReportList = (props) => {
         { name: 'Transaction Amount', selector: 'amount', sortable: true },
         { name: 'Comment', selector: 'comments', sortable: true },
         { name: 'Entered By', selector: 'entered_by', sortable: true },
-        { name: 'Entry Date&Time', selector: 'date', sortable: true, cell: row => Util.dateFormat(row.date)},
+        { name: 'Entry Date&Time', selector: 'date', sortable: true, cell: row => Util.dateFormatWithTime(row.date)},
        
       ];
     
@@ -101,7 +101,6 @@ const ReportList = (props) => {
     const[isOpen, setIsopen] = React.useState(false)
     return (
         <div className="container-fluid contact">
-            {console.log("report",reportType)}
             <div className="list-flex">
                 <h4>Generate Reports</h4>
                 <i className="glyphicon glyphicon-info-sign btn-lg info-logo" data-toggle="modal" data-target="#exampleModal" onClick={() => setIsopen(true)}></i>
@@ -135,7 +134,6 @@ const ReportList = (props) => {
                                     if(highLight.indexOf(index)){
                                         className="parent" 
                                     }
-                                    {console.log("test group::",data)}
                                     let item = data.split("&");
                                     let itemValue = item[item.length-1]
                                     if(data.subgroup != "Income" &&  data.subgroup != "Expenses"){

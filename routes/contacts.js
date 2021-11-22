@@ -16,7 +16,7 @@ router.post("/", async (req, res) => {
 	let phonetype2 = req.body.phonetype2; 
 	let email = req.body.email;  
 	let companyname = req.body.companyname; 
-	let address = "";  
+	let address = req.body.address;  
 	let phone1 = req.body.phone1;  
 	let url = req.body.url;  
 	let comment = req.body.comment;  
@@ -223,7 +223,7 @@ router.post("/delete", async (req, res) => {
 						)
 					);
 				} else {
-					var sql = "SELECT id,companyname,contactperson,mono,landline,phonenumber,email,url,address,groupname From contacts where house_id='"+req.body.house_id+"'";
+					var sql = "SELECT * From contacts where house_id='"+req.body.house_id+"'";
 					con.query(sql, function (err, contacts) {
 						if (err) {
 							res.send(

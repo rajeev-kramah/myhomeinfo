@@ -59,9 +59,9 @@ const UserList = (props) => {
         },
         {
             name: 'First Name',
-            selector: 'firstname',
+            selector: 'name',
             sortable: true,
-            cell: row => <Link data-tag="allowRowEvents" role="link" to={{ pathname: "edit-user", state: { id: row.id } }}>{row.firstname}</Link>
+            cell: row => <Link data-tag="allowRowEvents" role="link" to={{ pathname: "edit-user", state: { id: row.id } }}>{row.name}</Link>
         },
         { name: 'Last Name', selector: 'lastname', sortable: true, },
         { name: 'Email Address', selector: 'email', sortable: true, },
@@ -91,8 +91,8 @@ const UserList = (props) => {
             selector: 'row.id', 
             sortable: true, 
             cell: row => 
-            row.account_status === "Active" ?<button className="btn btn-primary  addNewItem" onClick={()=>handleDeactiveUser(row.id)}>DeActive User</button>:
-            <button className="btn btn-primary  addNewItem" onClick={()=>handleActiveUser(row.id)}>Active User</button>
+            row.account_status === "Active" ?<button className="btn btn-primary width-82 addNewItem" onClick={()=>handleDeactiveUser(row.id)}>DeActive</button>:
+            <button className="btn btn-primary width-82 addNewItem" onClick={()=>handleActiveUser(row.id)}>Active</button>
         },
     ];
     

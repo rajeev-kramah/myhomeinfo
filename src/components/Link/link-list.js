@@ -1,27 +1,46 @@
 import React, { useState } from 'react';
 import { connect } from "react-redux";
 import "../../style/Loan.css";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { getLink,getSingleLink } from "../../store/Actions/Link";
+import { Util } from "../../Datamanipulation/Util";
 import Table from "../../Reusable/Table";
 
 const LinkList = (props) => {
+    let history = useHistory();
     let house_id = props.location.state.house_id ? props.location.state.house_id : "";
     const [active, setActive] = useState("Home");
 
     const header = ["Name", "Description", "Group", ];
     var columns = [
-        { 
-            name: 'Url Name', 
-            selector: 'urlname', 
-            sortable: true,
-            cell: row => <Link data-tag="allowRowEvents" role="link" to={{pathname : "link", state:{house_id : house_id}}}>{row.urlname}</Link>
-        },
-        { name: 'Added Date', selector: 'date', sortable: true, },
+        { name: 'Added Date', selector: 'date', sortable: true, cell: row => Util.dateFormat(row.date) },
         { name: 'Group', selector: 'groupname', sortable: true, },
         { name: 'Description', selector: 'description', sortable: true, },
+        { 
+        name: 'Url Name', 
+        selector: 'urlname', 
+        sortable: true,
+             cell: row => <a href={row.urlname} target="_blank">{row.urlname}</a>,
+
+        },
+        { name: 'Actions', selector: '', sortable: true, 
+        cell: row => <a href="javascript:void(0)" onClick={()=>handleEdit(row)}><i className="glyphicon glyphicon-edit"></i></a>},
         // { name: 'Actions', selector: '', sortable: true },
       ];
+
+    const handleEdit = (row) => {
+        history.push({
+            pathname: '/link',
+            state:{house_id : house_id}
+        });
+        var data = {"id":row.id};
+        props.getSingleLink(data);
+    //    return (
+    //     <Link data-tag="allowRowEvents" role="link" to={{pathname : "link", state:{house_id : house_id}}}>
+    //         {row.urlname}
+    //     </Link>
+    //    )
+    }
 
     const handleDocType = (type) => {
         setActive(type);

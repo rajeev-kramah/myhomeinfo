@@ -12,14 +12,14 @@ import S3 from "aws-s3";
 import JsFileDownloader from "js-file-downloader";
 
 const LenderDetails = (props) => {
-
+  const userBucket = JSON.parse(localStorage.getItem('user')).bucket_folder_name;
  // aws-s3 uploader//
  const config = {
-  bucketName: "myhomeinfouseruploads",
-  // dirName: 'photos', /* optional */
+  bucketName: "myhomeinfo-s3",
+  dirName: userBucket, 
   region: "us-west-2",
-  accessKeyId: "AKIARSK5NHWUX4TJHVXB",
-  secretAccessKey: "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",
+  accessKeyId: "AKIAW4MIDXMBT4OOUQMJ",
+  secretAccessKey: "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",
 };
 const S3Client = new S3(config);
 const generate_random_string = (string_length) => {
@@ -74,7 +74,7 @@ const generate_random_string = (string_length) => {
       setId(props.leaseDetails[0].id);
       setLease_begin(props.leaseDetails[0].lease_begin ? props.leaseDetails[0].lease_begin : Util.getCurrentDate("-"));
       setLease_end(props.leaseDetails[0].lease_end ? props.leaseDetails[0].lease_end : Util.getCurrentDate("-"));
-      setLease_date(props.leaseDetails[0].lease_date ? props.leaseDetails[0].lease_date : Util.getCurrentDate("-"));
+      setLease_date(props.leaseDetails[0].lease_date ? props.leaseDetails[0].lease_date.trim() : Util.getCurrentDate("-"));
       setFrequency(props.leaseDetails[0].frequency);
       setRent(props.leaseDetails[0].rent);
       setRent_due_by(props.leaseDetails[0].rent_due_by);
@@ -98,7 +98,7 @@ const generate_random_string = (string_length) => {
       setComment(props.leaseDetails[0].comment);
       setHouse_id(props.leaseDetails[0].house_id);
       setDocument(props.leaseDetails[0].document);
-      setDocName(props.leaseDetails[0].document.split('/')[3]);
+      setDocName( props.leaseDetails[0].document.includes("/") &&props.leaseDetails[0].document.split('/')[4].slice("4"));
       setDownload(props.leaseDetails[0].document);
     }
   }, [props.leaseDetails]);
@@ -148,12 +148,11 @@ const generate_random_string = (string_length) => {
       "house_id": house_id,
       "lease_amount": lease_amount
     }
-    
-
+    console.log("daalese::",formdata)
     let valid = validate();
     if (valid) {
 
-      if(document.name)
+      if( document && document.name)
       {    const newFileName =
             generate_random_string(4) +
             document.name.split(".").slice(0, -1).join(".");
@@ -261,17 +260,6 @@ const generate_random_string = (string_length) => {
 
 
   const handleFrequencyChange = (e) => {
-    // var chooseDate=new Date(lease_end);
-    // if(frequency === "Monthly"){
-    //     chooseDate.setMonth(chooseDate.getMonth()+1);
-    // }else if(frequency === "Yearly"){
-    //     chooseDate.setMonth(chooseDate.getMonth()+12);
-    // }
-    // let futureDate = chooseDate.getFullYear()+'-'+('0'+(chooseDate.getMonth()+1)).slice(-2)+'-'+('0'+(chooseDate.getDate())).slice(-2);
-    // //  alert(futureDate);
-    // // e.target.value && 
-    // lease_end !=='' && setLease_date(futureDate);
-    // setLease_date(futureDate);
     setFrequency(e.target.value)
     console.log("lease_frequency", e.target.value)
     handleSetDate(lease_end, e.target.value);
@@ -287,7 +275,7 @@ const generate_random_string = (string_length) => {
       chooseDate.setMonth(chooseDate.getMonth() + 1);
     }
     let futureDate = chooseDate.getFullYear() + '-' + ('0' + (chooseDate.getMonth() + 1)).slice(-2) + '-' + ('0' + (chooseDate.getDate())).slice(-2);
-    lease_end !== '' && setLease_date(futureDate);
+    lease_end !== '' && setLease_date(futureDate.trim());
   }
 
   const handleRenewedChange = (e) => {
@@ -329,7 +317,7 @@ const handleDelete = (id,docFile) => {
       NotificationManager.error("Success Message", "Attachment deleted");
     }
   else if(docFile){
-    const newFileName = docFile.split('/')[3]
+    const newFileName = docFile.split('/')[4]
     S3Client.deleteFile(newFileName).then((data) =>
     {
       if(data.message === "File Deleted")
@@ -426,7 +414,7 @@ const handleDelete = (id,docFile) => {
                   <NumberFormat
                     placeholder="Rent/Month"
                     thousandsGroupStyle="thousand"
-                    className="form-control"
+                    className="form-control alignRight"
                     value={rent}
                     decimalSeparator="."
                     type="text"
@@ -473,7 +461,7 @@ const handleDelete = (id,docFile) => {
                 </div>
               </div>
             </div>
-            {renewed === "Yes" ?
+            {renewed === "Yes" &&
               <div className="row">
                 <div className="col-md-6">
                   <div className="form-group">
@@ -481,7 +469,7 @@ const handleDelete = (id,docFile) => {
                     <NumberFormat
                       placeholder="Lease Amount"
                       thousandsGroupStyle="thousand"
-                      className="form-control"
+                      className="form-control alignRight"
                       value={lease_amount}
                       decimalSeparator="."
                       type="text"
@@ -504,11 +492,11 @@ const handleDelete = (id,docFile) => {
                   </div>
                 </div>
               </div>
-              :
-              null}
+}
             <div className="row ">
               <div className="col-md-4">
                 <div className="form-group">
+                  {console.log("props.hmoDetails",props.hmoDetails)}
                   <label htmlFor="name">Space Name</label>
                   <select className="form-control" value={hmo_space} onChange={e => handleOnChange(e)}>
                     <option value="" disabled>Select</option>
@@ -538,7 +526,7 @@ const handleDelete = (id,docFile) => {
                 </div>
               </div>
             </div>
-            <div className="row ">
+            <div className="row dflex align-center">
               <div className="col-md-8">
                 <div className="form-group">
                   <label htmlFor="attachment">Attachments</label>
@@ -552,7 +540,7 @@ const handleDelete = (id,docFile) => {
                   </label>
                 </div>
               </div>
-              <div className="col-md-4" style={{ marginTop: "2%" }}>
+              <div className="col-md-4">
                 <div className="dflex">
                   <div onClick={() => handleViewEvent(document)}>
                   <i className="glyphicon glyphicon-eye-open primary  btn-lg blueIcon" value={document}></i>

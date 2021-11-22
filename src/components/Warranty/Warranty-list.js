@@ -4,7 +4,7 @@ import "../../style/Loan.css";
 import { Link } from "react-router-dom";
 import { getWarranty,getSingleWarranty } from "../../store/Actions/Warranty";
 import Table from "../../Reusable/Table";
-
+import { Util } from "../../Datamanipulation/Util";
 const WarrantyList = (props) => {
 
     let house_id = props.location.state.house_id ? props.location.state.house_id : "";
@@ -18,13 +18,12 @@ const WarrantyList = (props) => {
             sortable: true, 
             cell: row => <Link data-tag="allowRowEvents" role="link" to={{pathname : "provider", state:{house_id : house_id}}}>{row.product_name}</Link>
         },
-        { name: 'Installation Date', selector: 'installation_date', sortable: true, },
+        { name: 'Installation Date', selector: 'installation_date', sortable: true, cell: row => Util.dateFormat(row.installation_date) } ,
         { name: 'Company Name', selector: 'installation_company_name', sortable: true, },
         { name: 'Contact Number', selector: 'contact_number', sortable: true, },
-        { name: 'Warranty Details', selector: 'comments', sortable: true },
+        { name: 'Warranty Details', selector: '', sortable: true, cell: row => <span className="glyphicon glyphicon-tasks"></span> },
         { name: 'Product Price', selector: 'product_price', sortable: true,},
         { name: 'Installation Charges', selector: 'installation_charges', sortable: true, },
-        { name: 'Warranty End Date', selector: 'extended_warranty_end_date', sortable: true, },
       ];
       const[isOpen, setIsopen] = React.useState(false)
 
@@ -67,7 +66,8 @@ const WarrantyList = (props) => {
 }
 
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state) => (
+    {
     warranties : state.Warranty.warranties.data
 });
 

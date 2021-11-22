@@ -33,6 +33,7 @@ const Hoadetails = (props) => {
 
     useEffect(() => {
         if (props.houseDetails && props.houseDetails.house.length > 0 && props.houseDetails.hoadetails.length > 0) {
+            console.log("props.houseDetails.house[0]",props.houseDetails.house[0])
             setHouseId(props.houseDetails.house[0].id);
             setCompanyName(props.houseDetails.hoadetails[0].companyname ? props.houseDetails.hoadetails[0].companyname : "");
             setCompanyName1(props.houseDetails.hoadetails[0].companyname1 ? props.houseDetails.hoadetails[0].companyname1 : "");
@@ -115,9 +116,11 @@ const Hoadetails = (props) => {
         setCompanyName(e.target.value);
         for (var i = 0; i < props.contactList.length; i++) {
             if (e.target.value == props.contactList[i]['id']) {
-                setPhone(props.contactList[i].mono);
+                setPhone(props.contactList[i].phone1);
                 setEmail(props.contactList[i].email);
                 setContactName(props.contactList[i].contactperson);
+                setFrequency(props.contactList[i].posting_frequency);
+                setAmount(props.contactList[i].transaction_amount);
                 break;
             }
         }
@@ -138,10 +141,12 @@ const Hoadetails = (props) => {
         setCompanyName1(e.target.value);
         for (var i = 0; i < props.contactList.length; i++) {
             if (e.target.value == props.contactList[i]['companyname']) {
-                setPhone1(props.contactList[i].mono);
-                setEmail1(props.contactList[i].email);
-                setContactName1(props.contactList[i].contactperson);
-                break;
+            setPhone1(props.contactList[i].phone1);
+            setEmail1(props.contactList[i].email);
+            setContactName1(props.contactList[i].contactperson);
+            setFrequency1(props.contactList[i].posting_frequency);
+            setAmount1(props.contactList[i].transaction_amount);
+            break;
             }
         }
     }
@@ -245,16 +250,16 @@ const Hoadetails = (props) => {
                     <div className="col-md-2">
                         <div className="form-group">
                             <label htmlFor="HOA-Main company name">HOA-Main</label>
+                            {console.log("props.contactList",props.contactList)}
                             <select className="form-control" value={companyName} onChange={e => handleOnChange(e)}>
                                 <option value="" disabled>Select</option>
                                 {
                                     props.contactList ? (
                                         props.contactList.map((data) => {
-                                            console.log("data22::", data.groupname)
-                                            if (data.groupname === "Expenses&HOA") {
+                                            if (data.groupname.split('-')[0]==="Expenses&HOA") {
                                                 console.log("data::", data)
                                                 return (
-                                                    <option value={data.id}>{data.companyname}</option>
+                                                    <option value={data.id}>{data.companyname} - ({data.contactperson})</option>
                                                 )
                                             }
                                         })
@@ -281,9 +286,9 @@ const Hoadetails = (props) => {
                             }} className="form-control" />
                         </div>
                     </div>
-                    {/* <div className="col-md-3">
+                    <div className="col-md-3">
                         <img onClick={()=>togglePopup()} className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/>
-                    </div> */}
+                    </div>
                 </div>
                 <div className="row">
                     <div className="col-md-3"></div>
@@ -311,7 +316,7 @@ const Hoadetails = (props) => {
                             <NumberFormat
                                 placeholder="HOA-Amount"
                                 thousandsGroupStyle="thousand"
-                                className="form-control"
+                                className="form-control alignRight"
                                 value={amount}
                                 decimalSeparator="."
                                 type="text"
@@ -340,7 +345,7 @@ const Hoadetails = (props) => {
                                 {
                                     props.contactList ? (
                                         props.contactList.map((data) => {
-                                            if (data.groupname == "Expenses&HOA") {
+                                            if (data.groupname.split('-')[0]==="Expenses&HOA") {
                                                 return (
                                                     <option value={data.companyname}>{data.companyname}</option>
                                                 )
@@ -368,9 +373,9 @@ const Hoadetails = (props) => {
                             }} className="form-control" />
                         </div>
                     </div>
-                    {/* <div className="col-md-3">
+                    <div className="col-md-3">
                         <img onClick={()=>togglePopup()} className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/>
-                    </div> */}
+                    </div>
                 </div>
                 <div className="row">
                     <div className="col-md-3"></div>
@@ -398,7 +403,7 @@ const Hoadetails = (props) => {
                             <NumberFormat
                                 placeholder="HOA-Amount"
                                 thousandsGroupStyle="thousand"
-                                className="form-control"
+                                className="form-control alignRight"
                                 value={amount1}
                                 decimalSeparator="."
                                 type="text"

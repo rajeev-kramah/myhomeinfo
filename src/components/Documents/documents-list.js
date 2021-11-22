@@ -24,6 +24,8 @@ const DocumntsList = (props) => {
         },
         { name: 'Upload Date', selector: 'date', sortable: true, cell: row => Util.dateFormat(row.date)},
         { name: 'Description', selector: 'description', sortable: true, },
+        { name: 'View Document ', selector: 'attachment', sortable: true, cell: row=> row.attachment.includes("/") && row.attachment.split("/")[4].substring(4)},
+        { name: 'Action', selector: '', sortable: true, },
         // { name: 'View Document', selector: 'attachment', sortable: true, },
         // { name: 'Actions', selector: '', sortable: true },
       ];
@@ -39,6 +41,7 @@ const DocumntsList = (props) => {
             }
             setDocuments(doc)
         }
+        setDocuments(props.documents);
       },[props.documents])
 
     const handleDocType = (type) => {

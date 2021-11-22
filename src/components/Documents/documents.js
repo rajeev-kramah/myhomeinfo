@@ -8,14 +8,14 @@ import JsFileDownloader from "js-file-downloader";
 import S3 from "aws-s3";
 
 const Document = (props) => {
-
+  const userBucket = JSON.parse(localStorage.getItem('user')).bucket_folder_name;
   // aws-s3 uploader//
   const config = {
-    bucketName: "myhomeinfouseruploads",
-    // dirName: 'photos', /* optional */
+    bucketName: "myhomeinfo-s3",
+    dirName: userBucket,
     region: "us-west-2",
-    accessKeyId: "AKIARSK5NHWUX4TJHVXB",
-    secretAccessKey: "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",
+    accessKeyId: "AKIAW4MIDXMBT4OOUQMJ", 
+    secretAccessKey: "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", 
   };
   const S3Client = new S3(config);
   const generate_random_string = (string_length) => {
@@ -45,6 +45,7 @@ const Document = (props) => {
 
   useEffect(() => {
     if (props.documentDetails && props.documentDetails.length > 0) {
+      console.log("props.documentDetails:: ",props.documentDetails[0] )
       setId(props.documentDetails[0].id);
       setCategory(props.documentDetails[0].category);
       setDocname(props.documentDetails[0].docname);
@@ -52,7 +53,7 @@ const Document = (props) => {
       setDate(props.documentDetails[0].date);
       setHouse_id(props.documentDetails[0].house_id);
       setAttachment(props.documentDetails[0].attachment);
-      setAttachment_name(props.documentDetails[0].attachment.split("/")[3]);
+      setAttachment_name( props.documentDetails[0].attachment.includes("/") &&props.documentDetails[0].attachment.split("/")[4].slice(4));
       setDownload(props.documentDetails[0].attachment)
     }
   }, [props.documentDetails])
@@ -68,7 +69,7 @@ const Document = (props) => {
     }
 
     console.log("vbalid::", attachment)
-    if (attachment.name) {
+    if (attachment && attachment.name) {
       const newFileName =
         generate_random_string(4) +
         attachment.name.split(".").slice(0, -1).join(".");
@@ -153,7 +154,7 @@ const Document = (props) => {
       NotificationManager.error("Success Message", "Attachment deleted");
     }
     else if (docFile) {
-      const newFileName = docFile.split('/')[3]
+      const newFileName = docFile.split('/')[4]
       S3Client.deleteFile(newFileName).then((data) => {
         if (data.message === "File Deleted") {
           props.getSingleDocument({ id: id, delete: "doc" })
@@ -288,7 +289,8 @@ const Document = (props) => {
   )
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state) => (
+  {
   documentDetails: state.Document.documentDetails.data,
   houseDetails: state.House.houseDetail.data
 });

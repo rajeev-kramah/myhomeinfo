@@ -11,13 +11,17 @@ const MailList = (props) => {
             let data = {
                 "sentmailId":"sentmailId"
             }
-            props.getuserAllData(data);
+            props.getuserAllData(data); 
         }
       else
 	   {
+        let data = {
+            "sentmailId":"sentmailId"
+        }
+        props.getuserAllData(data);
            
         }
-    },[]);
+    },[props.getuserAllData]);
 
   
 
@@ -32,7 +36,9 @@ const MailList = (props) => {
 	)
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = state => (
+    console.log("state::",state),
+    {
 	userData : state.Authentication.userList.data,
 });
 

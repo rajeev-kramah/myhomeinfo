@@ -13,14 +13,15 @@ import S3 from "aws-s3";
 import JsFileDownloader from "js-file-downloader";
 
 const Insurance = (props) => {
+  const userBucket = JSON.parse(localStorage.getItem('user')).bucket_folder_name;
 
   // aws-s3 uploader//
   const config = {
-    bucketName: "myhomeinfouseruploads",
-    // dirName: 'photos', /* optional */
-    region: "us-west-2",
-    accessKeyId: "AKIARSK5NHWUX4TJHVXB",
-    secretAccessKey: "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",
+  bucketName: "myhomeinfo-s3",
+  dirName: userBucket, 
+  region: "us-west-2",
+  accessKeyId: "AKIAW4MIDXMBT4OOUQMJ",
+  secretAccessKey: "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"
   };
   const S3Client = new S3(config);
   const generate_random_string = (string_length) => {
@@ -66,6 +67,8 @@ const Insurance = (props) => {
   const [attachment, setAttachment] = useState('');
   const [attachment_name, setAttachment_name] = useState('');
   const [download, setDownload] = useState('');
+  const [contactData, setContactData] = useState();
+  const [contactData2, setContactData2] = useState();
 
   // useEffect(()=> {
 	
@@ -73,20 +76,22 @@ const Insurance = (props) => {
 
   useEffect(() => {
     if (props.insuranceDetails && props.insuranceDetails.length > 0) {
+      // handleContatData(props.insuranceDetails[0].provider);
+      // handleContatData2(props.insuranceDetails[0].company_name);
       console.log("props.insuranceDetails", props.insuranceDetails)
       setId(props.insuranceDetails[0].id);
       setInsurance_number(props.insuranceDetails[0].insurance_number);
       setProvider(props.insuranceDetails[0].provider);
-      setContactPerson(props.insuranceDetails[0].contact_person);
+     // setContactPerson(props.insuranceDetails[0].contact_person);
       setEffective_date(props.insuranceDetails[0].effective_date);
-      setProvider_phone(props.insuranceDetails[0].provider_phone);
+      //setProvider_phone(props.insuranceDetails[0].provider_phone);
       setExpiry_date(props.insuranceDetails[0].expiry_date);
       setPremium(props.insuranceDetails[0].premium);
       setRenewed(props.insuranceDetails[0].renewed);
-      setProvider_url(props.insuranceDetails[0].provider_url);
+      // setProvider_url(props.insuranceDetails[0].provider_url);
       setCompany_name(props.insuranceDetails[0].company_name);
-      setAgent_name(props.insuranceDetails[0].agent_name);
-      setCompany_phone(props.insuranceDetails[0].company_phone);
+      //setAgent_name(props.insuranceDetails[0].agent_name);
+      //setCompany_phone(props.insuranceDetails[0].company_phone);
       // setAddToHomeCost(props.transactionDetails[0].add_to_home_cost);
       setCompany_email(props.insuranceDetails[0].company_email);
       setCompany_address(props.insuranceDetails[0].company_address);
@@ -97,7 +102,7 @@ const Insurance = (props) => {
       setComments(props.insuranceDetails[0].comments);
       setHouse_id(props.insuranceDetails[0].house_id);
       setStatus(props.insuranceDetails[0].status);
-      setAttachment_name(props.insuranceDetails[0].attachments.split('/')[3]);
+      setAttachment_name( props.insuranceDetails[0].attachments.includes("/") && props.insuranceDetails[0].attachments.split('/')[4].slice(4));
       setAttachment(props.insuranceDetails[0].attachments);
       setDownload(props.insuranceDetails[0].attachments);
 
@@ -111,6 +116,29 @@ const Insurance = (props) => {
     }
     props.getContact(data);
   }, [props.insuranceDetails, props.accountDetails]);
+
+  useEffect(() => {
+    if (props.insuranceDetails && props.insuranceDetails.length > 0) {
+      handleContatData(props.insuranceDetails[0].provider);
+      handleContatData2(props.insuranceDetails[0].company_name);
+    }
+  }, [props.insuranceDetails, props.contactList]);
+  
+  const handleContatData = (dataId) => {
+    const myObj = props.contactList.find(obj => obj.id === parseInt(dataId.split("-")[0]));
+    console.log("props.leaseDetails", myObj);
+    setContactPerson(myObj && myObj.contactperson);
+    setProvider_phone(myObj && myObj.phone1);
+    setProvider_url(myObj && myObj.url);
+    setContactData(myObj);
+  }
+  const handleContatData2 = (dataId) => {
+    const myObj = props.contactList.find(obj => obj.id === parseInt(dataId.split("-")[0]));
+    console.log("props.leaseDetails", myObj);
+    setAgent_name(myObj && myObj.contactperson);
+    setCompany_phone(myObj && myObj.phone1)
+    setContactData2(myObj);
+  }
 
   const handleSubmit = () => {
 
@@ -144,7 +172,7 @@ const Insurance = (props) => {
  
     if (valid) {
       console.log("vbalid::",attachment)
-      if(attachment.name)
+      if(attachment && attachment.name)
   {    const newFileName =
         generate_random_string(4) +
         attachment.name.split(".").slice(0, -1).join(".");
@@ -242,7 +270,7 @@ const Insurance = (props) => {
       NotificationManager.error("Success Message", "Attachment deleted");
     }
   else if(docFile){
-    const newFileName = docFile.split('/')[3]
+    const newFileName = docFile.split('/')[4]
     S3Client.deleteFile(newFileName).then((data) =>
     {
       if(data.message === "File Deleted")
@@ -267,12 +295,10 @@ const Insurance = (props) => {
     console.log("download::",items)
     if(items.name !== undefined)
     {
-
+      
     }
-    const fileUrl = items;
-    new JsFileDownloader({
-      url: fileUrl,
-    })
+    console.log("clicked")
+    
   };
 
   // view Document //
@@ -281,6 +307,7 @@ const Insurance = (props) => {
   };
 
   const handleOnChange = (e) => {
+    handleContatData(e.target.value)
     setProvider(e.target.value);
     for (var i = 0; i < props.contactList.length; i++) {
       if (props.contactList[i]['groupname'] == "Expenses&Insurance" && e.target.value == props.contactList[i]['companyname']) {
@@ -295,6 +322,7 @@ const Insurance = (props) => {
 
   const onChangehandle = (e) => {
     setCompany_name(e.target.value);
+    handleContatData2(e.target.value);
     for (var i = 0; i < props.contactList.length; i++) {
       if (props.contactList[i]['groupname'] == "Expenses&Insurance" && e.target.value == props.contactList[i]['companyname']) {
         setAgent_name(props.contactList[i].contactperson)
@@ -400,6 +428,24 @@ const Insurance = (props) => {
     }
   }
 
+  const handleSetDate = (date, Renewed) => {
+    var chooseDate = new Date(date);
+    if (Renewed === "Yes") {
+      chooseDate.setMonth(chooseDate.getMonth() + 12);
+    }
+    let futureDate = chooseDate.getFullYear() + '-' + ('0' + (chooseDate.getMonth() + 1)).slice(-2) + '-' + ('0' + (chooseDate.getDate())).slice(-2);
+    setExpiry_date(futureDate.trim());
+  }
+
+  const handleRenewedChange = (e) =>{
+    setRenewed(e.target.value);
+    handleSetDate(effective_date , e.target.value)
+  }
+  const handleEffectiveDateChange = (e) =>{
+    setEffective_date(e.target.value)
+    handleSetDate(e.target.value , renewed);
+  }
+
   return (
     <div className="container-fluid house">
       <h4>Add Insurance Details</h4>
@@ -417,7 +463,8 @@ const Insurance = (props) => {
                     props.contactList.map((data) => {
                       if (data.groupname == "Expenses&Insurance") {
                         return (
-                          <option value={data.companyname}>{data.companyname} - ({data.contactperson})</option>
+                          <option value={`${data.id}-${data.companyname
+                          }`}>{data.companyname} - ({data.contactperson})</option>
                         )
                       }
                     })
@@ -439,12 +486,12 @@ const Insurance = (props) => {
               <label htmlFor="provider Number">Mobile Number</label>
               <input type="text" id="phoneNumberFormat" maxLength="12" placeholder="Provider Number" value={provider_phone} onChange={e => {
                 setProvider_phone(e.target.value)
-              }} className="form-control" />
+              }} className="form-control" readOnly/>
             </div>
           </div>
-          {/* <div className="col-md-3">
+          <div className="col-md-3">
               <img onClick={()=>togglePopup()} className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/>
-          </div> */}
+          </div>
         </div>
         <div className="row">
           <div className="col-md-3"></div>
@@ -458,7 +505,8 @@ const Insurance = (props) => {
                     props.contactList.map((data) => {
                       if (data.groupname == "Expenses&Insurance") {
                         return (
-                          <option value={data.companyname}>{data.companyname} - ({data.contactperson})</option>
+                          <option value={`${data.id}-${data.companyname
+                          }`}>{data.companyname} - ({data.contactperson})</option>
                         )
                       }
                     })
@@ -499,11 +547,11 @@ const Insurance = (props) => {
               <label htmlFor="Phone No" className="">Phone No.</label>
               <input type="text" id="phoneNumberFormat1" maxLength="12" placeholder="Phone No" value={company_phone} onChange={e => {
                 setCompany_phone(e.target.value)
-              }} className="form-control" />
+              }} className="form-control" readOnly/>
             </div>
           </div>
           <div className="col-md-3">
-            {/* <img onClick={()=>togglePopup()} className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/> */}
+            <img onClick={()=>togglePopup()} className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/>
           </div>
         </div>
 
@@ -521,7 +569,7 @@ const Insurance = (props) => {
             <div className="form-group">
               <label htmlFor="Effective Date" className="req">Policy Effective Date</label>
               <input type="date" style={{ textTransform: 'uppercase' }} placeholder="Policy Effective Date" value={effective_date} onChange={e => {
-                setEffective_date(e.target.value)
+               handleEffectiveDateChange(e)
               }} className="form-control" />
             </div>
           </div>
@@ -543,7 +591,7 @@ const Insurance = (props) => {
               <NumberFormat
                 placeholder="Premium"
                 thousandsGroupStyle="thousand"
-                className="form-control"
+                className="form-control alignRight"
                 value={premium}
                 decimalSeparator="."
                 type="text"
@@ -563,7 +611,7 @@ const Insurance = (props) => {
           <div className="col-md-2">
             <div className="form-group">
               <label htmlFor="type" className="">Renewed</label>
-              <select className="form-control" value={renewed} onChange={e => setRenewed(e.target.value)} >
+              <select className="form-control" value={renewed} onChange={e => handleRenewedChange(e)} >
                 <option value="" disabled>Select</option>
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
@@ -585,7 +633,7 @@ const Insurance = (props) => {
               <label htmlFor="Provider" className="">Provider URL</label>
               <input type="text" placeholder="Provider URL" value={provider_url} onChange={e => {
                 setProvider_url(e.target.value)
-              }} className="form-control" />
+              }} className="form-control" readOnly/>
             </div>
           </div>
         </div>
@@ -661,7 +709,7 @@ const Insurance = (props) => {
 
 
 const mapStateToProps = (state) =>
-( console.log("asxsx::3",state.Insurance),
+( console.log("asxsx::3",state.Contact),
   {
   insurancesuccessmsg : state.Insurance.insuranceDetails,
   insuranceDetails: state.Insurance.insuranceDetails.data,

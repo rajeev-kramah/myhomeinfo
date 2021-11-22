@@ -265,7 +265,7 @@ const Installtion = (props) => {
                                         <NumberFormat
                                         placeholder="Installtion Charges"
                                         thousandsGroupStyle="thousand"
-                                        className="form-control"
+                                        className="form-control alignRight"
                                         value={installation_charges ? installation_charges : 0}
                                         decimalSeparator="."
                                         type="text"
