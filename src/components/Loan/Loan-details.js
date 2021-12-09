@@ -56,7 +56,8 @@ console.log("Props::::::",props)
       setLurl(props.loanDetails[0].lurl);
       setPurchaseprice(props.loanDetails[0].purchaseprice );
       setDownpayment(props.loanDetails[0].downpayment);
-      setLoanamount(parseFloat(purchaseAmount.replace(/,/g, '')) - parseFloat(props.loanDetails[0].downpayment.replace(/,/g, '')));
+      // setLoanamount(parseFloat(purchaseAmount.replace(/,/g, '')) - parseFloat(props.loanDetails[0].downpayment.replace(/,/g, '')));
+      setLoanamount(props.loanDetails[0].loanamount);
       setRateofinterest(props.loanDetails[0].rateofinterest);
       setLoanterm(props.loanDetails[0].loanterm);
       setLoannumber(props.loanDetails[0].loannumber);
@@ -226,7 +227,7 @@ console.log("Props::::::",props)
   
   return (
     <div className="container-fluid house">
-      {/* {console.log("purchaseprice",purchaseprice)} */}
+  
       <h4>Add Loan Details</h4>
       <div className="house-form">
         <Tab loanPage="Loan Details" tabs={tabs} id={id} house_id={house_id} />

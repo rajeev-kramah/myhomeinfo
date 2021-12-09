@@ -3,19 +3,14 @@ import { connect } from "react-redux";
 import { addGallery, getGallery, deleteGallery } from "../../store/Actions/Gallery";
 import { NotificationManager } from "react-notifications";
 import Slider from "react-slick";
+import config from "../Authentication/s3config";
 import S3 from "aws-s3";
 
 
 const Galleries = (props) => {
     const userBucket = JSON.parse(localStorage.getItem('user')).bucket_folder_name;
 // aws-s3 uploader//
-const config = {
-    bucketName: "myhomeinfo-s3",
-    dirName: userBucket,
-    region: "us-west-2",
-    accessKeyId: "AKIAW4MIDXMBT4OOUQMJ",
-    secretAccessKey: "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",
-  };
+
   const S3Client = new S3(config);
   const generate_random_string = (string_length) => {
     let random_string = "";

@@ -8,19 +8,12 @@ import Tab from "../../Reusable/Tab";
 import S3 from "aws-s3";
 import { NotificationManager } from "react-notifications";
 import JsFileDownloader from "js-file-downloader";
+import config from "../Authentication/s3config";
 
 // import addContactLogo from '../addContact.png';
 
 const Realtordetails = (props) => {
-  const userBucket = JSON.parse(localStorage.getItem('user')).bucket_folder_name;
-  // aws-s3 uploader//
-  const config = {
-    bucketName: "myhomeinfo-s3",
-    dirName: userBucket,
-    region: "us-west-2",
-    accessKeyId: "AKIAW4MIDXMBT4OOUQMJ",
-    secretAccessKey: "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",
-  };
+
   const S3Client = new S3(config);
   const generate_random_string = (string_length) => {
     let random_string = "";
@@ -73,7 +66,7 @@ const Realtordetails = (props) => {
   }, [props.houseDetails, props.contactList]);
 
   const handleContatData = (dataId) => {
-    const myObj = props.contactList.find(obj => obj.id === parseInt(dataId.split("-")[0]));
+    const myObj = props.contactList && props.contactList.find(obj => obj.id === parseInt(dataId.split("-")[0]));
     console.log("props.leaseDetails", myObj);
     setEmail(myObj && myObj.email);
     setPhone(myObj && myObj.phone1);

@@ -98,6 +98,7 @@ const LoanTransaction = (props) => {
     return true;
   }
   const showTableView = () => {
+   
     let valid = validate();
     if (valid) {
       let loanData = props.loanDetails;
@@ -105,6 +106,7 @@ const LoanTransaction = (props) => {
       let tableData = [];
 
       if (props.loanDetails) {
+      
         var months;
         let d1 = new Date(startDate);
         let d2 = new Date(endDate);
@@ -120,88 +122,90 @@ const LoanTransaction = (props) => {
         var month2 = new Date().getMonth();
         var day2 = new Date().getDate();
 
-        if (year1 <= year2 && month1 <= month2 && day1 <= day2) {
-          var payment = "";
-          let roi = parseFloat(loanData[0].renewal_intrest_rate ? loanData[0].renewal_intrest_rate : rateofinterest);
-          var mroi = roi / (12 * 100);
-          let loa = parseInt(Util.removeCommas(loanData[0].loanamount));
-          let term = parseInt(loanData[0].loanterm * 12);
-          for (let i = 0; i < months; i++) {
-            let data = {};
-            let loanamount;
-            let interest = "";
-            let principal = "";
-            let extra = "";
-            let endingloan = "";
-            let scheduledpayment = "";
-            let cumulativeinterest = "";
-            let paymentdate = "";
-            if (i == 0) {
-              payment = loa / (((Math.pow((1 + mroi), term)) - 1) / (mroi * (Math.pow((1 + mroi), term))));
-              loanamount = loa;
-              payment = payment;
-              interest = (loa * mroi);
-              principal = (payment - interest);
-              extra = "";
-              endingloan = (loanamount - principal);
+        var payment = "";
+        let roi = parseFloat(loanData[0].renewal_intrest_rate ? loanData[0].renewal_intrest_rate : rateofinterest);
+        var mroi = roi / (12 * 100);
+        let loa = parseInt(Util.removeCommas(loanData[0].loanamount));
+        let term = parseInt(loanData[0].loanterm * 12);
+        for (let i = 0; i < months; i++) {
+         
+          let data = {};
+          let loanamount;
+          let interest = "";
+          let principal = "";
+          let extra = "";
+          let endingloan = "";
+          let scheduledpayment = "";
+          let cumulativeinterest = "";
+          let paymentdate = "";
+          if (i == 0) {
+            
+            payment = loa / (((Math.pow((1 + mroi), term)) - 1) / (mroi * (Math.pow((1 + mroi), term))));
+            loanamount = loa;
+            payment = payment;
+            interest = (loa * mroi);
+            principal = (payment - interest);
+            extra = "";
+            endingloan = (loanamount - principal);
 
-              scheduledpayment = "";
-              cumulativeinterest = "";
-              paymentdate = new Date(startDate);
-            } else {
-              let previousData = Util.removeCommas(tableData[i - 1].endingloan);
-              loanamount = Util.removeCommas(previousData);
-              payment = Util.removeCommas(payment);
-              interest = previousData * mroi;
-              principal = payment - interest;
-              extra = "";
-              endingloan = previousData - principal;
-              scheduledpayment = "";
-              cumulativeinterest = "";
-              let date = new Date(startDate)
-              paymentdate = new Date(date.setMonth(date.getMonth() + (i + 1)));
-            }
-            data.month = i + 1;
-            data.loanamount = Util.addCommasList(parseFloat(loanamount).toFixed(2));
-            data.payment = Util.addCommasList(parseFloat(payment).toFixed(2));
-            data.interest = Util.addCommasList(parseFloat(interest).toFixed(2));
-            data.principal = Util.addCommasList(parseFloat(principal).toFixed(2));
-            data.extra = "";
-            data.endingloan = Util.addCommasList(parseFloat(endingloan).toFixed(2));
-            data.loan_id = props.loanDetails[0].id;
-            data.scheduledpayment = scheduledpayment;
-            data.cumulativeinterest = cumulativeinterest;
-            data.entered_by = enteredBy;
-            let day = paymentdate.getDay();
-            let month = paymentdate.getMonth();
-            let year = paymentdate.getFullYear();
-            let hour = paymentdate.getHours();
-            let minutes = paymentdate.getMinutes();
-            data.paymentdate = Util.dateFormat(paymentdate);
-            //month+"/"+day+"/"+year + " "+ hour +":"+minutes;
-            tableData.push(data);
-
+            scheduledpayment = "";
+            cumulativeinterest = "";
+            paymentdate = new Date(startDate);
+          } else {
+           
+            let previousData = Util.removeCommas(tableData[i - 1].endingloan);
+            loanamount = Util.removeCommas(previousData);
+            payment = Util.removeCommas(payment);
+            interest = previousData * mroi;
+            principal = payment - interest;
+            extra = "";
+            endingloan = previousData - principal;
+            scheduledpayment = "";
+            cumulativeinterest = "";
+            let date = new Date(startDate)
+            paymentdate = new Date(date.setMonth(date.getMonth() + (i + 1)));
           }
-          setLoanStatus(true);
-          setButtonStatus(false);
+         
+          data.month = i + 1;
+          data.loanamount = Util.addCommasList(parseFloat(loanamount).toFixed(2));
+          data.payment = Util.addCommasList(parseFloat(payment).toFixed(2));
+          data.interest = Util.addCommasList(parseFloat(interest).toFixed(2));
+          data.principal = Util.addCommasList(parseFloat(principal).toFixed(2));
+          data.extra = "";
+          data.endingloan = Util.addCommasList(parseFloat(endingloan).toFixed(2));
+          data.loan_id = props.loanDetails[0].id;
+          data.scheduledpayment = scheduledpayment;
+          data.cumulativeinterest = cumulativeinterest;
+          data.entered_by = enteredBy;
+          let day = paymentdate.getDay();
+          let month = paymentdate.getMonth();
+          let year = paymentdate.getFullYear();
+          let hour = paymentdate.getHours();
+          let minutes = paymentdate.getMinutes();
+          data.paymentdate = Util.dateFormat(paymentdate);
+          //month+"/"+day+"/"+year + " "+ hour +":"+minutes;
+        
+          tableData.push(data);
+        
         }
-        else {
-          // NotificationManager.error("Success Message", "End date should be less than equal to current date");
-
-        }
+        setLoanStatus(true);
+        setButtonStatus(false);
       }
 
       if (tableData.length == 0) {
+        console.log("data12::")
         let data = {};
         data.loan_id = props.loanDetails && props.loanDetails[0].id;
         data.delete = true;
         tableData.push(data);
       }
-
+     
       setTableData(tableData)
     }
 
   }
+
+
 
   let tabs = [
     { pathname: "/loan-lender", label: "Lender Details" },

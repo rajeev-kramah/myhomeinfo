@@ -9,17 +9,12 @@ import Tab from "../../Reusable/Tab";
 import NumberFormat from "react-number-format";
 import S3 from "aws-s3";
 import JsFileDownloader from "js-file-downloader";
+import config from "../Authentication/s3config";
 
 const HouseDetails = (props) => {
-    const userBucket = JSON.parse(localStorage.getItem('user')).bucket_folder_name;
+
   // aws-s3 uploader//
-  const config = {
-    bucketName: "myhomeinfo-s3",
-    dirName: userBucket, 
-    region: "us-west-2",
-    accessKeyId: "AKIAW4MIDXMBT4OOUQMJ",
-    secretAccessKey: "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",
-  };
+ 
   const S3Client = new S3(config);
   const generate_random_string = (string_length) => {
     let random_string = "";
@@ -57,7 +52,7 @@ const HouseDetails = (props) => {
   const [previewImage, setPreviewImage] = useState("../assets/image/dummy.png");
   const [currency, setCurrency] = useState('');
   const [download, setDownload] = useState('');
-  const [img_path, setImg_path] = useState("../assets/image/dummy.png");
+  const [img_path, setImg_path] = useState();
 
   useEffect(() => {
     if (props.houseDetails && props.houseDetails.house.length > 0) {
