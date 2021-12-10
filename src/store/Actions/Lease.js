@@ -12,6 +12,7 @@ export const addLease = (data) => {
     return async (dispatch) => {
         await Lease.addLease(data)
         .then(res => {
+            console.log("leaseres:",res)
             if(res.status === 200  || res.status === 404 || res.status === 422) {
                 var data = {
                     type: ADD_LEASE,

@@ -6,15 +6,18 @@ const con = require("./config");
  * Create Contacts
  */
 router.post("/", async (req, res) => {
+	console.log("req",req)
 	// id, groupname, contactperson, landline, email, companyname, address, mono, url, comment, add_to_home_cost, transaction_type, transaction_amount, auto_post, posting_frequency, posting_date, house_id, streetName, city, state, country, houseno
 	let id = req.body.id; 
 	let groupname = req.body.groupname;   
 	let contactperson = req.body.contactperson;  
-	let landline = req.body.landline;  
+	let phone2 = req.body.phone2;
+	let phonetype1 = req.body.phonetype1; 
+	let phonetype2 = req.body.phonetype2; 
 	let email = req.body.email;  
 	let companyname = req.body.companyname; 
-	let address = "";  
-	let mono = req.body.mono;  
+	let address = req.body.address;  
+	let phone1 = req.body.phone1;  
 	let url = req.body.url;  
 	let comment = req.body.comment;  
 	let house_id = req.body.house_id;
@@ -33,10 +36,11 @@ router.post("/", async (req, res) => {
 
 
     con.connect(function(err) {
-        var sql = "INSERT INTO contacts (groupname, contactperson, landline, email, companyname, address, mono, url, comment, house_id, add_to_home_cost, transaction_type, transaction_amount, auto_post, posting_frequency, posting_date, streetName, city, state, country, houseno, zipcode) VALUES ('"+groupname+"', '"+contactperson+"', '"+landline+"', '"+email+"', '"+companyname+"', '"+address+"','"+mono+"', '"+url+"', '"+comment+"', '"+house_id+"', '"+add_to_home_cost+"', '"+transaction_type+"', '"+transaction_amount+"', '"+auto_post+"', '"+posting_frequency+"', '"+posting_date+"', '"+streetName+"', '"+city+"', '"+state+"', '"+country+"', '"+houseno+"', '"+zipcode+"')";
+        var sql = "INSERT INTO contacts (groupname, contactperson, phone2, phonetype1, phonetype2, email, companyname, address, phone1, url, comment, house_id, add_to_home_cost, transaction_type, transaction_amount, auto_post, posting_frequency, posting_date, streetName, city, state, country, houseno, zipcode) VALUES ('"+groupname+"', '"+contactperson+"', '"+phone2+"','"+phonetype1+"','"+phonetype2+"','"+email+"', '"+companyname+"', '"+address+"','"+phone1+"', '"+url+"', '"+comment+"', '"+house_id+"', '"+add_to_home_cost+"', '"+transaction_type+"', '"+transaction_amount+"', '"+auto_post+"', '"+posting_frequency+"', '"+posting_date+"', '"+streetName+"', '"+city+"', '"+state+"', '"+country+"', '"+houseno+"', '"+zipcode+"')";
+		console.log("abc:",sql)
 
         if(id){
-            sql = "UPDATE contacts SET groupname = '"+groupname+"', contactperson = '"+contactperson+"', landline = '"+landline+"', email = '"+email+"', companyname = '"+companyname+"', address = '"+address+"', mono = '"+mono+"', url = '"+url+"', comment = '"+comment+"', house_id = '"+house_id+"', add_to_home_cost = '"+add_to_home_cost+"', transaction_type = '"+transaction_type+"', transaction_amount = '"+transaction_amount+"', auto_post = '"+auto_post+"', posting_frequency = '"+posting_frequency+"', posting_date = '"+posting_date+"', streetName='"+streetName+"', city='"+city+"', state='"+state+"', country ='"+country+"', houseno='"+houseno+"', zipcode='"+zipcode+"' where id = '"+id+"'";
+            sql = "UPDATE contacts SET groupname = '"+groupname+"', contactperson = '"+contactperson+"', phone2 = '"+phone2+"', phonetype1 = '"+phonetype1+"',phonetype2 = '"+phonetype2+"' , email = '"+email+"', companyname = '"+companyname+"', address = '"+address+"', phone1 = '"+phone1+"', url = '"+url+"', comment = '"+comment+"', house_id = '"+house_id+"', add_to_home_cost = '"+add_to_home_cost+"', transaction_type = '"+transaction_type+"', transaction_amount = '"+transaction_amount+"', auto_post = '"+auto_post+"', posting_frequency = '"+posting_frequency+"', posting_date = '"+posting_date+"', streetName='"+streetName+"', city='"+city+"', state='"+state+"', country ='"+country+"', houseno='"+houseno+"', zipcode='"+zipcode+"' where id = '"+id+"'";
         }
         con.query(sql, function (err, contacts) {
 			console.log(contacts);
@@ -219,7 +223,7 @@ router.post("/delete", async (req, res) => {
 						)
 					);
 				} else {
-					var sql = "SELECT id,companyname,contactperson,mono,landline,email,url,address,groupname From contacts where house_id='"+req.body.house_id+"'";
+					var sql = "SELECT * From contacts where house_id='"+req.body.house_id+"'";
 					con.query(sql, function (err, contacts) {
 						if (err) {
 							res.send(

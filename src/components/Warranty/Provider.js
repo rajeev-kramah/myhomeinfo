@@ -39,24 +39,25 @@ const Provider = (props) => {
     const [image, setImage] = useState('');
     const [house_id, setHouse_id] = useState(houseid);
     const [showGroup, setShowGroup] = useState(false);
+    const [contactData, setContactData] = useState();
 
-    useEffect(()=> {
-        if(props.warrantyDetails && props.warrantyDetails.length > 0) {
+    useEffect(() => {
+        if (props.warrantyDetails && props.warrantyDetails.length > 0) {
 
-        
+
             setWarranty_provider(props.warrantyDetails[0].warranty_provider ? props.warrantyDetails[0].warranty_provider : "");
-            setContact_person(props.warrantyDetails[0].contact_person ? props.warrantyDetails[0].contact_person : "");
-            setEmail(props.warrantyDetails[0].email ? props.warrantyDetails[0].email : "");
-            setPhone_no(props.warrantyDetails[0].phone_no ? props.warrantyDetails[0].phone_no : "");
-            setWebsite_url(props.warrantyDetails[0].website_url ? props.warrantyDetails[0].website_url : "");
-            setCompany_address(props.warrantyDetails[0].company_address == "NULL" || props.warrantyDetails[0].company_address == null ? "" :  props.warrantyDetails[0].company_address);
+            // setContact_person(props.warrantyDetails[0].contact_person ? props.warrantyDetails[0].contact_person : "");
+            // setEmail(props.warrantyDetails[0].email ? props.warrantyDetails[0].email : "");
+            // setPhone_no(props.warrantyDetails[0].phone_no ? props.warrantyDetails[0].phone_no : "");
+            // setWebsite_url(props.warrantyDetails[0].website_url ? props.warrantyDetails[0].website_url : "");
+            // setCompany_address(props.warrantyDetails[0].company_address == "NULL" || props.warrantyDetails[0].company_address == null ? "" : props.warrantyDetails[0].company_address);
             setProduct_name(props.warrantyDetails[0].product_name ? props.warrantyDetails[0].product_name : "");
             setManufacturer_serial_no(props.warrantyDetails[0].manufacturer_serial_no);
             setModel_type(props.warrantyDetails[0].model_type ? props.warrantyDetails[0].model_type : "");
             setModel_no(props.warrantyDetails[0].model_no ? props.warrantyDetails[0].model_no : "");
             setColor(props.warrantyDetails[0].color ? props.warrantyDetails[0].color : "");
             setProduct_price(props.warrantyDetails[0].product_price ? props.warrantyDetails[0].product_price : "");
-            setMfg_warranty_start_date(props.warrantyDetails[0].mfg_warranty_start_date  ? props.warrantyDetails[0].mfg_warranty_start_date : "");
+            setMfg_warranty_start_date(props.warrantyDetails[0].mfg_warranty_start_date ? props.warrantyDetails[0].mfg_warranty_start_date : "");
             setMfg_warranty_end_date(props.warrantyDetails[0].mfg_warranty_end_date ? props.warrantyDetails[0].mfg_warranty_end_date : "");
             setExtended_warranty_start_date(props.warrantyDetails[0].extended_warranty_start_date ? props.warrantyDetails[0].extended_warranty_start_date : "");
             setExtended_warranty_end_date(props.warrantyDetails[0].extended_warranty_end_date ? props.warrantyDetails[0].extended_warranty_end_date : "");
@@ -71,29 +72,46 @@ const Provider = (props) => {
             setId(props.warrantyDetails[0].id);
 
             console.log(props.contactList)
-            if(props.contactList && props.contactList.length > 0){
-                for(var i=0; i<props.contactList.length; i++){
-                    console.log(props.warrantyDetails[0].warranty_provider +"=="+ props.contactList[i]['id'])
-                    if(props.warrantyDetails[0].warranty_provider == props.contactList[i]['id']){
+            if (props.contactList && props.contactList.length > 0) {
+                for (var i = 0; i < props.contactList.length; i++) {
+                    console.log(props.warrantyDetails[0].warranty_provider + "==" + props.contactList[i]['id'])
+                    if (props.warrantyDetails[0].warranty_provider == props.contactList[i]['id']) {
                         setContact_person(props.contactList[i]['contactperson']);
                         setPhone_no(props.contactList[i].mono);
                         setEmail(props.contactList[i].email);
                         setWebsite_url(props.contactList[i].url)
                         break;
-                  }
+                    }
                 }
             }
-            
+
         }
 
         let data = {
-            "house_id":house_id
+            "house_id": house_id
         }
         props.getContact(data);
     }, [props.warrantyDetails])
 
+    useEffect(()=>{
+        if (props.warrantyDetails && props.warrantyDetails.length > 0) {
+          handleContatData(props.warrantyDetails[0].warranty_provider );
+        }
+      }, [props.warrantyDetails, props.contactList])
+
+    const handleContatData = (dataId) => {
+        const myObj = props.contactList.find(obj => obj.id === parseInt(dataId.split("-")[0]));
+        console.log("props.leaseDetails", myObj);
+        setContact_person(myObj && myObj.contactperson);
+        setEmail(myObj && myObj.email);
+        setPhone_no(myObj && myObj.phone1);
+        setWebsite_url(myObj && myObj.url);
+        setCompany_address(myObj && myObj.address);
+        setContactData(myObj);
+      }
+
     const handleSubmit = () => {
-        
+
         let data = {
             "warranty_provider": warranty_provider,
             "contact_person": contact_person,
@@ -103,52 +121,52 @@ const Provider = (props) => {
             "company_address": company_address,
             "product_name": product_name,
             "manufacturer_serial_no": manufacturer_serial_no,
-            "model_type" : model_type,
-            "model_no" : model_no,
-            "color" : color,
-            "product_price" : product_price,
-            "mfg_warranty_start_date" : mfg_warranty_start_date,
-            "mfg_warranty_end_date" : mfg_warranty_end_date,
-            "extended_warranty_start_date" : extended_warranty_start_date,
-            "extended_warranty_end_date" : extended_warranty_end_date,
-            "installation_date" : installation_date,
-            "installation_company_name" : installation_company_name,
-            "installed_by" : installed_by,
-            "contact_number" : contact_number,
+            "model_type": model_type,
+            "model_no": model_no,
+            "color": color,
+            "product_price": product_price,
+            "mfg_warranty_start_date": mfg_warranty_start_date,
+            "mfg_warranty_end_date": mfg_warranty_end_date,
+            "extended_warranty_start_date": extended_warranty_start_date,
+            "extended_warranty_end_date": extended_warranty_end_date,
+            "installation_date": installation_date,
+            "installation_company_name": installation_company_name,
+            "installed_by": installed_by,
+            "contact_number": contact_number,
             "installation_charges": installation_charges,
-            "comments" : comments,
-            "image" : image,
+            "comments": comments,
+            "image": image,
             "house_id": house_id,
-            'id':id
+            'id': id
         }
         var form = new FormData();
-      
+
         for (const key in data) {
             form.append(key, data[key]);
         }
 
         let valid = validate();
-        if(valid) {
+        if (valid) {
             props.addWarranty(form)
             props.history.push({
                 pathname: 'warranty',
                 state: {
-                    house_id : house_id
+                    house_id: house_id
                 }
-            }); 
+            });
         }
     }
 
     const togglePopup = () => {
         setShowGroup(!showGroup);
         let data = {
-            house_id : house_id
+            house_id: house_id
         }
         props.getContact(data);
     };
 
     const validate = () => {
-        if(warranty_provider === '') {
+        if (warranty_provider === '') {
             NotificationManager.error("Error Message", "Warranty Provider cannot be empty.");
             return false;
         }
@@ -156,27 +174,30 @@ const Provider = (props) => {
     }
 
     const tabs = [
-        {pathname : "/provider", label : "Provider"},
-        {pathname : "/warranty", label : "Product Details"},
-        {pathname : "/warrantydates", label : "Warranty Dates"},
-        {pathname : "/installation", label : "Installation Details"},
+        { pathname: "/provider", label: "Provider" },
+        { pathname: "/warranty", label: "Product Details" },
+        { pathname: "/warrantydates", label: "Warranty Dates" },
+        { pathname: "/installation", label: "Installation Details" },
     ];
 
     const handleOnChange = (e) => {
         setWarranty_provider(e.target.value);
-        for(var i=0; i<props.contactList.length; i++){
-            if(e.target.value == props.contactList[i]['id']){
+        handleContatData(e.target.value);
+        // (e.target.value);
+        for (var i = 0; i < props.contactList.length; i++) {
+            if (e.target.value == props.contactList[i]['id']) {
                 setContact_person(props.contactList[i]['contactperson']);
-                setPhone_no(props.contactList[i].mono);
+                setPhone_no(props.contactList[i].phone1);
                 setEmail(props.contactList[i].email);
                 setWebsite_url(props.contactList[i].url)
+                setCompany_address(props.contactList[i].address)
                 break;
-          }
+            }
         }
     }
 
     const handleDelete = () => {
-        
+
         let data = {
             "id": id,
             "house_id": house_id
@@ -186,7 +207,7 @@ const Provider = (props) => {
         props.history.push({
             pathname: 'warranty-list',
             state: {
-                house_id : house_id
+                house_id: house_id
             }
         });
     }
@@ -197,7 +218,7 @@ const Provider = (props) => {
             (key >= 96 && key <= 105) // Allow number pad
         );
     };
-    
+
     const isModifierKey = (event) => {
         const key = event.keyCode;
         return (event.shiftKey === true || key === 35 || key === 36) || // Allow Shift, Home, End
@@ -209,46 +230,46 @@ const Provider = (props) => {
                 (key === 65 || key === 67 || key === 86 || key === 88 || key === 90)
             )
     };
-    
+
     const enforceFormat = (event) => {
         // Input must be of a valid number format or a modifier key, and not longer than ten digits
-        if(!isNumericInput(event) && !isModifierKey(event)){
+        if (!isNumericInput(event) && !isModifierKey(event)) {
             event.preventDefault();
         }
     };
-    
+
     const formatToPhone = (event) => {
-        if(isModifierKey(event)) {return;}
-    
+        if (isModifierKey(event)) { return; }
+
         // I am lazy and don't like to type things more than once
         const target = event.target;
-        const input = event.target.value.replace(/\D/g,'').substring(0,10); // First ten digits of input only
-        const zip = input.substring(0,3);
-        const middle = input.substring(3,6);
-        const last = input.substring(6,10);
-    
-        if(input.length > 6){target.value = `${zip}-${middle}-${last}`;}
-        else if(input.length > 3){target.value = `${zip}-${middle}`;}
-        else if(input.length > 0){target.value = `${zip}`;}
+        const input = event.target.value.replace(/\D/g, '').substring(0, 10); // First ten digits of input only
+        const zip = input.substring(0, 3);
+        const middle = input.substring(3, 6);
+        const last = input.substring(6, 10);
+
+        if (input.length > 6) { target.value = `${zip}-${middle}-${last}`; }
+        else if (input.length > 3) { target.value = `${zip}-${middle}`; }
+        else if (input.length > 0) { target.value = `${zip}`; }
     };
-    
+
     const inputElement = document.getElementById('phoneNumberFormat');
-    if(inputElement != null) {
-        inputElement.addEventListener('keydown',enforceFormat);
-        inputElement.addEventListener('keyup',formatToPhone);
+    if (inputElement != null) {
+        inputElement.addEventListener('keydown', enforceFormat);
+        inputElement.addEventListener('keyup', formatToPhone);
     }
-    
+
     return (
         <div className="container-fluid house">
             <h4>Provider Details</h4>
             <div className="house-form">
-                <Tab loanPage="Provider" tabs={tabs} id={id} house_id={house_id}/>
+                <Tab loanPage="Provider" tabs={tabs} id={id} house_id={house_id} />
                 <div className="row">
-                    <div className="col-md-3"></div>
-                    <div className="col-md-6">
-                        <div className="divWithContact">
-                                
-                                <div className="form-group">
+                    <div className="col-md-2"></div>
+                    <div className="col-md-8">
+                        {/* <div className="divWithContact"> */}
+                        {/* <div className="row"> */}
+                        {/* <div className="form-group col-md-6">
                                     <label htmlFor="name">Warranty Provider</label>
                                         <select className="form-control" value={warranty_provider} onChange={e=> handleOnChange(e)}>
                                             <option value="" disabled>Select</option>
@@ -267,66 +288,101 @@ const Provider = (props) => {
                                         </select>
                                 </div>
 
-                                <div className="form-group">
+                                <div className="form-group col-md-6">
                                     <label htmlFor="Contact Person" className="req">Contact Person</label>
                                     <input type="text" placeholder="Contact Person" value={contact_person} onChange={e=> {
                                             setContact_person(e.target.value)
                                     }} className="form-control" />
-                                </div>
-                            
-                              
-                                <div onClick={()=>togglePopup()} > <img className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/></div>
-                            
-                            </div>
-                       
+                                </div> */}
+                        {/* </div> */}
+
+
+                        {/* </div> */}
+
                         <div className="row">
-                        <div className="col-md-6">
+                            <div className="col-md-1"></div>
+                            <div className="col-md-5">
                                 <div className="form-group">
-                                    <label htmlFor="Email ID" className="">Email ID</label>
-                                    <input type="email" placeholder="Email ID" value={email} onChange={e=> {
-                                            setEmail(e.target.value)
-                                    }} className="form-control" />
+                                    <label htmlFor="name" className="req">Warranty Provider</label>
+                                    <select className="form-control" value={warranty_provider} onChange={e => handleOnChange(e)}>
+                                        <option value="" disabled>Select</option>
+                                        {
+                                            props.contactList ? (
+                                                props.contactList.map((data) => {
+                                                    return (
+                                                        <option value={`${data.id}-${data.companyname}`}>{data.companyname}</option>
+                                                    )
+                                                })
+                                            ) : ""
+                                        }
+                                    </select>
                                 </div>
                             </div>
-                            <div className="col-md-6">
+                            <div className="col-md-5">
                                 <div className="form-group">
-                                    <label htmlFor="Phone Number">Phone Number</label>
-                                    <input id="phoneNumberFormat" maxLength="12" type="text" placeholder="Phone Number" value={phone_no} onChange={e=> {
-                                            setPhone_no(e.target.value)
-                                    }} className="form-control" />
+                                    <label htmlFor="Contact Person" >Contact Person</label>
+                                    <input type="text" placeholder="Contact Person" value={contact_person} onChange={e => {
+                                        setContact_person(e.target.value)
+                                    }} className="form-control" readOnly/>
                                 </div>
                             </div>
+                        <div onClick={()=>togglePopup()} className="col-md-1"> <img className="addContactLogo" src={"assets/image/addContactIcon.png"} alt="AddContactLogo"/></div>
                         </div>
 
                         <div className="row">
-                            <div className="col-md-12">
+                        <div className="col-md-1"></div>
+                            <div className="col-md-5">
+                                <div className="form-group">
+                                    <label htmlFor="Email ID" className="">Email ID</label>
+                                    <input type="email" placeholder="Email ID" value={email} onChange={e => {
+                                        setEmail(e.target.value)
+                                    }} className="form-control" readOnly/>
+                                </div>
+                            </div>
+                            <div className="col-md-5">
+                                <div className="form-group">
+                                    <label htmlFor="Phone Number">Phone Number</label>
+                                    <input id="phoneNumberFormat" maxLength="12" type="text" placeholder="Phone Number" value={phone_no} onChange={e => {
+                                        setPhone_no(e.target.value)
+                                    }} className="form-control" readOnly/>
+                                </div>
+                            </div>
+                            <div className="col-md-1"></div>
+                        </div>
+
+                        <div className="row">
+                        <div className="col-md-1"></div>
+                            <div className="col-md-10">
                                 <div className="form-group">
                                     <label htmlFor="Website URL" className="">Website URL</label>
-                                    <input type="text" placeholder="Website URL" value={website_url} onChange={e=> {
-                                            setWebsite_url(e.target.value)
-                                    }} className="form-control" />
+                                    <input type="text" placeholder="Website URL" value={website_url} onChange={e => {
+                                        setWebsite_url(e.target.value)
+                                    }} className="form-control" readOnly/>
                                 </div>
                             </div>
+                            <div className="col-md-1"></div>
                         </div>
                         <div className="row">
-                            <div className="col-md-12">
-                                    <div className="form-group">
-                                        <label htmlFor=">Company Address">Company Address</label>
-                                        <input type="text" placeholder="Company Address" value={company_address} onChange={e=> {
-                                                setCompany_address(e.target.value)
-                                        }} className="form-control" />
-                                    </div>
+                        <div className="col-md-1"></div>
+                            <div className="col-md-10">
+                                <div className="form-group">
+                                    <label htmlFor=">Company Address">Company Address</label>
+                                    <input type="text" placeholder="Company Address" value={company_address} onChange={e => {
+                                        setCompany_address(e.target.value)
+                                    }} className="form-control" readOnly/>
                                 </div>
                             </div>
+                            <div className="col-md-1"></div>
+                        </div>
                     </div>
-                    <div className="col-md-3"></div>
+                    <div className="col-md-2"></div>
                 </div>
                 <div className="row footer ">
                     <div className="col-md-4">
                         {
                             id ? (
                                 <button className="btn btn-default btn-sm addNewItem" onClick={handleDelete}>  <span className="glyphicon glyphicon-trash"> </span> Delete Entry</button>
-                            ):""
+                            ) : ""
                         }
                     </div>
                     <div className="col-md-4 pt-pb-10" align="center">
@@ -335,20 +391,20 @@ const Provider = (props) => {
                     <div className="col-md-4">
                         <div className="btn-group pull-right" role="group" aria-label="...">
                             {/* <button type="button" className="btn btn-primary btn-sm addNewItem " onClick={handlePrevious}><span className="glyphicon glyphicon-arrow-left"></span>Previous</button> */}
-                            <button type="button"  className="btn btn-primary btn-sm addNewItem " onClick={handleSubmit}>Next <span className="glyphicon glyphicon-arrow-right"> </span></button>
+                            <button type="button" className="btn btn-primary btn-sm addNewItem " onClick={handleSubmit}>Next <span className="glyphicon glyphicon-arrow-right"> </span></button>
                         </div>
                     </div>
                 </div>
             </div>
-            {showGroup ? <ContactModal house_id={house_id} toggle={togglePopup} /> : null}    
+            {showGroup ? <ContactModal house_id={house_id} toggle={togglePopup} /> : null}
         </div>
     )
 }
 
 
 const mapStateToProps = (state) => ({
-    warrantyDetails : state.Warranty.warrantyDetails.data,
-    contactList : state.Contact.contacts.data
+    warrantyDetails: state.Warranty.warrantyDetails.data,
+    contactList: state.Contact.contacts.data
 });
 
 const mapDispatchToProps = {

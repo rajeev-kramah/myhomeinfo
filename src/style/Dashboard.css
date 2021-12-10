@@ -1,7 +1,7 @@
 .dashboard {
     background-color: var(--lightGray);
     min-height: 650px;
-    padding-top: 15vh;
+    padding-top: 25vh;
     padding-bottom: 15vh;
 }
 
@@ -159,4 +159,24 @@
 
 .min-chat svg {
     padding-top: 60px;
+}
+.propertyCard {
+    border-top: 1px solid #B0D0F4;
+}
+.selectedCard {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.sliderCard{
+    margin: 0 auto;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+.slick-prev:before, .slick-next:before{
+    color:#4559fa !important;
+}
+.justify-between{
+    display: flex;
+    justify-content: space-between;
 }

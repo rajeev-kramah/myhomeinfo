@@ -13,7 +13,7 @@ const ApiService = {
 			.catch(err => console.log(err));
 	},
 
-	post(apiurl, bodyFormData) {
+post(apiurl, bodyFormData) {
 		return axios
 			.post(apiurl, bodyFormData)
 			.then(response => {
@@ -57,6 +57,27 @@ export const Authentication = {
 
 	resetPassword(data) {
 		return ApiService.post(url + "users/reset", data);
+	},
+	admin(data) {
+		return ApiService.post(url + "users/admin", data);
+	},
+	getroleOfUser(data) {
+		return ApiService.post(url + "users/roleOfUser", data);
+	},
+	getuserAllData(data) {
+		return ApiService.post(url + "users/getuserAllData", data);
+	},
+	deleteUser(data) {
+		return ApiService.post(url + "users/deletesingleUser", data);
+	},
+	activateUser(data) {
+		return ApiService.post(url + "users/activeUser", data);
+	},
+	deActivateUser(data) {
+		return ApiService.post(url + "users/deActiveUser", data);
+	},
+	getsingleUser(data) {
+		return ApiService.post(url + "users/getsingleuser", data);
 	}
 };
 
@@ -250,12 +271,20 @@ export const Transaction = {
 		return ApiService.post(url + "transaction/gethometransactions", data);
 	},
 
+	getTransactionAllData(data) {
+		return ApiService.post(url + "transaction/gettransactionsAllData", data);
+	},
+
 	getSingleTransaction(data) {
 		return ApiService.post(url + "transaction/getsingletransaction", data);
 	},
 
 	deleteTransaction(data) {
 		return ApiService.post(url + "transaction/delete", data);
+	},
+
+	unDeleteTransaction(data) {
+		return ApiService.post(url + "transaction/undelete", data);
 	}
 }
 

@@ -1,7 +1,7 @@
 var mysql = require('mysql');
 var con = mysql.createConnection({
 	host: "localhost",
-	port: 3308,
+	port: 3306,
 	user: "root",
 	password: "",
 	database: "myhomeinfo"
@@ -44,7 +44,7 @@ con.on('error', function(err) {
 	if(err.code === 'PROTOCOL_CONNECTION_LOST') {
 		var con = mysql.createConnection({
 			host: "localhost",
-			port: 3308,
+			port: 3306,
 			user: "root",
 			password: "",
 			database: "myhomeinfo"

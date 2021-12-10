@@ -1,7 +1,7 @@
 .loan {
     background-color: var(--lightGray);
     min-height: 650px;
-    padding-top: 16vh;
+    padding-top: 22vh;
 }
 
 .loan-inner {
@@ -16,6 +16,13 @@
 
 .mt-5 {
     margin-top: 5px;
+}
+.buttondisplay{
+    display: flex;
+    align-items: center;
+}
+.installdetails{
+    margin-right: 0 !important;
 }
 
 .status {
@@ -65,4 +72,8 @@
 }
 #insurance{
     margin-top: 50px;
+}
+.d_flex {
+    display: flex;
+    align-items: center;
 }

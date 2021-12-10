@@ -92,10 +92,10 @@ const Group = (props) => {
                                             }
                                           
                                             return( 
-                                                <>
+                                                <React.Fragment>
                                                     <option className={className} value={data}>{space}{itemValue}
                                                     </option>
-                                                </>
+                                                </React.Fragment>
                                             )
                                            
                                     })):""

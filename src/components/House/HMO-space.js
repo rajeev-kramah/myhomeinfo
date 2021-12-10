@@ -15,8 +15,8 @@ const HMOSpace = (props) => {
         if(props.houseDetails && props.houseDetails.house.length > 0 && props.houseDetails.hmodetails.length > 0){
             setHouseId(props.houseDetails.house[0].id);
             setId(props.houseDetails.hmodetails[props.houseDetails.hmodetails.length-1].id);
-            //setName(props.houseDetails.hmodetails[props.houseDetails.hmodetails.length-1].name);
-            //setDescription(props.houseDetails.hmodetails[props.houseDetails.hmodetails.length-1].description);
+            // setName(props.houseDetails.hmodetails[props.houseDetails.hmodetails.length-1].name);
+            // setDescription(props.houseDetails.hmodetails[props.houseDetails.hmodetails.length-1].description);
         } 
         if(props.houseDetails && props.houseDetails.house.length > 0){
             setHouseId(props.houseDetails.house[0].id);
@@ -29,8 +29,10 @@ const HMOSpace = (props) => {
             "description": description,
             "house_id": houseId,
            // "id" : id
-        }
 
+          
+        }
+        {console.log("datahmo::",data)}
         let valid = validate();
         if(valid) {
             props.addHMOSpace(data);
@@ -152,6 +154,7 @@ const HMOSpace = (props) => {
                     </div>
                 </div>
             </div>
+            {console.log("house::",props.houseDetails)}
         </div>
     )
 }

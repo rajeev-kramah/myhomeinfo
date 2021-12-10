@@ -25,8 +25,6 @@ class Reminder extends React.Component {
 
 
     componentWillReceiveProps(nextProps){
-      console.log(this.props.accountDetails)
-      console.log(nextProps.accountDetails)
        if(this.props.events != nextProps.events){
            this.setState({calendarEvents : nextProps.events})
        }
@@ -58,7 +56,6 @@ class Reminder extends React.Component {
     /**Insurance reminder */
     if(this.props.insurances && this.props.insurances.length > 0){
       for(let i=0; i< this.props.insurances.length; i++){
-        console.log(this.props.insurances)
         let subscription = {
           id : "",
           title : this.props.insurances[i].comments,
@@ -112,8 +109,9 @@ class Reminder extends React.Component {
 }
 
 
-const mapStateToProps = (state) => ({
-   events : state.Reminder.events.data,
+const mapStateToProps = (state) => (
+  {
+  events : state.Reminder.events.data,
    accountDetails : state.Account.accountDetails.data,
    insurances : state.Insurance.insurances.data
 });

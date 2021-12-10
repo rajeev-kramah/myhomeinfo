@@ -46,7 +46,6 @@ const storage = multer.diskStorage({
  * Create Lease
 */
 router.post("/", upload.single("document"), async (req, res) => {
-
 	let id = req.body.id; 
 	let lease_begin = req.body.lease_begin;
 	let lease_end = req.body.lease_end;
@@ -61,9 +60,11 @@ router.post("/", upload.single("document"), async (req, res) => {
 	let tenant_email2 = req.body.tenant_email2;
 	let tenant_phone2 = req.body.tenant_phone2;
     let people = req.body.people;
+	let lease_amount = req.body.lease_amount;
     let pets = req.body.pets;
     let deposit = req.body.deposit;
     let renewed = req.body.renewed;
+	let lease_date = req.body.lease_date;
     let realtor_name = req.body.realtor_name;
 	let realtor_phone = req.body.realtor_phone;
 	let realtor_email = req.body.realtor_email;
@@ -72,16 +73,17 @@ router.post("/", upload.single("document"), async (req, res) => {
     let comment = req.body.comment;
     let document = req.body.document;
 	let house_id = req.body.house_id;
+	
 
 	con.connect(function(err) {
-        if (req.file) {
-            document = '../files/' + req.file.path.substr(12);
-        }
+        // if (req.file) {
+        //     document = req.file.path;
+        // }
 
-		var sql = "INSERT INTO lease (lease_begin, lease_end, frequency, rent, rent_due_by, rental_insurance, tenant_name1, document, tenant_email1, tenant_phone1, tenant_name2, tenant_email2, tenant_phone2, people, pets, deposit, renewed, realtor_name, realtor_phone, realtor_email, hmo_space, space_description, comment, house_id) VALUES ('"+lease_begin+"', '"+lease_end+"', '"+frequency+"', '"+rent+"', '"+rent_due_by+"', '"+rental_insurance+"','"+tenant_name1+"', '"+document+"', '"+tenant_email1+"', '"+tenant_phone1+"', '"+tenant_name2+"', '"+tenant_email2+"', '"+tenant_phone2+"', '"+people+"', '"+pets+"', '"+deposit+"', '"+renewed+"', '"+realtor_name+"', '"+realtor_phone+"', '"+realtor_email+"', '"+hmo_space+"', '"+space_description+"', '"+comment+"', '"+house_id+"')";
+		var sql = "INSERT INTO lease (lease_begin, lease_end, frequency, rent, rent_due_by, rental_insurance, tenant_name1, document, tenant_email1, tenant_phone1, tenant_name2, tenant_email2, tenant_phone2, people,lease_amount, pets, deposit, renewed, lease_date, realtor_name, realtor_phone, realtor_email, hmo_space, space_description, comment, house_id) VALUES ('"+lease_begin+"', '"+lease_end+"', '"+frequency+"', '"+rent+"', '"+rent_due_by+"', '"+rental_insurance+"','"+tenant_name1+"','"+document+"', '"+tenant_email1+"', '"+tenant_phone1+"', '"+tenant_name2+"', '"+tenant_email2+"', '"+tenant_phone2+"', '"+people+"','"+lease_amount+"','"+pets+"','"+deposit+"', '"+renewed+"', '"+lease_date+"',  '"+realtor_name+"', '"+realtor_phone+"', '"+realtor_email+"', '"+hmo_space+"', '"+space_description+"', '"+comment+"', '"+house_id+"')";
 
 		if(id){
-			sql = "UPDATE lease SET lease_begin = '"+lease_begin+"', lease_end = '"+lease_end+"', frequency = '"+frequency+"', rent = '"+rent+"', rent_due_by = '"+rent_due_by+"', rental_insurance = '"+rental_insurance+"', tenant_name1 = '"+tenant_name1+"', tenant_email1 = '"+tenant_email1+"', tenant_phone1= '"+tenant_phone1+"', tenant_name2 = '"+tenant_name2+"', tenant_email2 = '"+tenant_email2+"', tenant_phone2 = '"+tenant_phone2+"', people = '"+people+"', pets = '"+pets+"', deposit = '"+deposit+"', renewed = '"+renewed+"', realtor_name = '"+realtor_name+"', realtor_phone = '"+realtor_phone+"', realtor_email = '"+realtor_email+"', hmo_space = '"+hmo_space+"', space_description = '"+space_description+"', comment = '"+comment+"', house_id = '"+house_id+"'";
+			sql = "UPDATE lease SET lease_begin = '"+lease_begin+"', lease_end = '"+lease_end+"', frequency = '"+frequency+"', rent = '"+rent+"', rent_due_by = '"+rent_due_by+"', rental_insurance = '"+rental_insurance+"', tenant_name1 = '"+tenant_name1+"', tenant_email1 = '"+tenant_email1+"', tenant_phone1= '"+tenant_phone1+"', tenant_name2 = '"+tenant_name2+"', tenant_email2 = '"+tenant_email2+"', tenant_phone2 = '"+tenant_phone2+"', people = '"+people+"',lease_amount = '"+lease_amount+"', pets = '"+pets+"', deposit = '"+deposit+"', renewed = '"+renewed+" ', lease_date ='"+lease_date+" ', realtor_name = '"+realtor_name+"', realtor_phone = '"+realtor_phone+"', realtor_email = '"+realtor_email+"', hmo_space = '"+hmo_space+"', space_description = '"+space_description+"', comment = '"+comment+"', house_id = '"+house_id+"'";
 
 			if(document) {
 				sql += ", document = '"+document+"'";
@@ -100,15 +102,13 @@ router.post("/", upload.single("document"), async (req, res) => {
 					)
 				);
 			} else {
-                var sql = "";
+				var sql =  "SELECT * FROM lease WHERE ID = (SELECT MAX(ID) FROM lease)";
 				if(id) {
 					sql = "select * from lease where id = '" + id + "'";
-				} else {
-                    sql =  "SELECT * FROM lease WHERE ID = (SELECT MAX(ID) FROM lease)"
-                }
+				} 
 
                 if(req.body.lastTab){
-					sql =  "SELECT id, lease_begin, lease_end, rent, rent_due_by, rental_insurance FROM lease WHERE house_id='"+house_id+"'";
+					sql =  "SELECT * FROM lease WHERE house_id='"+house_id+"'";
 				}
 				con.query(sql, function (err, lease) {
 					if (err) {
@@ -127,7 +127,7 @@ router.post("/", upload.single("document"), async (req, res) => {
                             }
 							res.send(
 								result.response(
-									200,
+									200,	
 									lease,
 									"Updated successfully!",
                                     lastTab
@@ -170,8 +170,8 @@ router.post("/", upload.single("document"), async (req, res) => {
 							)
 						);
 					} else if (lease.length > 0) {
-						let path = lease[0]['document'].substr(11);
-						path = "public\\files\\" + path;
+						let path = lease[0]['document']
+						// path = "public\\files\\" + path;
 						removeFile(path);
 					}
 				});
@@ -278,8 +278,8 @@ router.post("/", upload.single("document"), async (req, res) => {
 						)
 					);
 				} else if (lease.length > 0) {
-					let path = lease[0]['document'].substr(11);
-					path = "public\\files\\" + path;
+					let path = lease[0]['document']
+					// path = "public\\files\\" + path;
 					removeFile(path);
 				}
 			});
@@ -303,7 +303,7 @@ router.post("/", upload.single("document"), async (req, res) => {
 						)
 					);
 				} else {
-					var sql = "SELECT id, lease_begin, lease_end, rent, rent_due_by, rental_insurance From lease where  house_id='"+req.body.house_id+"'";
+					var sql = "SELECT * From lease where  house_id='"+req.body.house_id+"'";
 					con.query(sql, function (err, lease) {
 						if (err) {
 							res.send(
@@ -315,10 +315,10 @@ router.post("/", upload.single("document"), async (req, res) => {
 							);
 						} else if (lease.length === 0) {
 							res.send(
-								result.response(
-									404,
+								result.response(  
+									200,
 									{},
-									"Lease does not found !"
+									"Lease does not found!"
 								)
 							);
 						} else {

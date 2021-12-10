@@ -21,12 +21,12 @@ const Login =  (props) => {
 		
 		if(valid){
 			props.login(data);
-		}
+				}
 	}
 
 	const validate = (data) => {
         if(data.email.length === 0) {
-            NotificationManager.error('Error message', 'Username cannot be empty.');
+            NotificationManager.error('Error message', 'Email cannot be empty.');
             return false;
         } else if(data.password.length === 0) {
             NotificationManager.error('Error Message', 'Password cannot be empty.');
