@@ -70,7 +70,7 @@ const CreateUser = (props) => {
       'id': id,
       "name": firstName,
       "lastname": lastName,
-      "username": user_name,
+      "username": user_name.trim(),
       "mono": mobileNo,
       "email": emailAddress,
       "password": password,
@@ -82,7 +82,7 @@ const CreateUser = (props) => {
       "country": country,
       "renewalDate": renewalPendingDate,
       "role": role,
-      "bucket_name": user_name + generate_random_string(4)
+      "bucket_name": user_name.trim() + generate_random_string(4)
     }
 
     console.log("resposedata ", data)

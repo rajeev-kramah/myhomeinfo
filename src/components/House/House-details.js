@@ -9,12 +9,19 @@ import Tab from "../../Reusable/Tab";
 import NumberFormat from "react-number-format";
 import S3 from "aws-s3";
 import JsFileDownloader from "js-file-downloader";
-import config from "../Authentication/s3config";
 
 const HouseDetails = (props) => {
 
   // aws-s3 uploader//
- 
+  const userBucket = JSON.parse(localStorage.getItem('user')) && JSON.parse(localStorage.getItem('user')).bucket_folder_name;
+  const config = {
+      bucketName: "myhomeinfodata",
+      dirName: userBucket,
+      region: "us-west-2",
+      accessKeyId: "AKIAW4MIDXMBR2LANW4B", 
+      secretAccessKey: "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", 
+    };
+   
   const S3Client = new S3(config);
   const generate_random_string = (string_length) => {
     let random_string = "";
@@ -55,8 +62,9 @@ const HouseDetails = (props) => {
   const [img_path, setImg_path] = useState();
 
   useEffect(() => {
-    if (props.houseDetails && props.houseDetails.house.length > 0) {
-        console.log("props.houseDetails12",props.houseDetails)
+    if (props.houseDetails && props.houseDetails.house.length > 0) {  
+      console.log("imgdata::HOUSE",props.houseDetails.house[0].img_path )
+       
       setHouse(props.houseDetails.house[0].houseno);
       setStreet(props.houseDetails.house[0].streetname);
       setCity(props.houseDetails.house[0].city);
@@ -105,14 +113,14 @@ const HouseDetails = (props) => {
   // download Document //
   const downloadFile = (items) => {
     console.log("download::", items)
-    if (items.name !== undefined) {
+    if (items && items.name !== undefined) {
 
     }
     const fileUrl = items;
     new JsFileDownloader({
-      url: fileUrl,
-    })
+      url: fileUrl})
   };
+  
 
   const handleDeleteImg = (id, docFile) => {
     if (docFile && docFile.name !== undefined) {
@@ -179,7 +187,7 @@ const HouseDetails = (props) => {
       if (img_path && img_path.name) {
         const newFileName =
           generate_random_string(4) +
-          img_path.name.split(".").slice(0, -1).join(".");
+          img_path.name.split(".").slice(0, -1).join(".").trim();
         S3Client.uploadFile(img_path, newFileName)
           .then((data) => {
             var form = new FormData();

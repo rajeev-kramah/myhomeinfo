@@ -220,7 +220,7 @@ const Navbar = (props) => {
             </li>
           </ul>
         </div>
-        <div className="container-fluid inner-bg pt-10">
+        <div className="container-fluid inner-bg">
           <ul className="nav navbar-nav">
             {
               props.house ? (props.house.map((house) => {

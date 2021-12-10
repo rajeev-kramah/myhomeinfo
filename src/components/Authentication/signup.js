@@ -42,7 +42,7 @@ const Signup =  (props) => {
 		let data = {
 			"name" : name,
 			"email" : email,
-			"username" : username,
+			"username" : username.trim(),
 			"houseno" : house,
 			"street" : street,
 			"zipcode" : zipcode,
@@ -55,7 +55,7 @@ const Signup =  (props) => {
 			"mono" : mobile,
 			"password" : password,
 			"address" : address,
-			"bucket_name": username + generate_random_string(4) 
+			"bucket_name": username.trim() + generate_random_string(4) 
 		}
 		let valid = validate(data);
 		if(valid) {

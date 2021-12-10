@@ -29,8 +29,10 @@ const HMOSpace = (props) => {
             "description": description,
             "house_id": houseId,
            // "id" : id
-        }
 
+          
+        }
+        {console.log("datahmo::",data)}
         let valid = validate();
         if(valid) {
             props.addHMOSpace(data);
@@ -152,6 +154,7 @@ const HMOSpace = (props) => {
                     </div>
                 </div>
             </div>
+            {console.log("house::",props.houseDetails)}
         </div>
     )
 }

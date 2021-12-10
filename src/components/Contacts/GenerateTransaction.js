@@ -206,7 +206,7 @@ const GenerateTransaction = (props) => {
                     let previousData = tableData[pos - 1].endingloan ? Util.removeCommas(tableData[pos - 1].endingloan) : 0;
                     let transactionAmount = transactionData[k].amount ? Util.removeCommas(transactionData[k].amount) : 0;
                     let endingloan = parseInt(previousData) - parseInt(transactionAmount);
-                    data1.month = "";
+                    data1.month = k + 1;
                     data1.loanamount = previousData;
                     data1.payment = Util.addCommasList(parseFloat(transactionAmount).toFixed(2));
                     data1.interest = "";

@@ -10,6 +10,7 @@ import { NotificationManager } from "react-notifications";
 import NumberFormat from "react-number-format";
 
 const LoanTransaction = (props) => {
+  console.log("loan::props",props)
   let house_id = props.location.state.house_id ? props.location.state.house_id : "";
   let loggedinUser = Util.getLoggedinUser();
   let today = new Date();
@@ -61,7 +62,7 @@ const LoanTransaction = (props) => {
       }
       setTableData(tableData)
     }
-  }, [props.loanTransaction])
+  }, [props.loanTransaction,props.loanDetails])
 
 
   const handleSubmit = () => {
@@ -75,7 +76,7 @@ const LoanTransaction = (props) => {
     setLoanStatus(false);
   }
   const validate = () => {
-
+console
     if (startDate === '') {
       NotificationManager.error("Error Message", "Start Date cannot be empty.");
       return false;
@@ -98,15 +99,16 @@ const LoanTransaction = (props) => {
     return true;
   }
   const showTableView = () => {
-   
+    
     let valid = validate();
+    console.log("dat12:::",props.loanDetails,valid)
     if (valid) {
       let loanData = props.loanDetails;
       /**Calculating Amortization */
       let tableData = [];
 
       if (props.loanDetails) {
-      
+    
         var months;
         let d1 = new Date(startDate);
         let d2 = new Date(endDate);

@@ -22,11 +22,13 @@ const initialState = {
 export default function(state = initialState, action) {
 	switch (action.type) {
         case ADD_LOAN:
+         
             if(action.payload.lastTab){
+                console.log("loan:1",action)
                 return {
                     ...state,
                     loans: action.payload,
-                    loanDetails : []
+                    loanDetails : action.payload
                 };
             }
 			return {
@@ -40,12 +42,14 @@ export default function(state = initialState, action) {
             }
 
         case GET_SINGLE_LOAN:
+             console.log("loan:2",action)
             return {
                 ...state,
                 loanDetails: action.payload
             }
 
         case RESET_SINGLE_LOAN:
+            console.log("loan:3")
             return {
                 ...state,
                 loanDetails: action.payload

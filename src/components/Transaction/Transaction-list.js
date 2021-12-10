@@ -266,7 +266,7 @@ var activeDatesArr = []
                                         pathname: "/transaction",
                                         state: { house_id: house_id }
                                     }} className="btn btn-primary btn-sm addNewItem pull-right" role="button">
-                                        <span className="glyphicon glyphicon-plus"> </span> Loan Transaction
+                                        <span className="glyphicon glyphicon-plus"> </span> Add Transaction
                                     </Link> : <React.Fragment>You are not allowed for New Transaction Because Your Loan is Closed </React.Fragment>
                             } 
            

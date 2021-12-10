@@ -10,10 +10,17 @@ import { getHouseHmo } from "../../store/Actions/house";
 import NumberFormat from "react-number-format";
 import S3 from "aws-s3";
 import JsFileDownloader from "js-file-downloader";
-import config from "../Authentication/s3config";
 
 const LenderDetails = (props) => {
-
+// aws-s3 uploader//
+const userBucket = JSON.parse(localStorage.getItem('user')) && JSON.parse(localStorage.getItem('user')).bucket_folder_name;
+const config = {
+    bucketName: "myhomeinfodata",
+    dirName: userBucket,
+    region: "us-west-2",
+    accessKeyId: "AKIAW4MIDXMBR2LANW4B", 
+    secretAccessKey: "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", 
+  };
 const S3Client = new S3(config);
 const generate_random_string = (string_length) => {
   let random_string = "";
@@ -62,8 +69,9 @@ const generate_random_string = (string_length) => {
 
 
   useEffect(() => {
+  
     if (props.leaseDetails && props.leaseDetails.length > 0) {
-      console.log("props.leaseDetails", props.leaseDetails[0])
+     
       setId(props.leaseDetails[0].id);
       setLease_begin(props.leaseDetails[0].lease_begin ? props.leaseDetails[0].lease_begin : Util.getCurrentDate("-"));
       setLease_end(props.leaseDetails[0].lease_end ? props.leaseDetails[0].lease_end : Util.getCurrentDate("-"));
@@ -91,7 +99,7 @@ const generate_random_string = (string_length) => {
       setComment(props.leaseDetails[0].comment);
       setHouse_id(props.leaseDetails[0].house_id);
       setDocument(props.leaseDetails[0].document);
-      setDocName( props.leaseDetails[0].document.includes("/") &&props.leaseDetails[0].document.split('/')[4].slice("4"));
+      setDocName( props.leaseDetails[0].document.includes("/") && props.leaseDetails[0].document.split('/')[4].slice(4));
       setDownload(props.leaseDetails[0].document);
     }
   }, [props.leaseDetails]);
