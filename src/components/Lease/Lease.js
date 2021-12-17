@@ -89,7 +89,7 @@ const generate_random_string = (string_length) => {
       setPeople(props.leaseDetails[0].people);
       setPets(props.leaseDetails[0].pets);
       setDeposit(props.leaseDetails[0].deposit);
-      setRenewed(props.leaseDetails[0].renewed);
+      setRenewed(props.leaseDetails[0].renewed.trim());
       setLease_amount(props.leaseDetails[0].lease_amount);
       setRealtor_name(props.leaseDetails[0].realtor_name);
       setRealtor_phone(props.leaseDetails[0].realtor_phone);
@@ -138,7 +138,7 @@ const generate_random_string = (string_length) => {
       "people": people,
       "pets": pets,
       "deposit": deposit,
-      "renewed": renewed,
+      "renewed": renewed.trim(),
       "lease_date": lease_date,
       "realtor_name": realtor_name,
       "realtor_phone": realtor_phone,

@@ -169,7 +169,7 @@ const config = {
             }
             form.append("lastTab", true)
             form.append("document", data.location);
-            props.addLoan(form)
+            props.addLoan(formdata)
             props.history.push({
               pathname: 'loan-transaction',
               state: {
@@ -184,7 +184,7 @@ const config = {
           form.append(key, formdata[key]);
         }
         form.append("lastTab", true)
-        props.addLoan(form);
+        props.addLoan(formdata);
         props.history.push({
           pathname: 'loan-transaction',
           state: {

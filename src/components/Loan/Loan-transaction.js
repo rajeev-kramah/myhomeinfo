@@ -27,19 +27,7 @@ const LoanTransaction = (props) => {
   const [loantype, setLoantype] = useState('');
   const [enteredBy, setEnteredBy] = useState(loggedinUser["name"]);
 
-  useEffect(() => {
-    if (props.loanDetails && props.loanDetails.length > 0) {
-      console.log("startDateofloan12:", props.loanDetails[0])
-      setLoanamount(props.loanDetails[0].loanamount);
-      setRateofinterest(props.loanDetails[0].rateofinterest);
-      setLoanterm(props.loanDetails[0].loanterm);
-      setLoannumber(props.loanDetails[0].loannumber);
-      setStartDate(props.loanDetails[0].loanbegindate);
-      setEndDate(props.loanDetails[0].loanclosuredate);
-      setLoantype(props.loanDetails[0].loantype);
-      setId(props.loanDetails[0].id);
-    }
-  }, [props.loanDetails])
+ 
 
   useEffect(() => {
     let tableData = [];
@@ -64,6 +52,19 @@ const LoanTransaction = (props) => {
     }
   }, [props.loanTransaction,props.loanDetails])
 
+  useEffect(() => {
+    if (props.loanDetails && props.loanDetails.length > 0) {
+      console.log("startDateofloan12:", props.loanDetails[0])
+      setLoanamount(props.loanDetails[0].loanamount);
+      setRateofinterest(props.loanDetails[0].rateofinterest);
+      setLoanterm(props.loanDetails[0].loanterm);
+      setLoannumber(props.loanDetails[0].loannumber);
+      setStartDate(props.loanDetails[0].loanbegindate);
+      setEndDate(props.loanDetails[0].loanclosuredate);
+      setLoantype(props.loanDetails[0].loantype);
+      setId(props.loanDetails[0].id);
+    }
+  }, [props.loanDetails])
 
   const handleSubmit = () => {
     props.addLoanTransaction(tableData);

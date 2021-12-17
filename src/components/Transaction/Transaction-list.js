@@ -33,35 +33,40 @@ const TransactionList = (props) => {
   const [transactionData, setTransactionData] = useState();
 
   useEffect(() => {
-var activeDatesArr = []
+    var activeDatesArr = [];
     if (props.loanDetails && props.loanDetails.length > 0) {
       setLoanHouse_id(props.loanDetails[0].house_id);
-        props.loanDetails.map((data) => {
-      let expiry = Math.floor(new Date(data.loanclosuredate).getTime() / 86400000);
-      let current = Math.floor(new Date().getTime() / 86400000);
-        if(expiry > current)
-        {
-            activeDatesArr.push(expiry)
-            setLoanclosuredate(activeDatesArr)
+      props.loanDetails.map((data) => {
+        let expiry = Math.floor(
+          new Date(data.loanclosuredate).getTime() / 86400000
+        );
+        let current = Math.floor(new Date().getTime() / 86400000);
+        if (expiry > current) {
+          activeDatesArr.push(expiry);
+          setLoanclosuredate(activeDatesArr);
         }
-        })}
-}, [props.loanDetails]);
+      });
+    }
+  }, [props.loanDetails]);
 
   useEffect(() => {
     if (props.transactions !== undefined && props.transactions.length > 0) {
-        props.contactList &&  props.contactList.map((item1, index1) => {
-        const selectedIndex = props.transactions.findIndex(
-          (val) =>
-            item1.id ===
-            parseInt(val && val.account_name && val.account_name.split("-")[0])
-        );
+      props.contactList &&
+        props.contactList.map((item1, index1) => {
+          const selectedIndex = props.transactions.findIndex(
+            (val) =>
+              item1.id ===
+              parseInt(
+                val && val.account_name && val.account_name.split("-")[0]
+              )
+          );
 
-        if (selectedIndex > -1 && selectedIndex !== undefined) {
-          props.transactions[selectedIndex].account_name = item1.companyname;
-          props.transactions[selectedIndex].amount = item1.transaction_amount;
-          props.transactions[selectedIndex].type = item1.transaction_type;
-        }
-      });
+          if (selectedIndex > -1 && selectedIndex !== undefined) {
+            props.transactions[selectedIndex].account_name = item1.companyname;
+            props.transactions[selectedIndex].amount = item1.transaction_amount;
+            props.transactions[selectedIndex].type = item1.transaction_type;
+          }
+        });
       setTransactionData(props.transactions);
     }
   }, [props.transactions]);
@@ -121,7 +126,7 @@ var activeDatesArr = []
             role="link"
             to={{ pathname: "transaction", state: { house_id: house_id } }}
           >
-            {row.account_name}
+            {row.account_name.includes("-") ? row.account_name.split("-")[1] : row.account_name}
           </Link>
         ),
     },
@@ -218,7 +223,6 @@ var activeDatesArr = []
   ];
   return (
     <div className="container-fluid contact">
-        {console.log("closure::",loanclosuredate)}
       <div className="list-flex">
         <h4>Transactions</h4>
         <i
@@ -247,6 +251,7 @@ var activeDatesArr = []
         </div>
         {transaction ? (
           <React.Fragment>
+            {console.log("console_1:==>", transactionData, props.transactionAllData)}
             {transactionData !== undefined && (
               <Table
                 header={header}
@@ -258,18 +263,24 @@ var activeDatesArr = []
               />
             )}
             <div className="row footer">
-              
-                            {
-                           
-                                loanHouse_id === house_id && loanclosuredate !== ""
-                                    ? <Link to={{
-                                        pathname: "/transaction",
-                                        state: { house_id: house_id }
-                                    }} className="btn btn-primary btn-sm addNewItem pull-right" role="button">
-                                        <span className="glyphicon glyphicon-plus"> </span> Add Transaction
-                                    </Link> : <React.Fragment>You are not allowed for New Transaction Because Your Loan is Closed </React.Fragment>
-                            } 
-           
+              {loanHouse_id === house_id && loanclosuredate !== "" ? (
+                <Link
+                  to={{
+                    pathname: "/transaction",
+                    state: { house_id: house_id },
+                  }}
+                  className="btn btn-primary btn-sm addNewItem pull-right"
+                  role="button"
+                >
+                  <span className="glyphicon glyphicon-plus"> </span> Add
+                  Transaction
+                </Link>
+              ) : (
+                <React.Fragment>
+                  You are not allowed for New Transaction Because Your Loan is
+                  Closed
+                </React.Fragment>
+              )}
             </div>
           </React.Fragment>
         ) : (

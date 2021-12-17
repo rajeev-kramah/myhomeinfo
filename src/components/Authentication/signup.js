@@ -160,6 +160,14 @@ const Signup =  (props) => {
         inputElement.addEventListener('keyup',formatToPhone);
     }
 
+	const onAddressChange = (e) =>{
+		setAddress(e.target.value)
+	}
+
+	useEffect(()=>{
+		setAddress(`${house} ${street} ${zipcode} ${city} ${stateName} ${country}`)
+	},[house, street, zipcode, city, stateName, country ])
+
 	return (
 		
 
@@ -294,7 +302,7 @@ const Signup =  (props) => {
 				<div className="row" style={{paddingLeft:"15px",addingRight:"18px"}}>
 					<div className="form-group">
 						<label htmlFor="address">Address</label>
-						<input type="text" placeholder="Enter Address" value={address} onChange={e => setAddress(e.target.value)} className="form-control" />
+						<input type="text" placeholder="Enter Address" value={address} onChange={e => onAddressChange(e)} className="form-control" />
 					</div>
 				</div>
 					
