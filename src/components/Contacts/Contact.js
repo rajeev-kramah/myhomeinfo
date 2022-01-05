@@ -35,7 +35,7 @@ const Contact = (props) => {
   const [contactId, setContactId] = useState('');
   const [showGroup, setShowGroup] = useState(false);
   const [add_to_home_cost, setAdd_to_home_cost] = useState(0);
-  const [transaction_type, setTransaction_type] = useState("");
+  const [transaction_type, setTransaction_type] = useState("Receipt");
   const [transaction_amount, setTransaction_amount] = useState("");
   const [auto_post, setAuto_post] = useState(0);
   const [posting_frequency, setPosting_frequency] = useState("");
@@ -183,15 +183,8 @@ const Contact = (props) => {
     state = Util.countryDetails()[country]['data'];
   }
 
-  useEffect(() => {
-    if (groupName == "Income") {
-      setTransaction_type("Receipt");
-    } else if (groupName == "Expenses") {
-      setTransaction_type("Payment");
-    }
-  }, [groupName]);
-
-
+  
+  
   var groupData = ['Income', "Expenses"];
   var highLight = [];
   if (props.groupDetails) {
@@ -204,6 +197,15 @@ const Contact = (props) => {
 
     }
   }
+  useEffect(() => {
+    if ( groupName && groupName.includes("Income")) {
+      setTransaction_type("Receipt");
+    } else if (groupName && groupName.includes("Expenses")) {
+      setTransaction_type("Payment");
+    }
+  }, [groupName]);
+  
+  console.log("props.groupDetails", groupData)
 
   const isNumericInput = (event) => {
     const key = event.keyCode;
@@ -311,6 +313,7 @@ const Contact = (props) => {
 
               <div className="col-md-6">
                 <div className="form-group inputGroup">
+                  {console.log("console_gropname", groupName)}
                   <label htmlFor="group">Group Name</label>
                   <select className="form-control" value={groupName} onChange={e => setGroupName(e.target.value)}>
                     {
@@ -323,6 +326,7 @@ const Contact = (props) => {
                         }
                         let item = data.split("&");
                         let itemValue = item[item.length - 1]
+                        console.log("console_Data", data)
                         if (data.subgroup != "Income" && data.subgroup != "Expenses") {
                           if (data.split("&").length == 2) {
                             space = `\xa0\xa0\xa0\xa0`
@@ -490,7 +494,7 @@ const Contact = (props) => {
                 <div className="form-group">
                   <label htmlFor="transaction_type">Transaction Type</label>
                   {/* <input type="text" placeholder="" value={transaction_type} onChange={e=> setTransaction_type(e.target.value)} className="form-control"/> */}
-                  <select className="form-control" value={transaction_type} onChange={e => setTransaction_type(e.target.value)} >
+                  <select className="form-control" value={transaction_type} onChange={e => setTransaction_type(e.target.value)} disabled >
                     <option value="" disabled>Select</option>
                     <option value="Receipt">Receipt</option>
                     <option value="Payment">Payment</option>

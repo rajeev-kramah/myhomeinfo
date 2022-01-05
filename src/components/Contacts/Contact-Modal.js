@@ -28,7 +28,7 @@ const CreateContact = (props) => {
   const [contactId, setContactId] = useState('');
   const [showGroup, setShowGroup] = useState(false);
   const [add_to_home_cost, setAdd_to_home_cost] = useState(0);
-  const [transaction_type, setTransaction_type] = useState("");
+  const [transaction_type, setTransaction_type] = useState("Receipt");
   const [transaction_amount, setTransaction_amount] = useState("");
   const [auto_post, setAuto_post] = useState(0);
   const [posting_frequency, setPosting_frequency] = useState("");
@@ -105,9 +105,9 @@ const CreateContact = (props) => {
   }
 
   useEffect(() => {
-    if (groupName == "Income") {
+    if ( groupName && groupName.includes("Income")) {
       setTransaction_type("Receipt");
-    } else if (groupName == "Expenses") {
+    } else if (groupName && groupName.includes("Expenses")) {
       setTransaction_type("Payment");
     }
   }, [groupName]);

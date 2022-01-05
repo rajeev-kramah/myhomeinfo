@@ -575,7 +575,7 @@ router.post("/delete", async (req, res) => {
                 );
               } else {
                 let transactionData = [];
-                var sql = "SELECT loan.lname, paymentdate as date, c.contactperson as contact_person, lt.totalpayment as amount, loan.additionaldetails as comments, c.groupname,c.companyname, 'payment' as type, lt.entry_date as created_at,lt.entered_by, '*' as ltransaction From loan INNER JOIN loantransaction as lt on loan.id = lt.loan_id INNER JOIN contacts as c ON loan.lname = c.id where loan.house_id='" + req.body.house_id + "'";
+                var sql = "SELECT loan.lname, paymentdate as date, c.contactperson as contact_person, lt.principal as principal, lt.interest as interest ,lt.totalpayment as amount, loan.additionaldetails as comments, c.groupname,c.companyname, 'payment' as type, lt.entry_date as created_at,lt.entered_by, '*' as ltransaction From loan INNER JOIN loantransaction as lt on loan.id = lt.loan_id INNER JOIN contacts as c ON loan.lname = c.id where loan.house_id='" + req.body.house_id + "'";
                 con.query(sql, function (err, loanTransaction) {
                   if (err) {
                     res.send(

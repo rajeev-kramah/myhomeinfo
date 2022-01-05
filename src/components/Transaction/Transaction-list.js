@@ -126,7 +126,9 @@ const TransactionList = (props) => {
             role="link"
             to={{ pathname: "transaction", state: { house_id: house_id } }}
           >
-            {row.account_name.includes("-") ? row.account_name.split("-")[1] : row.account_name}
+            {row.account_name.includes("-")
+              ? row.account_name.split("-")[1]
+              : row.account_name}
           </Link>
         ),
     },
@@ -196,7 +198,15 @@ const TransactionList = (props) => {
     { name: "Type", selector: "type", sortable: true },
     { name: "Amount", selector: "amount", sortable: true },
     { name: "Comments", selector: "comments", sortable: true },
-    { name: "Receipt", selector: "receipt", sortable: true },
+    {
+      name: "Receipt",
+      selector: "receipt",
+      sortable: true,
+      cell: (row) =>
+        row.receipt === "undefined"
+          ? ""
+          : row.receipt && row.receipt.split("/")[4].slice(4),
+    },
     {
       name: "Entry Date & Time",
       selector: "created_at",
@@ -251,7 +261,11 @@ const TransactionList = (props) => {
         </div>
         {transaction ? (
           <React.Fragment>
-            {console.log("console_1:==>", transactionData, props.transactionAllData)}
+            {console.log(
+              "console_1:==>",
+              transactionData,
+              props.transactionAllData
+            )}
             {transactionData !== undefined && (
               <Table
                 header={header}

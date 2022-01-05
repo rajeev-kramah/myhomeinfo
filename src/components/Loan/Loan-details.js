@@ -253,6 +253,7 @@ console.log("Props::::::",props)
                         allowEmptyFormatting={true}
                         allowLeadingZeros={false}
                         onChange={e => setPurchaseprice(e.target.value)}
+                        readOnly
                         isNumericString={true} />
                     </div>
                   </div>
